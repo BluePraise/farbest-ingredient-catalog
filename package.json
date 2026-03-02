@@ -1,0 +1,37 @@
+{
+  "name": "farbest-product-catalog",
+  "version": "1.0.0",
+  "description": "Custom product catalog solution for Farbest with React filtering",
+  "main": "assets/build/index.js",
+  "scripts": {
+    "build": "wp-scripts build assets/src/index.js --output-path=assets/build",
+    "start": "wp-scripts start assets/src/index.js --output-path=assets/build",
+    "check-engines": "wp-scripts check-engines",
+    "check-licenses": "wp-scripts check-licenses",
+    "format": "wp-scripts format",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "lint:pkg-json": "wp-scripts lint-pkg-json",
+    "packages-update": "wp-scripts packages-update",
+    "test:e2e": "wp-scripts test-e2e",
+    "test:unit": "wp-scripts test-unit-js",
+    "deploy": "npm run build && sh ./deploy.sh"
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "product-catalog",
+    "react"
+  ],
+  "author": "BeckerGuerry",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@wordpress/scripts": "^27.9.0"
+  },
+  "dependencies": {
+    "@wordpress/api-fetch": "^7.0.0",
+    "@wordpress/components": "^28.0.0",
+    "@wordpress/element": "^6.0.0",
+    "@wordpress/i18n": "^5.0.0"
+  }
+}

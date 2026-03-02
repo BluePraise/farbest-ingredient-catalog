@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build files
+assets/build/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp

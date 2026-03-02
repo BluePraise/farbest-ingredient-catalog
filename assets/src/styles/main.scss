@@ -1,0 +1,578 @@
+/**
+ * Farbest Ingredient Catalog Styles
+ */
+@use 'sass:color';
+
+// Variables
+$primary-color:    #007cba;
+$secondary-color:  #50575e;
+$border-color:     #ddd;
+$success-color:    #4caf50;
+$error-color:      #f44336;
+$bg-light:         #f9f9f9;
+$transition:       all 0.2s ease;
+
+// ─── Layout ──────────────────────────────────────────────────────────────────
+
+.fpc-ingredient-grid-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+// ─── Filters bar ─────────────────────────────────────────────────────────────
+
+.fpc-filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: $bg-light;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+// ─── Search ──────────────────────────────────────────────────────────────────
+
+.fpc-search {
+    flex: 1;
+    min-width: 200px;
+
+    .fpc-search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .fpc-search-input {
+        width: 100%;
+        padding: 8px 70px 8px 12px;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: $transition;
+
+        &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 2px rgba($primary-color, 0.15);
+        }
+    }
+
+    .fpc-search-clear {
+        position: absolute;
+        right: 38px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        line-height: 1;
+        color: $secondary-color;
+        cursor: pointer;
+        padding: 0 6px;
+
+        &:hover { color: $error-color; }
+    }
+
+    .fpc-search-button {
+        position: absolute;
+        right: 4px;
+        padding: 6px 10px;
+        background: $primary-color;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: $transition;
+
+        &:hover { background: color.adjust($primary-color, $lightness: -10%); }
+        svg { display: block; }
+    }
+}
+
+// ─── Filter dropdowns ────────────────────────────────────────────────────────
+
+.fpc-filter-dropdowns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.fpc-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 180px;
+}
+
+.fpc-filter-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $secondary-color;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+// Dropdown toggle button
+.fpc-dropdown {
+    position: relative;
+}
+
+.fpc-dropdown-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: $transition;
+    text-align: left;
+
+    &:hover, &.open {
+        border-color: $primary-color;
+    }
+
+    &.open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+}
+
+.fpc-dropdown-caret {
+    font-size: 10px;
+    color: $secondary-color;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+// Dropdown menu (checkbox list)
+.fpc-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid $primary-color;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.fpc-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.1s;
+
+    &:hover:not(.disabled) { background: rgba($primary-color, 0.06); }
+
+    &.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    input[type="checkbox"] {
+        flex-shrink: 0;
+        cursor: inherit;
+    }
+
+    .fpc-dropdown-item-name { flex: 1; }
+
+    .fpc-dropdown-item-count {
+        font-size: 11px;
+        color: $secondary-color;
+    }
+}
+
+.fpc-dropdown-empty {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: $secondary-color;
+}
+
+// ─── Toolbar (results count + sort + view) ────────────────────────────────────
+
+.fpc-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.fpc-results-count {
+    font-size: 14px;
+    color: $secondary-color;
+
+    strong { color: #333; }
+}
+
+.fpc-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.fpc-sort-label {
+    font-size: 13px;
+    color: $secondary-color;
+    white-space: nowrap;
+}
+
+.fpc-sort-select {
+    padding: 6px 10px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #333;
+    background: white;
+    cursor: pointer;
+    transition: $transition;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+    }
+}
+
+// View toggle
+.fpc-view-toggle {
+    display: flex;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.fpc-view-btn {
+    padding: 6px 10px;
+    background: white;
+    border: none;
+    cursor: pointer;
+    color: $secondary-color;
+    transition: $transition;
+    line-height: 1;
+
+    & + & { border-left: 1px solid $border-color; }
+
+    &:hover { background: $bg-light; color: $primary-color; }
+
+    &.active {
+        background: $primary-color;
+        color: white;
+    }
+
+    svg { display: block; fill: currentColor; }
+}
+
+// Reset button
+.fpc-reset-button {
+    padding: 6px 12px;
+    background: none;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    font-size: 13px;
+    color: $secondary-color;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+        border-color: $error-color;
+        color: $error-color;
+    }
+}
+
+// ─── Ingredients Grid ─────────────────────────────────────────────────────────
+
+.fpc-ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+// List view override
+.fpc-ingredients-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+// ─── Ingredient Card ──────────────────────────────────────────────────────────
+
+.fpc-ingredient-card {
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        transform: translateY(-3px);
+    }
+
+    // List layout
+    &.fpc-ingredient-card--list {
+        flex-direction: row;
+        transform: none;
+
+        &:hover { transform: none; }
+
+        .fpc-ingredient-thumbnail {
+            flex-shrink: 0;
+            width: 160px;
+            aspect-ratio: auto;
+
+            @media (max-width: 600px) { width: 100px; }
+        }
+
+        .fpc-ingredient-card-content {
+            padding: 16px 20px;
+        }
+    }
+}
+
+.fpc-ingredient-thumbnail {
+    display: block;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: #f5f5f5;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    &:hover img { transform: scale(1.04); }
+}
+
+.fpc-ingredient-card-content {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    // List view: body takes up space, button stays at bottom
+    .fpc-ingredient-card--list & {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+}
+
+.fpc-ingredient-card-body {
+    flex: 1;
+}
+
+.fpc-ingredient-description {
+    color: #555;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.fpc-ingredient-claims-text {
+    font-size: 12px;
+    color: $secondary-color;
+    margin-bottom: 0;
+
+    strong { color: #444; }
+}
+
+.fpc-ingredient-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    line-height: 1.4;
+
+    a {
+        color: #222;
+        text-decoration: none;
+        &:hover { color: $primary-color; }
+    }
+}
+
+// Term badges
+.fpc-ingredient-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.fpc-term-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    border-radius: 10px;
+
+    &--category { background: #e9ecef; color: $secondary-color; }
+    &--claim    { background: #d1ecf1; color: #0c5460; }
+    &--cert     { background: #d4edda; color: #155724; }
+    &--more     { background: transparent; border: 1px solid $border-color; color: $secondary-color; }
+}
+
+.fpc-ingredient-excerpt {
+    flex: 1;
+    margin-bottom: 12px;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.fpc-button {
+    display: inline-block;
+    padding: 9px 18px;
+    background: $primary-color;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 13px;
+    transition: $transition;
+    align-self: flex-start;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover { background: color.adjust($primary-color, $lightness: -10%); }
+
+    // List view: full-width in its own column
+    &--list {
+        align-self: center;
+    }
+}
+
+// ─── Pagination ───────────────────────────────────────────────────────────────
+
+.fpc-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.fpc-pagination-button {
+    padding: 7px 14px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: $transition;
+
+    &:hover:not(:disabled) {
+        background: $primary-color;
+        color: white;
+        border-color: $primary-color;
+    }
+
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.fpc-pagination-numbers { display: flex; gap: 4px; }
+
+.fpc-pagination-number {
+    min-width: 34px;
+    padding: 7px 10px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: center;
+    transition: $transition;
+
+    &:hover { background: $bg-light; }
+
+    &.active {
+        background: $primary-color;
+        color: white;
+        border-color: $primary-color;
+    }
+}
+
+.fpc-pagination-ellipsis {
+    padding: 7px 4px;
+    font-size: 13px;
+    color: $secondary-color;
+}
+
+// ─── Loading & States ─────────────────────────────────────────────────────────
+
+.fpc-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    color: $secondary-color;
+}
+
+.fpc-spinner {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border: 3px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: fpc-spin 0.7s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes fpc-spin {
+    to { transform: rotate(360deg); }
+}
+
+.fpc-no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: $secondary-color;
+    font-size: 16px;
+}
+
+.fpc-error {
+    text-align: center;
+    padding: 40px 20px;
+    color: $error-color;
+}
+
+// ─── Accessibility ────────────────────────────────────────────────────────────
+
+.screen-reader-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
