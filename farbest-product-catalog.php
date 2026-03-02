@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.0.0');
+define('FPC_VERSION', '1.0.1');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -409,14 +409,14 @@ class Farbest_Product_Catalog {
 
         $format = function($terms) {
             if (is_wp_error($terms)) return array();
-            return array_map(function($term) {
+            return array_values(array_map(function($term) {
                 return array(
                     'id'    => $term->term_id,
                     'name'  => $term->name,
                     'slug'  => $term->slug,
                     'count' => $term->count,
                 );
-            }, $terms);
+            }, $terms));
         };
 
         return new WP_REST_Response(array(
