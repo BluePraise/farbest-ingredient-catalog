@@ -20,34 +20,6 @@ get_header();
 
     <div class="archive-container">
 
-        <!-- Sidebar with categories -->
-        <aside class="ingredient-sidebar">
-            <div class="ingredient-filters">
-
-                <h3><?php esc_html_e('Categories', 'farbest-catalog'); ?></h3>
-                <?php
-                $categories = get_terms(array(
-                    'taxonomy' => 'fpc_category',
-                    'hide_empty' => true,
-                ));
-
-                if ($categories && !is_wp_error($categories)) :
-                    ?>
-                    <ul class="category-list">
-                        <?php foreach ($categories as $category) : ?>
-                            <li>
-                                <a href="<?php echo esc_url(get_term_link($category)); ?>">
-                                    <?php echo esc_html($category->name); ?>
-                                    <span class="count">(<?php echo $category->count; ?>)</span>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-
-            </div>
-        </aside>
-
         <!-- Ingredient Grid -->
         <main class="ingredient-content">
 
