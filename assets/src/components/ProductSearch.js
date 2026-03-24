@@ -9,6 +9,10 @@ const ProductSearch = ({ onSearch, initialValue = '' }) => {
     const [debounceTimer, setDebounceTimer] = useState(null);
 
     useEffect(() => {
+        setSearchTerm(initialValue);
+    }, [initialValue]);
+
+    useEffect(() => {
         // Cleanup timer on unmount
         return () => {
             if (debounceTimer) {

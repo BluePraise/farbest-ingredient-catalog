@@ -93,17 +93,21 @@ const MultiSelectDropdown = ({ label, options, selected, onChange, availableSlug
 };
 
 /**
- * IngredientFilter — renders the three filter dropdowns.
+ * IngredientFilter — renders the four filter dropdowns.
  *
  * Props:
- *   filterOptions  - { categories, claims, certifications } from /farbest/v1/filter-options
- *   selected       - { categories: [], claims: [], certifications: [] }
+ *   filterOptions  - { categories, claims, certifications, applications } from /farbest/v1/filter-options
+ *   selected       - { categories: [], claims: [], certifications: [], applications: [] }
  *   onFilterChange - called with updated selected object
- *   availableSlugs - { categories: Set, claims: Set, certifications: Set } | null
+ *   availableSlugs - { categories: Set, claims: Set, certifications: Set, applications: Set } | null
  */
-const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs }) => {
+const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs, onReset }) => {
     const update = (key, value) => {
         onFilterChange({ ...selected, [key]: value });
+    };
+
+    const handleReset = () => {
+        onReset();
     };
 
     return (
@@ -123,14 +127,14 @@ const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs
 
             <div className="fpc-filter-group">
                 <span className="fpc-filter-label">
-                    {__('Label Claims', 'farbest-catalog')}
+                    {__('Application', 'farbest-catalog')}
                 </span>
                 <MultiSelectDropdown
-                    label={__('All Claims', 'farbest-catalog')}
-                    options={filterOptions.claims}
-                    selected={selected.claims}
-                    onChange={(val) => update('claims', val)}
-                    availableSlugs={availableSlugs ? availableSlugs.claims : null}
+                    label={__('All Applications', 'farbest-catalog')}
+                    options={filterOptions.applications || []}
+                    selected={selected.applications}
+                    onChange={(val) => update('applications', val)}
+                    availableSlugs={availableSlugs ? availableSlugs.applications : null}
                 />
             </div>
 
@@ -146,6 +150,26 @@ const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs
                     availableSlugs={availableSlugs ? availableSlugs.certifications : null}
                 />
             </div>
+
+            <div className="fpc-filter-group">
+                <span className="fpc-filter-label">
+                    {__('Label Claims', 'farbest-catalog')}
+                </span>
+                <MultiSelectDropdown
+                    label={__('All Claims', 'farbest-catalog')}
+                    options={filterOptions.claims}
+                    selected={selected.claims}
+                    onChange={(val) => update('claims', val)}
+                    availableSlugs={availableSlugs ? availableSlugs.claims : null}
+                />
+            </div>
+            <button
+                type="button"
+                className="fpc-reset-button fbd-cta-button"
+                onClick={handleReset}
+            >
+                {__('Reset Filters', 'farbest-catalog')}
+            </button>
         </div>
     );
 };

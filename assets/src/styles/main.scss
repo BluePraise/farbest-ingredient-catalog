@@ -3,23 +3,20 @@
  */
 @use 'sass:color';
 
-// Variables
-$primary-color:    #007cba;
-$secondary-color:  #50575e;
-$border-color:     #ddd;
+// Variables — aligned with farbest.css / brand palette
+$primary-color:    #4D7B29;   // Heading green (matches h1-h6 in farbest.css)
+$moss-green:       #5C643A;   // Moss green (--fb-color-moss-green, .btn, .fb-label)
+$dark-teal:        #003e52;   // Logo teal (PMS 3035)
+$cta-color:        #b5b800;   // Lime green CTA (PMS 390C)
+$secondary-color:  #6c757d;   // Matches --fb-color-secondary
+$border-color:     #383836;   // Matches --fb-border warm grey
 $success-color:    #4caf50;
-$error-color:      #f44336;
-$bg-light:         #f9f9f9;
+$error-color:      #dc3545;   // Matches --fb-color-danger
+$bg-light:         #f2efe9;   // Light beige (brand)
 $transition:       all 0.2s ease;
 
 // ─── Layout ──────────────────────────────────────────────────────────────────
-
-.fpc-ingredient-grid-wrapper {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
+// no layout needed, the theme will carry this.
 
 // ─── Filters bar ─────────────────────────────────────────────────────────────
 
@@ -29,10 +26,7 @@ $transition:       all 0.2s ease;
     gap: 16px;
     align-items: flex-end;
     margin-bottom: 20px;
-    padding: 16px 20px;
-    background: $bg-light;
-    border: 1px solid $border-color;
-    border-radius: 6px;
+    // padding: 16px 20px;
 
     @media (max-width: 768px) {
         flex-direction: column;
@@ -43,8 +37,8 @@ $transition:       all 0.2s ease;
 // ─── Search ──────────────────────────────────────────────────────────────────
 
 .fpc-search {
-    flex: 1;
     min-width: 200px;
+    max-width: 300px;
 
     .fpc-search-wrapper {
         position: relative;
@@ -118,10 +112,11 @@ $transition:       all 0.2s ease;
     min-width: 180px;
 }
 
+// Matches .fb-label in farbest.css
 .fpc-filter-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: $secondary-color;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $moss-green;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -131,23 +126,27 @@ $transition:       all 0.2s ease;
     position: relative;
 }
 
+// Matches .form-control / .btn border style from farbest.css
 .fpc-dropdown-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 8px 12px;
+    padding: 14px 10px;
     background: white;
     border: 1px solid $border-color;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #333;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $moss-green;
+    text-transform: uppercase;
     cursor: pointer;
     transition: $transition;
     text-align: left;
 
     &:hover, &.open {
         border-color: $primary-color;
+        color: $primary-color;
     }
 
     &.open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
@@ -258,50 +257,64 @@ $transition:       all 0.2s ease;
     }
 }
 
-// View toggle
-.fpc-view-toggle {
+
+// ─── Category Browse Grid (initial view) ──────────────────────────────────────
+
+.fpc-category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.fpc-category-card {
     display: flex;
-    border: 1px solid $border-color;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.fpc-view-btn {
-    padding: 6px 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 20px;
     background: white;
-    border: none;
-    cursor: pointer;
-    color: $secondary-color;
-    transition: $transition;
-    line-height: 1;
-
-    & + & { border-left: 1px solid $border-color; }
-
-    &:hover { background: $bg-light; color: $primary-color; }
-
-    &.active {
-        background: $primary-color;
-        color: white;
-    }
-
-    svg { display: block; fill: currentColor; }
-}
-
-// Reset button
-.fpc-reset-button {
-    padding: 6px 12px;
-    background: none;
     border: 1px solid $border-color;
-    border-radius: 4px;
-    font-size: 13px;
-    color: $secondary-color;
+    border-radius: 6px;
+    overflow: hidden;
     cursor: pointer;
-    transition: $transition;
+    text-align: left;
+    transition: box-shadow 0.2s, transform 0.2s;
+    width: 100%;
 
     &:hover {
-        border-color: $error-color;
-        color: $error-color;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        transform: translateY(-3px);
     }
+}
+
+.fpc-category-card-content {
+    width: 100%;
+}
+
+// Placeholder circle icon — replaced by SVG once client provides assets
+.fpc-category-card-icon {
+    width: 100%;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::after {
+        content: '';
+        display: block;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: color.adjust($primary-color, $lightness: 30%);
+    }
+}
+
+.fpc-category-card-title {
+    font-size: 18px;
+}
+.fpc-button {
+    width: 100%;
+    text-align: right;
 }
 
 // ─── Ingredients Grid ─────────────────────────────────────────────────────────
@@ -311,12 +324,6 @@ $transition:       all 0.2s ease;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 24px;
     margin-bottom: 40px;
-}
-
-// List view override
-.fpc-ingredients-list {
-    grid-template-columns: 1fr;
-    gap: 16px;
 }
 
 // ─── Ingredient Card ──────────────────────────────────────────────────────────
@@ -335,25 +342,6 @@ $transition:       all 0.2s ease;
         transform: translateY(-3px);
     }
 
-    // List layout
-    &.fpc-ingredient-card--list {
-        flex-direction: row;
-        transform: none;
-
-        &:hover { transform: none; }
-
-        .fpc-ingredient-thumbnail {
-            flex-shrink: 0;
-            width: 160px;
-            aspect-ratio: auto;
-
-            @media (max-width: 600px) { width: 100px; }
-        }
-
-        .fpc-ingredient-card-content {
-            padding: 16px 20px;
-        }
-    }
 }
 
 .fpc-ingredient-thumbnail {
@@ -377,44 +365,19 @@ $transition:       all 0.2s ease;
     flex: 1;
     display: flex;
     flex-direction: column;
-
-    // List view: body takes up space, button stays at bottom
-    .fpc-ingredient-card--list & {
-        flex-direction: row;
-        align-items: center;
-        gap: 16px;
-        padding: 16px 20px;
-    }
 }
 
-.fpc-ingredient-card-body {
-    flex: 1;
-}
-
-.fpc-ingredient-description {
-    color: #555;
-    font-size: 13px;
-    line-height: 1.6;
-    margin-bottom: 8px;
-}
-
-.fpc-ingredient-claims-text {
-    font-size: 12px;
-    color: $secondary-color;
-    margin-bottom: 0;
-
-    strong { color: #444; }
-}
-
+// Heading colour matches h1-h6: #4D7B29 in farbest.css
 .fpc-ingredient-title {
     margin: 0 0 8px;
     font-size: 16px;
+    font-weight: 700;
     line-height: 1.4;
 
     a {
-        color: #222;
+        color: $primary-color;
         text-decoration: none;
-        &:hover { color: $primary-color; }
+        &:hover { color: $moss-green; }
     }
 }
 
@@ -446,26 +409,31 @@ $transition:       all 0.2s ease;
     line-height: 1.6;
 }
 
+// Matches .btn in farbest.css — moss green, uppercase, no fill
 .fpc-button {
     display: inline-block;
-    padding: 9px 18px;
-    background: $primary-color;
-    color: white;
+    padding: 0;
+    background: none;
+    color: $moss-green;
     text-decoration: none;
-    border-radius: 4px;
-    text-align: center;
-    font-size: 13px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
     transition: $transition;
     align-self: flex-start;
     white-space: nowrap;
     flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+    margin-top: auto;
+    padding-top: 12px;
 
-    &:hover { background: color.adjust($primary-color, $lightness: -10%); }
-
-    // List view: full-width in its own column
-    &--list {
-        align-self: center;
+    &::after {
+        content: ' ›';
+        font-size: 14px;
     }
+
+    &:hover { color: $primary-color; }
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────

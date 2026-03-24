@@ -281,6 +281,7 @@ class Farbest_Product_Catalog {
      *   category       - single fpc_category slug
      *   claims         - comma-separated fpc_claim slugs
      *   certifications - comma-separated fpc_certification slugs
+     *   applications   - comma-separated fpc_application slugs
      *   search         - keyword search
      *   orderby        - 'name' (default) | 'date'
      *   order          - 'ASC' (default) | 'DESC'
@@ -344,6 +345,18 @@ class Farbest_Product_Catalog {
             }
         }
 
+        if (!empty($params['applications'])) {
+            $app_slugs = array_filter(array_map('sanitize_text_field', explode(',', $params['applications'])));
+            if (!empty($app_slugs)) {
+                $tax_query[] = array(
+                    'taxonomy' => 'fpc_application',
+                    'field'    => 'slug',
+                    'terms'    => $app_slugs,
+                    'operator' => 'IN',
+                );
+            }
+        }
+
         if (count($tax_query) > 1) {
             $args['tax_query'] = $tax_query;
         }
@@ -370,6 +383,7 @@ class Farbest_Product_Catalog {
                     'categories'     => wp_get_post_terms($id, 'fpc_category', array('fields' => 'names')),
                     'claims'         => wp_get_post_terms($id, 'fpc_claim', array('fields' => 'names')),
                     'certifications' => wp_get_post_terms($id, 'fpc_certification', array('fields' => 'names')),
+                    'applications'   => wp_get_post_terms($id, 'fpc_application', array('fields' => 'names')),
                 );
             }
             wp_reset_postdata();
@@ -388,7 +402,7 @@ class Farbest_Product_Catalog {
     public function get_filter_options($request) {
         $categories = get_terms(array(
             'taxonomy'   => 'fpc_category',
-            'hide_empty' => true,
+            'hide_empty' => false,
             'orderby'    => 'name',
             'order'      => 'ASC',
         ));
@@ -402,6 +416,13 @@ class Farbest_Product_Catalog {
 
         $certifications = get_terms(array(
             'taxonomy'   => 'fpc_certification',
+            'hide_empty' => true,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
+        ));
+
+        $applications = get_terms(array(
+            'taxonomy'   => 'fpc_application',
             'hide_empty' => true,
             'orderby'    => 'name',
             'order'      => 'ASC',
@@ -423,6 +444,7 @@ class Farbest_Product_Catalog {
             'categories'     => $format($categories),
             'claims'         => $format($claims),
             'certifications' => $format($certifications),
+            'applications'   => $format($applications),
         ), 200);
     }
 

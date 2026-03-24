@@ -48,7 +48,7 @@ class FPC_Post_Types {
             'description'         => __('Farbest Ingredient Catalog', 'farbest-catalog'),
             'labels'              => $labels,
             'supports'            => array('title', 'editor', 'thumbnail', 'excerpt', 'revisions'),
-            'taxonomies'          => array('fpc_category', 'fpc_subcategory'),
+            'taxonomies'          => array('fpc_category'),
             'hierarchical'        => false,
             'public'              => true,
             'show_ui'             => true,

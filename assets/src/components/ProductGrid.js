@@ -8,7 +8,7 @@ import apiFetch from '@wordpress/api-fetch';
 import ProductFilter from './ProductFilter';
 import ProductSearch from './ProductSearch';
 
-const EMPTY_SELECTED = { categories: [], claims: [], certifications: [] };
+const EMPTY_SELECTED = { categories: [], claims: [], certifications: [], applications: [] };
 
 /**
  * Derive available filter slugs from a list of ingredients + the full filter options map.
@@ -51,14 +51,25 @@ function computeAvailableSlugsFrom(ingredientList, options) {
         });
     }
 
-    return { categories, claims, certifications };
+    const applications = new Set();
+    if (options.applications && options.applications.length) {
+        const nameToSlug = {};
+        options.applications.forEach((t) => { nameToSlug[t.name] = t.slug; });
+        ingredientList.forEach((p) => {
+            (p.applications || []).forEach((name) => {
+                if (nameToSlug[name]) applications.add(nameToSlug[name]);
+            });
+        });
+    }
+
+    return { categories, claims, certifications, applications };
 }
 
 const IngredientGrid = ({ initialCategory = '' }) => {
     // Filter / sort state
     const [filters, setFilters] = useState({
         selected: initialCategory
-            ? { categories: [initialCategory], claims: [], certifications: [] }
+            ? { categories: [initialCategory], claims: [], certifications: [], applications: [] }
             : { ...EMPTY_SELECTED },
         search: '',
         orderby: 'name',
@@ -78,9 +89,6 @@ const IngredientGrid = ({ initialCategory = '' }) => {
 
     // Available slugs for smart filtering (updated after each fetch)
     const [availableSlugs, setAvailableSlugs] = useState(null);
-
-    // View: 'grid' | 'list'
-    const [view, setView] = useState('grid');
 
     // Load filter options once on mount; re-compute available slugs once they arrive
     useEffect(() => {
@@ -120,6 +128,9 @@ const IngredientGrid = ({ initialCategory = '' }) => {
             }
             if (filters.selected.certifications.length > 0) {
                 params.append('certifications', filters.selected.certifications.join(','));
+            }
+            if (filters.selected.applications.length > 0) {
+                params.append('applications', filters.selected.applications.join(','));
             }
             if (filters.search) {
                 params.append('search', filters.search);
@@ -183,11 +194,16 @@ const IngredientGrid = ({ initialCategory = '' }) => {
         setAvailableSlugs(null);
     };
 
+
     const hasActiveFilters =
         filters.selected.categories.length > 0 ||
         filters.selected.claims.length > 0 ||
         filters.selected.certifications.length > 0 ||
+        filters.selected.applications.length > 0 ||
         filters.search !== '';
+
+    // Initial view: show category cards when no filters are active
+    const showCategoryBrowse = !hasActiveFilters && optionsLoaded;
 
     const sortValue = `${filters.orderby}-${filters.order.toLowerCase()}`;
 
@@ -204,22 +220,37 @@ const IngredientGrid = ({ initialCategory = '' }) => {
 
             {/* Filters bar */}
             <div className="fpc-filters-bar">
-                <ProductSearch
-                    onSearch={handleSearchChange}
-                    initialValue={filters.search}
-                />
                 {optionsLoaded && (
                     <ProductFilter
                         filterOptions={filterOptions}
                         selected={filters.selected}
                         onFilterChange={handleFilterChange}
                         availableSlugs={availableSlugs}
+                        onReset={handleReset}
                     />
                 )}
             </div>
 
-            {/* Toolbar: results count + sort + view toggle */}
+            {/* Initial view: category browse (no filters active) */}
+            {showCategoryBrowse && (
+                <CategoryGrid
+                    categories={filterOptions.categories}
+                    onSelectCategory={(slug) =>
+                        handleFilterChange({ ...EMPTY_SELECTED, categories: [slug] })
+                    }
+                />
+            )}
+
+            {/* Filtered view: toolbar + ingredient results */}
+            {!showCategoryBrowse && (
+            <>
+            {/* Toolbar: search + results count + sort */}
             <div className="fpc-toolbar">
+                <ProductSearch
+                    onSearch={handleSearchChange}
+                    initialValue={filters.search}
+                />
+
                 <div className="fpc-results-count">
                     {loading ? (
                         <span>{__('Loading…', 'farbest-catalog')}</span>
@@ -234,15 +265,9 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                 </div>
 
                 <div className="fpc-toolbar-right">
-                    {hasActiveFilters && (
-                        <button
-                            type="button"
-                            className="fpc-reset-button"
-                            onClick={handleReset}
-                        >
-                            {__('Reset Filters', 'farbest-catalog')}
-                        </button>
-                    )}
+
+
+
 
                     <label className="fpc-sort-label" htmlFor="fpc-sort-select">
                         {__('Sort:', 'farbest-catalog')}
@@ -258,33 +283,6 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                         <option value="date-desc">{__('Newest First', 'farbest-catalog')}</option>
                         <option value="date-asc">{__('Oldest First', 'farbest-catalog')}</option>
                     </select>
-
-                    <div className="fpc-view-toggle" role="group" aria-label={__('View', 'farbest-catalog')}>
-                        <button
-                            type="button"
-                            className={`fpc-view-btn${view === 'grid' ? ' active' : ''}`}
-                            onClick={() => setView('grid')}
-                            aria-pressed={view === 'grid'}
-                            title={__('Grid view', 'farbest-catalog')}
-                        >
-                            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                                <rect x="0" y="0" width="7" height="7" /><rect x="9" y="0" width="7" height="7" />
-                                <rect x="0" y="9" width="7" height="7" /><rect x="9" y="9" width="7" height="7" />
-                            </svg>
-                        </button>
-                        <button
-                            type="button"
-                            className={`fpc-view-btn${view === 'list' ? ' active' : ''}`}
-                            onClick={() => setView('list')}
-                            aria-pressed={view === 'list'}
-                            title={__('List view', 'farbest-catalog')}
-                        >
-                            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                                <rect x="0" y="1" width="16" height="3" /><rect x="0" y="7" width="16" height="3" />
-                                <rect x="0" y="13" width="16" height="3" />
-                            </svg>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -299,15 +297,15 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                     <p>{__('No ingredients found matching your criteria.', 'farbest-catalog')}</p>
                     {hasActiveFilters && (
                         <button type="button" className="fpc-reset-button" onClick={handleReset}>
-                            {__('Clear all filters', 'farbest-catalog')}
+                            {__('Reset Filters', 'farbest-catalog')}
                         </button>
                     )}
                 </div>
             ) : (
                 <>
-                    <div className={`fpc-ingredients-grid${view === 'list' ? ' fpc-ingredients-list' : ''}`}>
+                    <div className="fpc-ingredients-grid">
                         {ingredients.map((ingredient) => (
-                            <IngredientCard key={ingredient.id} ingredient={ingredient} view={view} />
+                            <IngredientCard key={ingredient.id} ingredient={ingredient} />
                         ))}
                     </div>
 
@@ -320,6 +318,34 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                     )}
                 </>
             )}
+            </>
+            )}
+        </div>
+    );
+};
+
+/**
+ * CategoryGrid — initial view showing one card per ingredient category.
+ * Clicking a card sets that category as the active filter.
+ */
+const CategoryGrid = ({ categories, onSelectCategory }) => {
+    if (!categories || categories.length === 0) return null;
+    return (
+        <div className="fpc-category-grid">
+            {categories.map((cat) => (
+                <button
+                    key={cat.slug}
+                    type="button"
+                    className="fpc-category-card"
+                    onClick={() => onSelectCategory(cat.slug)}
+                >
+                    <div className="fpc-category-card-icon" aria-hidden="true" />
+                    <div className="fpc-category-card-content">
+                        <h3 className="fpc-category-card-title">{cat.name}</h3>
+                        <span className="fpc-button">{__('Product Details', 'farbest-catalog')}</span>
+                    </div>
+                </button>
+            ))}
         </div>
     );
 };
@@ -340,52 +366,7 @@ const CategoryBadges = ({ categories }) => {
     );
 };
 
-const truncate = (str, max) => {
-    if (!str) return '';
-    const plain = str.replace(/<[^>]+>/g, '');
-    return plain.length > max ? plain.slice(0, max) + '…' : plain;
-};
-
-const IngredientCard = ({ ingredient, view }) => {
-    if (view === 'list') {
-        return (
-            <article className="fpc-ingredient-card fpc-ingredient-card--list">
-                {ingredient.thumbnail && (
-                    <a href={ingredient.permalink} className="fpc-ingredient-thumbnail">
-                        <img src={ingredient.thumbnail} alt={ingredient.title} loading="lazy" />
-                    </a>
-                )}
-                <div className="fpc-ingredient-card-content">
-                    <div className="fpc-ingredient-card-body">
-                        <h3 className="fpc-ingredient-title">
-                            <a href={ingredient.permalink}>{ingredient.title}</a>
-                        </h3>
-
-                        {ingredient.description && (
-                            <p className="fpc-ingredient-description">
-                                {truncate(ingredient.description, 250)}
-                            </p>
-                        )}
-
-                        <CategoryBadges categories={ingredient.categories} />
-
-                        {ingredient.claims && ingredient.claims.length > 0 && (
-                            <p className="fpc-ingredient-claims-text">
-                                <strong>{__('Claims:', 'farbest-catalog')}</strong>{' '}
-                                {ingredient.claims.slice(0, 5).join(', ')}
-                                {ingredient.claims.length > 5 ? '…' : ''}
-                            </p>
-                        )}
-                    </div>
-
-                    <a href={ingredient.permalink} className="fpc-button fpc-button--list">
-                        {__('View Details', 'farbest-catalog')}
-                    </a>
-                </div>
-            </article>
-        );
-    }
-
+const IngredientCard = ({ ingredient }) => {
     return (
         <article className="fpc-ingredient-card">
             {ingredient.thumbnail && (

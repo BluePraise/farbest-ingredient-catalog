@@ -10,6 +10,7 @@ while (have_posts()) :
     $ingredient_id = get_the_ID();
     ?>
 
+    <div class="fb_content_left">
     <article id="ingredient-<?php the_ID(); ?>" <?php post_class('farbest-ingredient-single'); ?>>
 
         <div class="ingredient-container">
@@ -165,6 +166,7 @@ while (have_posts()) :
         </div>
 
     </article>
+    </div>
 
     <?php
 endwhile;

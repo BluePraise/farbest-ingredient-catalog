@@ -21,7 +21,7 @@ class FPC_Template_Loader {
             return self::get_template('archive-ingredient.php', $template);
         }
 
-        if (is_tax('fpc_category') || is_tax('fpc_subcategory')) {
+        if (is_tax('fpc_category')) {
             return self::get_template('taxonomy-ingredient-category.php', $template);
         }
 
