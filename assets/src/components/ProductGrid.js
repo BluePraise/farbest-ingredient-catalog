@@ -84,7 +84,7 @@ const IngredientGrid = ({ initialCategory = '' }) => {
     const [error, setError] = useState(null);
 
     // Filter options (loaded once)
-    const [filterOptions, setFilterOptions] = useState({ categories: [], claims: [], certifications: [] });
+    const [filterOptions, setFilterOptions] = useState({ categories: [], parent_categories: [], claims: [], certifications: [] });
     const [optionsLoaded, setOptionsLoaded] = useState(false);
 
     // Available slugs for smart filtering (updated after each fetch)
@@ -138,7 +138,7 @@ const IngredientGrid = ({ initialCategory = '' }) => {
             params.append('orderby', filters.orderby);
             params.append('order', filters.order);
             params.append('page', filters.page);
-            params.append('per_page', 12);
+            params.append('per_page', -1);
 
             const response = await apiFetch({
                 path: `/farbest/v1/ingredients?${params.toString()}`,
@@ -178,11 +178,6 @@ const IngredientGrid = ({ initialCategory = '' }) => {
         setFilters((f) => ({ ...f, orderby, order: order.toUpperCase(), page: 1 }));
     };
 
-    const handlePageChange = (page) => {
-        setFilters((f) => ({ ...f, page }));
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     const handleReset = () => {
         setFilters({
             selected: { ...EMPTY_SELECTED },
@@ -202,7 +197,7 @@ const IngredientGrid = ({ initialCategory = '' }) => {
         filters.selected.applications.length > 0 ||
         filters.search !== '';
 
-    // Initial view: show category cards when no filters are active
+    // Initial view: show parent category cards when no filters are active
     const showCategoryBrowse = !hasActiveFilters && optionsLoaded;
 
     const sortValue = `${filters.orderby}-${filters.order.toLowerCase()}`;
@@ -231,20 +226,8 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                 )}
             </div>
 
-            {/* Initial view: category browse (no filters active) */}
-            {showCategoryBrowse && (
-                <CategoryGrid
-                    categories={filterOptions.categories}
-                    onSelectCategory={(slug) =>
-                        handleFilterChange({ ...EMPTY_SELECTED, categories: [slug] })
-                    }
-                />
-            )}
-
-            {/* Filtered view: toolbar + ingredient results */}
-            {!showCategoryBrowse && (
-            <>
-            {/* Toolbar: search + results count + sort */}
+            {/* Toolbar: search + results count + sort — always visible */}
+            {optionsLoaded && (
             <div className="fpc-toolbar">
                 <ProductSearch
                     onSearch={handleSearchChange}
@@ -265,10 +248,6 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                 </div>
 
                 <div className="fpc-toolbar-right">
-
-
-
-
                     <label className="fpc-sort-label" htmlFor="fpc-sort-select">
                         {__('Sort:', 'farbest-catalog')}
                     </label>
@@ -285,40 +264,41 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                     </select>
                 </div>
             </div>
+            )}
 
-            {/* Ingredient grid / list */}
-            {loading ? (
-                <div className="fpc-loading">
-                    <span className="fpc-spinner" aria-hidden="true"></span>
-                    <p>{__('Loading ingredients…', 'farbest-catalog')}</p>
-                </div>
-            ) : ingredients.length === 0 ? (
-                <div className="fpc-no-results">
-                    <p>{__('No ingredients found matching your criteria.', 'farbest-catalog')}</p>
-                    {hasActiveFilters && (
-                        <button type="button" className="fpc-reset-button" onClick={handleReset}>
-                            {__('Reset Filters', 'farbest-catalog')}
-                        </button>
-                    )}
-                </div>
-            ) : (
-                <>
+            {/* Initial view: category browse (no filters active) */}
+            {showCategoryBrowse && (
+                <CategoryGrid
+                    categories={filterOptions.parent_categories}
+                    onSelectCategory={(slug) =>
+                        handleFilterChange({ ...EMPTY_SELECTED, categories: [slug] })
+                    }
+                />
+            )}
+
+            {/* Filtered view: ingredient results */}
+            {!showCategoryBrowse && (
+                loading ? (
+                    <div className="fpc-loading">
+                        <span className="fpc-spinner" aria-hidden="true"></span>
+                        <p>{__('Loading ingredients…', 'farbest-catalog')}</p>
+                    </div>
+                ) : ingredients.length === 0 ? (
+                    <div className="fpc-no-results">
+                        <p>{__('No ingredients found matching your criteria.', 'farbest-catalog')}</p>
+                        {hasActiveFilters && (
+                            <button type="button" className="fpc-reset-button" onClick={handleReset}>
+                                {__('Reset Filters', 'farbest-catalog')}
+                            </button>
+                        )}
+                    </div>
+                ) : (
                     <div className="fpc-ingredients-grid">
                         {ingredients.map((ingredient) => (
                             <IngredientCard key={ingredient.id} ingredient={ingredient} />
                         ))}
                     </div>
-
-                    {pagination.pages > 1 && (
-                        <Pagination
-                            currentPage={filters.page}
-                            totalPages={pagination.pages}
-                            onPageChange={handlePageChange}
-                        />
-                    )}
-                </>
-            )}
-            </>
+                )
             )}
         </div>
     );
@@ -350,14 +330,14 @@ const CategoryGrid = ({ categories, onSelectCategory }) => {
     );
 };
 
-const CategoryBadges = ({ categories }) => {
-    if (!categories || categories.length === 0) return null;
-    const visible = categories.slice(0, 3);
-    const extra = categories.length - 3;
+const CategoryBadges = ({ subcategories }) => {
+    if (!subcategories || subcategories.length === 0) return null;
+    const visible = subcategories.slice(0, 3);
+    const extra = subcategories.length - 3;
     return (
         <div className="fpc-ingredient-terms">
-            {visible.map((cat, i) => (
-                <span key={i} className="fpc-term-badge fpc-term-badge--category">{cat}</span>
+            {visible.map((name, i) => (
+                <span key={i} className="fpc-term-badge fpc-term-badge--category">{name}</span>
             ))}
             {extra > 0 && (
                 <span className="fpc-term-badge fpc-term-badge--more">+{extra} more</span>
@@ -379,7 +359,7 @@ const IngredientCard = ({ ingredient }) => {
                     <a href={ingredient.permalink}>{ingredient.title}</a>
                 </h3>
 
-                <CategoryBadges categories={ingredient.categories} />
+                <CategoryBadges subcategories={ingredient.subcategories} />
 
                 {ingredient.excerpt && (
                     <div
@@ -396,62 +376,5 @@ const IngredientCard = ({ ingredient }) => {
     );
 };
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    // Show at most 7 page numbers around current page
-    const delta = 2;
-    const range = [];
-    for (
-        let i = Math.max(1, currentPage - delta);
-        i <= Math.min(totalPages, currentPage + delta);
-        i++
-    ) {
-        range.push(i);
-    }
-
-    return (
-        <nav className="fpc-pagination" aria-label={__('Ingredients pagination', 'farbest-catalog')}>
-            <button
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="fpc-pagination-button"
-            >
-                {__('« Previous', 'farbest-catalog')}
-            </button>
-
-            <div className="fpc-pagination-numbers">
-                {range[0] > 1 && (
-                    <>
-                        <button className="fpc-pagination-number" onClick={() => onPageChange(1)}>1</button>
-                        {range[0] > 2 && <span className="fpc-pagination-ellipsis">…</span>}
-                    </>
-                )}
-                {range.map((page) => (
-                    <button
-                        key={page}
-                        onClick={() => onPageChange(page)}
-                        className={`fpc-pagination-number${page === currentPage ? ' active' : ''}`}
-                        aria-current={page === currentPage ? 'page' : undefined}
-                    >
-                        {page}
-                    </button>
-                ))}
-                {range[range.length - 1] < totalPages && (
-                    <>
-                        {range[range.length - 1] < totalPages - 1 && <span className="fpc-pagination-ellipsis">…</span>}
-                        <button className="fpc-pagination-number" onClick={() => onPageChange(totalPages)}>{totalPages}</button>
-                    </>
-                )}
-            </div>
-
-            <button
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="fpc-pagination-button"
-            >
-                {__('Next »', 'farbest-catalog')}
-            </button>
-        </nav>
-    );
-};
 
 export default IngredientGrid;

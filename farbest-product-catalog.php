@@ -381,6 +381,7 @@ class Farbest_Product_Catalog {
                     'permalink'      => get_permalink(),
                     'thumbnail'      => get_the_post_thumbnail_url($id, 'medium'),
                     'categories'     => wp_get_post_terms($id, 'fpc_category', array('fields' => 'names')),
+                    'subcategories'  => array_values(array_map(function($t) { return $t->name; }, array_filter(wp_get_post_terms($id, 'fpc_category'), function($t) { return $t->parent !== 0; }))),
                     'claims'         => wp_get_post_terms($id, 'fpc_claim', array('fields' => 'names')),
                     'certifications' => wp_get_post_terms($id, 'fpc_certification', array('fields' => 'names')),
                     'applications'   => wp_get_post_terms($id, 'fpc_application', array('fields' => 'names')),
@@ -400,6 +401,16 @@ class Farbest_Product_Catalog {
      * Get available filter options (categories, claims, certifications with counts)
      */
     public function get_filter_options($request) {
+        // Top-level parent categories only (for the category browse grid)
+        $parent_categories = get_terms(array(
+            'taxonomy'   => 'fpc_category',
+            'hide_empty' => false,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
+            'parent'     => 0,
+        ));
+
+        // All categories (parents + children) for filter dropdowns and slug resolution
         $categories = get_terms(array(
             'taxonomy'   => 'fpc_category',
             'hide_empty' => false,
@@ -440,11 +451,25 @@ class Farbest_Product_Catalog {
             }, $terms));
         };
 
+        $format_categories = function($terms) {
+            if (is_wp_error($terms)) return array();
+            return array_values(array_map(function($term) {
+                return array(
+                    'id'        => $term->term_id,
+                    'name'      => $term->name,
+                    'slug'      => $term->slug,
+                    'count'     => $term->count,
+                    'parent_id' => $term->parent,
+                );
+            }, $terms));
+        };
+
         return new WP_REST_Response(array(
-            'categories'     => $format($categories),
-            'claims'         => $format($claims),
-            'certifications' => $format($certifications),
-            'applications'   => $format($applications),
+            'categories'        => $format_categories($categories),
+            'parent_categories' => $format_categories($parent_categories),
+            'claims'            => $format($claims),
+            'certifications'    => $format($certifications),
+            'applications'      => $format($applications),
         ), 200);
     }
 
