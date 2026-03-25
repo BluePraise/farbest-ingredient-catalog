@@ -257,8 +257,8 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                         value={sortValue}
                         onChange={handleSortChange}
                     >
-                        <option value="name-asc">{__('Name (A–Z)', 'farbest-catalog')}</option>
-                        <option value="name-desc">{__('Name (Z–A)', 'farbest-catalog')}</option>
+                        <option value="name-asc">{__('Name (A-Z)', 'farbest-catalog')}</option>
+                        <option value="name-desc">{__('Name (Z-A)', 'farbest-catalog')}</option>
                         <option value="date-desc">{__('Newest First', 'farbest-catalog')}</option>
                         <option value="date-asc">{__('Oldest First', 'farbest-catalog')}</option>
                     </select>
