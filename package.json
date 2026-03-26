@@ -1,6 +1,6 @@
 {
   "name": "farbest-product-catalog",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Custom product catalog solution for Farbest with React filtering",
   "main": "assets/build/index.js",
   "scripts": {

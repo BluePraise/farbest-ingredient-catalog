@@ -5,7 +5,7 @@ Custom WordPress plugin replacing WooCommerce with a streamlined product catalog
 ## Overview
 
 - **Client**: Farbest (via BeckerGuerry)
-- **Version**: 1.0.0
+- **Version**: 1.1.0
 - **WordPress**: 6.0+
 - **PHP**: 7.4+
 - **Dependencies**: Advanced Custom Fields Pro
@@ -18,6 +18,7 @@ Custom WordPress plugin replacing WooCommerce with a streamlined product catalog
 - Automated email routing based on sales representative codes
 - Contact form with product sheet and quote requests
 - REST API endpoints for frontend integration
+- Canonical ingredient archive at `/ingredients/` with plugin-owned hero/layout
 - Template override system for theme customization
 - WP-CLI migration tool for WooCommerce products
 
