@@ -17,6 +17,79 @@ class FPC_Taxonomies {
         self::register_claims();
         self::register_certifications();
         self::register_applications();
+        self::register_category_meta();
+    }
+
+    const TAGLINE_MAX_LINES = 5;
+
+    /**
+     * Register term meta and admin UI fields for fpc_category tagline lines.
+     */
+    private static function register_category_meta() {
+        register_term_meta('fpc_category', 'fpc_tagline_lines', array(
+            'type'         => 'string',
+            'description'  => 'JSON array of tagline lines shown on the category card',
+            'single'       => true,
+            'show_in_rest' => true,
+        ));
+
+        add_action('fpc_category_add_form_fields', array(__CLASS__, 'render_tagline_add_field'));
+        add_action('fpc_category_edit_form_fields', array(__CLASS__, 'render_tagline_edit_field'));
+        add_action('created_fpc_category', array(__CLASS__, 'save_tagline_field'));
+        add_action('edited_fpc_category', array(__CLASS__, 'save_tagline_field'));
+        add_action('admin_footer', array(__CLASS__, 'render_tagline_script'));
+    }
+
+    public static function render_tagline_add_field() {
+        self::render_tagline_inputs(array());
+    }
+
+    public static function render_tagline_edit_field($term) {
+        $raw   = get_term_meta($term->term_id, 'fpc_tagline_lines', true);
+        $lines = $raw ? json_decode($raw, true) : array();
+        if (!is_array($lines)) $lines = array();
+        self::render_tagline_inputs($lines, true);
+    }
+
+    private static function render_tagline_inputs($lines, $is_edit = false) {
+        $max = self::TAGLINE_MAX_LINES;
+        $wrap_open  = $is_edit ? '<tr class="form-field"><th scope="row">' : '<div class="form-field">';
+        $wrap_mid   = $is_edit ? '</th><td>' : '';
+        $wrap_close = $is_edit ? '</td></tr>' : '</div>';
+
+        echo wp_kses_post($wrap_open);
+        echo '<label>' . esc_html__('Card Tagline Lines', 'farbest-catalog') . '</label>';
+        echo wp_kses_post($wrap_mid);
+        echo '<div id="fpc-tagline-repeater">';
+
+        for ($i = 0; $i < $max; $i++) {
+            $val = isset($lines[$i]) ? $lines[$i] : '';
+            printf(
+                '<p><input type="text" name="fpc_tagline_lines[]" value="%s" style="width:100%%;max-width:25em;" placeholder="%s" /></p>',
+                esc_attr($val),
+                esc_attr(sprintf(__('Line %d', 'farbest-catalog'), $i + 1))
+            );
+        }
+
+        echo '<p class="description">' . esc_html__('Up to 5 lines displayed beneath the category name on the browse grid. Leave lines blank to omit them.', 'farbest-catalog') . '</p>';
+        echo '</div>';
+        echo wp_kses_post($wrap_close);
+    }
+
+    public static function save_tagline_field($term_id) {
+        if (!isset($_POST['fpc_tagline_lines'])) {
+            return;
+        }
+        $raw   = (array) $_POST['fpc_tagline_lines'];
+        $lines = array_values(array_filter(array_map('sanitize_text_field', $raw)));
+        $lines = array_slice($lines, 0, self::TAGLINE_MAX_LINES);
+        update_term_meta($term_id, 'fpc_tagline_lines', wp_json_encode($lines));
+    }
+
+    public static function render_tagline_script() {
+        $screen = get_current_screen();
+        if (!$screen || $screen->taxonomy !== 'fpc_category') return;
+        // No JS needed — static repeater with fixed inputs.
     }
 
     /**

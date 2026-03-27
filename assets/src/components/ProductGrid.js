@@ -322,6 +322,13 @@ const CategoryGrid = ({ categories, onSelectCategory }) => {
                     <div className="fpc-category-card-icon" aria-hidden="true" />
                     <div className="fpc-category-card-content">
                         <h3 className="fpc-category-card-title">{cat.name}</h3>
+                        {cat.tagline_lines && cat.tagline_lines.length > 0 && (
+                            <p className="fpc-category-card-tagline">
+                                {cat.tagline_lines.map((line, i) => (
+                                    <span key={i}>{line}</span>
+                                ))}
+                            </p>
+                        )}
                         <span className="fpc-button">{__('Product Details', 'farbest-catalog')}</span>
                     </div>
                 </button>

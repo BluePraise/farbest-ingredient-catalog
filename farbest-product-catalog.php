@@ -455,11 +455,18 @@ class Farbest_Product_Catalog {
             if (is_wp_error($terms)) return array();
             return array_values(array_map(function($term) {
                 return array(
-                    'id'        => $term->term_id,
-                    'name'      => $term->name,
-                    'slug'      => $term->slug,
-                    'count'     => $term->count,
-                    'parent_id' => $term->parent,
+                    'id'          => $term->term_id,
+                    'name'        => $term->name,
+                    'slug'        => $term->slug,
+                    'count'       => $term->count,
+                    'parent_id'   => $term->parent,
+                    'tagline_lines' => (function($term_id) {
+                        $raw = get_term_meta($term_id, 'fpc_tagline_lines', true);
+                        if (!$raw) return array();
+                        $lines = json_decode($raw, true);
+                        return is_array($lines) ? $lines : array();
+                    })($term->term_id),
+                    'description' => wp_strip_all_tags($term->description),
                 );
             }, $terms));
         };

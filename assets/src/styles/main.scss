@@ -450,6 +450,18 @@ $grid-gap:         24px;
 .fpc-category-card-title {
     font-size: 18px;
 }
+
+.fpc-category-card-tagline {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 4px 0 8px;
+    line-height: 1.4;
+
+    span {
+        display: block;
+    }
+}
+
 .fpc-button {
     width: 100%;
     text-align: right;
