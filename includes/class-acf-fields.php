@@ -8,14 +8,14 @@ if (!defined('ABSPATH')) {
 }
 
 class FPC_ACF_Fields {
-    
+
     /**
      * Initialize ACF fields
      */
     public static function init() {
         add_action('acf/init', array(__CLASS__, 'register_field_groups'));
     }
-    
+
     /**
      * Register all field groups
      */
@@ -23,12 +23,12 @@ class FPC_ACF_Fields {
         if (!function_exists('acf_add_local_field_group')) {
             return;
         }
-        
+
         self::register_product_details();
         self::register_product_specifications();
         self::register_representative_codes();
     }
-    
+
     /**
      * Product Details field group
      */
@@ -101,7 +101,7 @@ class FPC_ACF_Fields {
                     array(
                         'param' => 'post_type',
                         'operator' => '==',
-                        'value' => 'fpc_product',
+                        'value' => 'fpc_ingredient',
                     ),
                 ),
             ),
@@ -112,7 +112,7 @@ class FPC_ACF_Fields {
             'instruction_placement' => 'label',
         ));
     }
-    
+
     /**
      * Product Specifications field group
      */
@@ -178,7 +178,7 @@ class FPC_ACF_Fields {
                     array(
                         'param' => 'post_type',
                         'operator' => '==',
-                        'value' => 'fpc_product',
+                        'value' => 'fpc_ingredient',
                     ),
                 ),
             ),
@@ -187,7 +187,7 @@ class FPC_ACF_Fields {
             'style' => 'default',
         ));
     }
-    
+
     /**
      * Representative Codes field group
      */
@@ -229,7 +229,7 @@ class FPC_ACF_Fields {
                     array(
                         'param' => 'post_type',
                         'operator' => '==',
-                        'value' => 'fpc_product',
+                        'value' => 'fpc_ingredient',
                     ),
                 ),
             ),

@@ -130,20 +130,34 @@ while (have_posts()) :
 
             <!-- Applications -->
             <?php
-            $applications = get_field('product_applications');
-            if ($applications) :
-                $app_list = array_filter(array_map('trim', explode('|', $applications)));
-                if (!empty($app_list)) :
-                    ?>
-                    <div class="ingredient-applications">
-                        <h2><?php esc_html_e('Proven Applications', 'farbest-catalog'); ?></h2>
-                        <ul>
-                            <?php foreach ($app_list as $app) : ?>
-                                <li><?php echo esc_html($app); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
+            $application_terms = wp_get_post_terms($ingredient_id, 'fpc_application', array(
+                'fields' => 'names',
+            ));
+
+            if (is_wp_error($application_terms) || !is_array($application_terms)) {
+                $application_terms = array();
+            }
+
+            $app_list = array_values(array_filter(array_map('trim', $application_terms)));
+
+            if (empty($app_list)) {
+                $legacy_applications = get_field('product_applications');
+
+                if (!empty($legacy_applications) && is_string($legacy_applications)) {
+                    $app_list = array_values(array_filter(array_map('trim', explode('|', $legacy_applications))));
+                }
+            }
+
+            if (!empty($app_list)) :
+                ?>
+                <div class="ingredient-applications">
+                    <h2><?php esc_html_e('Proven Applications', 'farbest-catalog'); ?></h2>
+                    <ul>
+                        <?php foreach ($app_list as $app) : ?>
+                            <li><?php echo esc_html($app); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             <?php endif; ?>
 
             <!-- Packaging -->
