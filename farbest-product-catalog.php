@@ -80,6 +80,7 @@ class Farbest_Product_Catalog {
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
 
         // Initialization
+        add_action('plugins_loaded', array($this, 'init_acf_fields'));
         add_action('init', array($this, 'init'));
         add_action('init', array($this, 'load_textdomain'));
 
@@ -127,6 +128,16 @@ class Farbest_Product_Catalog {
     }
 
     /**
+     * Initialize ACF fields early (plugins_loaded, before acf/init fires)
+     */
+    public function init_acf_fields() {
+        FPC_ACF_Fields::init();
+        if (!function_exists('acf_add_local_field_group')) {
+            add_action('admin_notices', array($this, 'acf_missing_notice'));
+        }
+    }
+
+    /**
      * Initialize plugin
      */
     public function init() {
@@ -135,13 +146,6 @@ class Farbest_Product_Catalog {
 
         // Register taxonomies
         FPC_Taxonomies::register();
-
-        // Initialize ACF fields
-        if (class_exists('ACF')) {
-            FPC_ACF_Fields::init();
-        } else {
-            add_action('admin_notices', array($this, 'acf_missing_notice'));
-        }
 
         // Initialize contact form
         FPC_Contact_Form::init();
@@ -368,30 +372,40 @@ class Farbest_Product_Catalog {
 
         $query = new WP_Query($args);
 
-        $products = array();
+        $ingredients = array();
         if ($query->have_posts()) {
             while ($query->have_posts()) {
                 $query->the_post();
                 $id = get_the_ID();
-                $products[] = array(
+                $category_terms = wp_get_post_terms($id, 'fpc_category');
+                if (is_wp_error($category_terms)) {
+                    $category_terms = array();
+                }
+
+                $category_names = wp_get_post_terms($id, 'fpc_category', array('fields' => 'names'));
+                $claim_names = wp_get_post_terms($id, 'fpc_claim', array('fields' => 'names'));
+                $certification_names = wp_get_post_terms($id, 'fpc_certification', array('fields' => 'names'));
+                $application_names = wp_get_post_terms($id, 'fpc_application', array('fields' => 'names'));
+
+                $ingredients[] = array(
                     'id'             => $id,
                     'title'          => get_the_title(),
                     'excerpt'        => get_the_excerpt(),
                     'description'    => function_exists('get_field') ? (get_field('product_description', $id) ?: '') : '',
                     'permalink'      => get_permalink(),
                     'thumbnail'      => get_the_post_thumbnail_url($id, 'medium'),
-                    'categories'     => wp_get_post_terms($id, 'fpc_category', array('fields' => 'names')),
-                    'subcategories'  => array_values(array_map(function($t) { return $t->name; }, array_filter(wp_get_post_terms($id, 'fpc_category'), function($t) { return $t->parent !== 0; }))),
-                    'claims'         => wp_get_post_terms($id, 'fpc_claim', array('fields' => 'names')),
-                    'certifications' => wp_get_post_terms($id, 'fpc_certification', array('fields' => 'names')),
-                    'applications'   => wp_get_post_terms($id, 'fpc_application', array('fields' => 'names')),
+                    'categories'     => is_wp_error($category_names) ? array() : $category_names,
+                    'subcategories'  => array_values(array_map(function($term) { return $term->name; }, array_filter($category_terms, function($term) { return $term->parent !== 0; }))),
+                    'claims'         => is_wp_error($claim_names) ? array() : $claim_names,
+                    'certifications' => is_wp_error($certification_names) ? array() : $certification_names,
+                    'applications'   => is_wp_error($application_names) ? array() : $application_names,
                 );
             }
             wp_reset_postdata();
         }
 
         return new WP_REST_Response(array(
-            'ingredients' => $products,
+            'ingredients' => $ingredients,
             'total'       => $query->found_posts,
             'pages'       => $query->max_num_pages,
         ), 200);

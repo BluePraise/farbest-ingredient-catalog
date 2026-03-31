@@ -320,7 +320,8 @@ $grid-gap:         24px;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px $grid-gap;
     align-items: end;
-    margin-bottom: 20px;
+    margin-block-start: 80px;
+    margin-bottom: 80px;
 
     @media (max-width: 1024px) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -391,7 +392,7 @@ $grid-gap:         24px;
 .fpc-category-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: $grid-gap;
+    gap: 80px $grid-gap;
     margin-bottom: 40px;
 
     @media (max-width: 1024px) {
@@ -404,14 +405,16 @@ $grid-gap:         24px;
 }
 
 .fpc-category-card {
+    position: relative;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     padding: 10px 20px;
     background: white;
     border: 1px solid $border-color;
+    box-shadow: 3px 3px 5px rgba(38, 38, 38, 0.5);
     border-radius: 6px;
-    overflow: hidden;
     cursor: pointer;
     text-align: left;
     transition: box-shadow 0.2s, transform 0.2s;
@@ -429,15 +432,25 @@ $grid-gap:         24px;
     width: 100%;
 }
 
-// Placeholder circle icon — replaced by SVG once client provides assets
 .fpc-category-card-icon {
-    width: 100%;
-    aspect-ratio: 4/3;
+    position: relative;
+    transform: translate(0%, -50%);
+    width: 90px;
+    height: 90px;
+    padding: 12px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #628B1B;
+    border-radius: 50%;
+    opacity: 0.8;
+    filter: drop-shadow(3px 3px 5px rgba(38, 38, 38, 0.5));
+    transition: opacity 0.2s ease, filter 0.2s ease;
+    margin: 0px auto;
 
-    &::after {
+    // Fallback inner circle when no SVG is matched
+    &:not(:has(.fpc-category-card-icon-img))::after {
         content: '';
         display: block;
         width: 72px;
@@ -447,8 +460,20 @@ $grid-gap:         24px;
     }
 }
 
+.fpc-category-card:hover .fpc-category-card-icon {
+    opacity: 1;
+    filter: drop-shadow(3px 3px 8px rgba(38, 38, 38, 0.7));
+}
+
+.fpc-category-card-icon-img {
+    object-fit: contain;
+    display: block;
+}
+
 .fpc-category-card-title {
-    font-size: 18px;
+    font-size: 24px;
+    text-transform: unset;
+    color: #383836;
 }
 
 .fpc-category-card-tagline {
@@ -691,6 +716,113 @@ $grid-gap:         24px;
     text-align: center;
     padding: 40px 20px;
     color: $error-color;
+}
+
+// ─── Single Ingredient: Tabbed Content ───────────────────────────────────────
+
+.ingredient-tabs {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.ingredient-tabs__nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #ddd7cb;
+    margin-bottom: 0;
+}
+
+.ingredient-tabs__tab {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 12px 24px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: $secondary-color;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+
+    &:hover {
+        color: $primary-color;
+    }
+
+    &--active,
+    &[aria-selected="true"] {
+        color: $primary-color;
+        border-bottom-color: $cta-color;
+    }
+}
+
+.ingredient-tabs__panel {
+    border: 1px solid #ddd7cb;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: 32px;
+    background: #fff;
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+.ingredient-tabs__empty {
+    color: $secondary-color;
+    font-style: italic;
+    margin: 0;
+}
+
+// Product Details table
+.ingredient-details-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: 14px 20px;
+        vertical-align: top;
+        text-align: left;
+        border-bottom: 1px solid #ddd7cb;
+        font-size: 0.9375rem;
+        line-height: 1.6;
+    }
+
+    tr:last-child th,
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    th {
+        width: 200px;
+        font-weight: 700;
+        color: $border-color;
+        white-space: nowrap;
+
+        @media (max-width: 640px) {
+            width: auto;
+            display: block;
+            padding-bottom: 4px;
+        }
+    }
+
+    td {
+        color: #444;
+
+        @media (max-width: 640px) {
+            display: block;
+            padding-top: 0;
+        }
+    }
+
+    @media (max-width: 640px) {
+        tr {
+            display: block;
+            padding: 12px 0;
+        }
+    }
 }
 
 // ─── Accessibility ────────────────────────────────────────────────────────────

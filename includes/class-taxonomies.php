@@ -77,10 +77,22 @@ class FPC_Taxonomies {
     }
 
     public static function save_tagline_field($term_id) {
+        $taxonomy = get_taxonomy('fpc_category');
+
+        if (!$taxonomy || !current_user_can($taxonomy->cap->edit_terms)) {
+            return;
+        }
+
+        $nonce_action = isset($_POST['tag_ID']) ? 'update-tag_' . $term_id : 'add-tag';
+        if (!isset($_POST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), $nonce_action)) {
+            return;
+        }
+
         if (!isset($_POST['fpc_tagline_lines'])) {
             return;
         }
-        $raw   = (array) $_POST['fpc_tagline_lines'];
+
+        $raw   = (array) wp_unslash($_POST['fpc_tagline_lines']);
         $lines = array_values(array_filter(array_map('sanitize_text_field', $raw)));
         $lines = array_slice($lines, 0, self::TAGLINE_MAX_LINES);
         update_term_meta($term_id, 'fpc_tagline_lines', wp_json_encode($lines));

@@ -5,9 +5,9 @@
     'use strict';
 
     $(document).ready(function() {
-        
+
         // Add column for thumbnail in admin list
-        if ($('body.post-type-fpc_product').length) {
+        if ($('body.post-type-fpc_ingredient').length) {
             addThumbnailColumn();
         }
 
@@ -19,7 +19,7 @@
     });
 
     /**
-     * Add thumbnail column to product list
+        * Add thumbnail column to ingredient list
      */
     function addThumbnailColumn() {
         // This would typically be done via PHP filters
@@ -31,7 +31,7 @@
      */
     function validateRepCodes() {
         const repCodeFields = $('input[name*="rep_code"]');
-        
+
         repCodeFields.on('blur', function() {
             const value = $(this).val();
             if (value && !/^\d+$/.test(value)) {
@@ -48,7 +48,7 @@
      */
     function emailSettingsHelper() {
         const emailMappingField = $('#fpc_rep_emails');
-        
+
         if (!emailMappingField.length) return;
 
         // Add validation on blur

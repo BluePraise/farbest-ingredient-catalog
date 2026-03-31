@@ -6,12 +6,13 @@
 get_header();
 
 $is_category_archive = is_tax('fpc_category');
+$queried_object = $is_category_archive ? get_queried_object() : null;
 $archive_title = $is_category_archive ? single_term_title('', false) : __('Our Ingredients, Your Sourcing Simplified.', 'farbest-catalog');
 $archive_description = $is_category_archive
     ? wp_strip_all_tags(get_the_archive_description())
     : __('Whether you are looking for proteins, texturants, sweeteners, vitamins, natural colors, or something else, our selection of ingredients can solve your formulation needs.', 'farbest-catalog');
 $cta_url = home_url('/contact/');
-$initial_category = $is_category_archive ? get_queried_object()->slug : '';
+$initial_category = ($is_category_archive && $queried_object && !is_wp_error($queried_object)) ? $queried_object->slug : '';
 ?>
 
 <div class="fpc-archive-page">

@@ -27,6 +27,8 @@ class FPC_ACF_Fields {
         self::register_product_details();
         self::register_product_specifications();
         self::register_representative_codes();
+        self::register_ingredient_benefits();
+        self::register_certification_logo();
     }
 
     /**
@@ -185,6 +187,99 @@ class FPC_ACF_Fields {
             'menu_order' => 1,
             'position' => 'normal',
             'style' => 'default',
+        ));
+    }
+
+    /**
+     * Ingredient Benefits field group (flexible repeater columns)
+     */
+    private static function register_ingredient_benefits() {
+        acf_add_local_field_group(array(
+            'key'   => 'group_ingredient_benefits',
+            'title' => 'Ingredient Benefits',
+            'fields' => array(
+                array(
+                    'key'          => 'field_benefits_columns',
+                    'label'        => 'Benefits Columns',
+                    'name'         => 'benefits_columns',
+                    'type'         => 'repeater',
+                    'instructions' => 'Add one or more benefit columns (e.g. "Application Benefits", "Fiber Benefits")',
+                    'button_label' => 'Add Column',
+                    'sub_fields'   => array(
+                        array(
+                            'key'         => 'field_benefits_column_label',
+                            'label'       => 'Column Heading',
+                            'name'        => 'column_label',
+                            'type'        => 'text',
+                            'placeholder' => 'e.g. Application Benefits',
+                            'required'    => 1,
+                        ),
+                        array(
+                            'key'          => 'field_benefits_column_items',
+                            'label'        => 'Benefit Items',
+                            'name'         => 'column_items',
+                            'type'         => 'repeater',
+                            'button_label' => 'Add Item',
+                            'sub_fields'   => array(
+                                array(
+                                    'key'      => 'field_benefits_item_text',
+                                    'label'    => 'Item',
+                                    'name'     => 'item_text',
+                                    'type'     => 'text',
+                                    'required' => 1,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param'    => 'post_type',
+                        'operator' => '==',
+                        'value'    => 'fpc_ingredient',
+                    ),
+                ),
+            ),
+            'menu_order' => 3,
+            'position'   => 'normal',
+            'style'      => 'default',
+        ));
+    }
+
+    /**
+     * Certification Logo image field (on fpc_certification taxonomy terms)
+     */
+    private static function register_certification_logo() {
+        acf_add_local_field_group(array(
+            'key'   => 'group_certification_logo',
+            'title' => 'Certification Logo',
+            'fields' => array(
+                array(
+                    'key'           => 'field_certification_logo_image',
+                    'label'         => 'Logo Image',
+                    'name'          => 'certification_logo',
+                    'type'          => 'image',
+                    'instructions'  => 'Upload the certification logo (transparent PNG preferred)',
+                    'required'      => 0,
+                    'return_format' => 'array',
+                    'preview_size'  => 'thumbnail',
+                    'library'       => 'all',
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param'    => 'taxonomy',
+                        'operator' => '==',
+                        'value'    => 'fpc_certification',
+                    ),
+                ),
+            ),
+            'menu_order' => 0,
+            'position'   => 'normal',
+            'style'      => 'default',
         ));
     }
 

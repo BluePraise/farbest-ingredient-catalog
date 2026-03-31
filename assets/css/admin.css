@@ -2,12 +2,12 @@
  * Admin Styles for Farbest Product Catalog
  */
 
-/* Product admin list customizations */
-.post-type-fpc_product .wp-list-table .column-taxonomy-fpc_category {
+/* Ingredient admin list customizations */
+.post-type-fpc_ingredient .wp-list-table .column-taxonomy-fpc_category {
     width: 15%;
 }
 
-.post-type-fpc_product .wp-list-table .column-thumbnail {
+.post-type-fpc_ingredient .wp-list-table .column-thumbnail {
     width: 60px;
 }
 
@@ -36,7 +36,7 @@
     border-radius: 3px;
 }
 
-/* Product metabox icons */
+/* Ingredient metabox icons */
 .fpc-product-meta-icon {
     margin-right: 8px;
     color: #2271b1;

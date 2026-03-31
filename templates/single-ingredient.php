@@ -8,6 +8,34 @@ get_header();
 while (have_posts()) :
     the_post();
     $ingredient_id = get_the_ID();
+
+    // Product Details tab data
+    $application_terms = wp_get_post_terms($ingredient_id, 'fpc_application', array('fields' => 'names'));
+    if (is_wp_error($application_terms) || !is_array($application_terms)) {
+        $application_terms = array();
+    }
+    $app_list = array_values(array_filter(array_map('trim', $application_terms)));
+    if (empty($app_list)) {
+        $legacy_applications = get_field('product_applications');
+        if (!empty($legacy_applications) && is_string($legacy_applications)) {
+            $app_list = array_values(array_filter(array_map('trim', explode('|', $legacy_applications))));
+        }
+    }
+
+    $claim_terms = wp_get_post_terms($ingredient_id, 'fpc_claim', array('fields' => 'names'));
+    if (is_wp_error($claim_terms) || !is_array($claim_terms)) {
+        $claim_terms = array();
+    }
+
+    $cert_terms = wp_get_post_terms($ingredient_id, 'fpc_certification');
+    if (is_wp_error($cert_terms) || !is_array($cert_terms)) {
+        $cert_terms = array();
+    }
+
+    $packaging           = get_field('product_packaging');
+    $product_sheet       = get_field('product_sheet');
+    $product_description = get_field('product_description');
+    $benefits_columns    = get_field('benefits_columns');
     ?>
 
     <div class="fb_content_left">
@@ -21,29 +49,69 @@ while (have_posts()) :
 
                 <?php
                 $categories = get_the_terms($ingredient_id, 'fpc_category');
-                if ($categories && !is_wp_error($categories)) :
-                    ?>
+                if ($categories && !is_wp_error($categories)) : ?>
                     <div class="ingredient-categories">
-                        <?php
-                        foreach ($categories as $category) {
-                            echo '<span class="ingredient-category">' . esc_html($category->name) . '</span>';
-                        }
-                        ?>
+                        <?php foreach ($categories as $category) : ?>
+                            <span class="ingredient-category"><?php echo esc_html($category->name); ?></span>
+                        <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
             </header>
 
+            <?php if (!empty($benefits_columns)) : ?>
+                <div class="ingredient-benefits">
+                    <?php foreach ($benefits_columns as $column) :
+                        $col_label = !empty($column['column_label']) ? $column['column_label'] : '';
+                        $col_items = !empty($column['column_items']) ? $column['column_items'] : array();
+                        if (empty($col_label) && empty($col_items)) continue;
+                    ?>
+                        <div class="ingredient-benefits__column">
+                            <?php if ($col_label) : ?>
+                                <h3 class="ingredient-benefits__heading"><?php echo esc_html($col_label); ?></h3>
+                            <?php endif; ?>
+                            <?php if (!empty($col_items)) : ?>
+                                <ul class="ingredient-benefits__list">
+                                    <?php foreach ($col_items as $item) : ?>
+                                        <?php if (!empty($item['item_text'])) : ?>
+                                            <li><?php echo esc_html($item['item_text']); ?></li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($cert_terms)) : ?>
+                <div class="ingredient-certifications">
+                    <?php foreach ($cert_terms as $cert_term) :
+                        $logo = get_field('certification_logo', 'fpc_certification_' . $cert_term->term_id);
+                    ?>
+                        <div class="ingredient-certifications__item">
+                            <?php if (!empty($logo['url'])) : ?>
+                                <img
+                                    src="<?php echo esc_url($logo['url']); ?>"
+                                    alt="<?php echo esc_attr(!empty($logo['alt']) ? $logo['alt'] : $cert_term->name); ?>"
+                                    class="ingredient-certifications__logo"
+                                >
+                            <?php else : ?>
+                                <span class="ingredient-certifications__name"><?php echo esc_html($cert_term->name); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Ingredient Main Content -->
             <div class="ingredient-main">
 
-                <!-- Ingredient Image -->
                 <?php if (has_post_thumbnail()) : ?>
                     <div class="ingredient-image">
                         <?php the_post_thumbnail('large'); ?>
                     </div>
                 <?php endif; ?>
 
-                <!-- Ingredient Info -->
                 <div class="ingredient-info">
 
                     <?php if (get_the_excerpt()) : ?>
@@ -52,20 +120,7 @@ while (have_posts()) :
                         </div>
                     <?php endif; ?>
 
-                    <?php
-                    $product_description = get_field('product_description');
-                    if ($product_description) :
-                        ?>
-                        <div class="ingredient-description">
-                            <?php echo wp_kses_post($product_description); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- Product Sheet Download -->
-                    <?php
-                    $product_sheet = get_field('product_sheet');
-                    if ($product_sheet) :
-                        ?>
+                    <?php if ($product_sheet) : ?>
                         <div class="ingredient-sheet">
                             <a href="<?php echo esc_url($product_sheet['url']); ?>"
                                class="button ingredient-sheet-button"
@@ -80,96 +135,129 @@ while (have_posts()) :
 
             </div>
 
-            <!-- Specifications -->
-            <?php
-            $show_specs = false;
-            $spec_fields = array(
-                'spec_protein_content' => __('Protein Content', 'farbest-catalog'),
-                'spec_moisture'        => __('Moisture', 'farbest-catalog'),
-                'spec_ph'              => __('pH', 'farbest-catalog'),
-                'spec_solubility'      => __('Solubility', 'farbest-catalog'),
-            );
+            <!-- Tabbed Content: Product Description / Product Details -->
+            <div class="ingredient-tabs" id="ingredient-tabs-<?php the_ID(); ?>">
 
-            foreach ($spec_fields as $field => $label) {
-                if (get_field($field)) {
-                    $show_specs = true;
-                    break;
-                }
-            }
+                <nav class="ingredient-tabs__nav" role="tablist">
+                    <button
+                        class="ingredient-tabs__tab ingredient-tabs__tab--active"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="tab-description-<?php the_ID(); ?>"
+                        id="tab-btn-description-<?php the_ID(); ?>"
+                        data-tab="description"
+                    >
+                        <?php esc_html_e('Product Description', 'farbest-catalog'); ?>
+                    </button>
+                    <button
+                        class="ingredient-tabs__tab"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-details-<?php the_ID(); ?>"
+                        id="tab-btn-details-<?php the_ID(); ?>"
+                        data-tab="details"
+                    >
+                        <?php esc_html_e('Product Details', 'farbest-catalog'); ?>
+                    </button>
+                </nav>
 
-            if ($show_specs) :
-                ?>
-                <div class="ingredient-specifications">
-                    <h2><?php esc_html_e('Specifications', 'farbest-catalog'); ?></h2>
-                    <table class="specs-table">
-                        <?php
-                        foreach ($spec_fields as $field => $label) {
-                            $value = get_field($field);
-                            if ($value) {
-                                echo '<tr>';
-                                echo '<th>' . esc_html($label) . '</th>';
-                                echo '<td>' . esc_html($value) . '</td>';
-                                echo '</tr>';
-                            }
-                        }
+                <!-- Tab: Product Description -->
+                <div
+                    class="ingredient-tabs__panel ingredient-tabs__panel--active"
+                    role="tabpanel"
+                    id="tab-description-<?php the_ID(); ?>"
+                    aria-labelledby="tab-btn-description-<?php the_ID(); ?>"
+                >
+                    <?php if ($product_description) : ?>
+                        <div class="ingredient-description">
+                            <?php echo wp_kses_post($product_description); ?>
+                        </div>
+                    <?php else : ?>
+                        <p class="ingredient-tabs__empty"><?php esc_html_e('No description available.', 'farbest-catalog'); ?></p>
+                    <?php endif; ?>
+                </div>
 
-                        // Additional specifications
-                        if (have_rows('spec_additional')) {
-                            while (have_rows('spec_additional')) {
-                                the_row();
-                                echo '<tr>';
-                                echo '<th>' . esc_html(get_sub_field('spec_name')) . '</th>';
-                                echo '<td>' . esc_html(get_sub_field('spec_value')) . '</td>';
-                                echo '</tr>';
-                            }
-                        }
-                        ?>
+                <!-- Tab: Product Details -->
+                <div
+                    class="ingredient-tabs__panel"
+                    role="tabpanel"
+                    id="tab-details-<?php the_ID(); ?>"
+                    aria-labelledby="tab-btn-details-<?php the_ID(); ?>"
+                    hidden
+                >
+                    <table class="ingredient-details-table">
+                        <tbody>
+
+                            <?php if (!empty($app_list)) : ?>
+                                <tr>
+                                    <th><?php esc_html_e('Applications', 'farbest-catalog'); ?></th>
+                                    <td>
+                                        <?php foreach ($app_list as $app) : ?>
+                                            <div><?php echo esc_html($app); ?></div>
+                                        <?php endforeach; ?>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if (!empty($claim_terms)) : ?>
+                                <tr>
+                                    <th><?php esc_html_e('Label Claims', 'farbest-catalog'); ?></th>
+                                    <td><?php echo esc_html(implode(' | ', $claim_terms)); ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if (!empty($cert_terms)) : ?>
+                                <tr>
+                                    <th><?php esc_html_e('Certifications', 'farbest-catalog'); ?></th>
+                                    <td><?php echo esc_html(implode(' | ', wp_list_pluck($cert_terms, 'name'))); ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($packaging) : ?>
+                                <tr>
+                                    <th><?php esc_html_e('Packaging', 'farbest-catalog'); ?></th>
+                                    <td><?php echo esc_html($packaging); ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                        </tbody>
                     </table>
                 </div>
-            <?php endif; ?>
 
-            <!-- Applications -->
-            <?php
-            $application_terms = wp_get_post_terms($ingredient_id, 'fpc_application', array(
-                'fields' => 'names',
-            ));
+            </div>
 
-            if (is_wp_error($application_terms) || !is_array($application_terms)) {
-                $application_terms = array();
-            }
+            <!-- Tab switching script -->
+            <script>
+            (function () {
+                document.querySelectorAll('.ingredient-tabs').forEach(function (wrapper) {
+                    var tabs   = wrapper.querySelectorAll('.ingredient-tabs__tab');
+                    var panels = wrapper.querySelectorAll('.ingredient-tabs__panel');
 
-            $app_list = array_values(array_filter(array_map('trim', $application_terms)));
+                    tabs.forEach(function (tab) {
+                        tab.addEventListener('click', function () {
+                            var target = tab.getAttribute('aria-controls');
 
-            if (empty($app_list)) {
-                $legacy_applications = get_field('product_applications');
+                            tabs.forEach(function (t) {
+                                t.setAttribute('aria-selected', 'false');
+                                t.classList.remove('ingredient-tabs__tab--active');
+                            });
+                            panels.forEach(function (p) {
+                                p.hidden = true;
+                                p.classList.remove('ingredient-tabs__panel--active');
+                            });
 
-                if (!empty($legacy_applications) && is_string($legacy_applications)) {
-                    $app_list = array_values(array_filter(array_map('trim', explode('|', $legacy_applications))));
-                }
-            }
-
-            if (!empty($app_list)) :
-                ?>
-                <div class="ingredient-applications">
-                    <h2><?php esc_html_e('Proven Applications', 'farbest-catalog'); ?></h2>
-                    <ul>
-                        <?php foreach ($app_list as $app) : ?>
-                            <li><?php echo esc_html($app); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-
-            <!-- Packaging -->
-            <?php
-            $packaging = get_field('product_packaging');
-            if ($packaging) :
-                ?>
-                <div class="ingredient-packaging">
-                    <h2><?php esc_html_e('Packaging', 'farbest-catalog'); ?></h2>
-                    <p><?php echo esc_html($packaging); ?></p>
-                </div>
-            <?php endif; ?>
+                            tab.setAttribute('aria-selected', 'true');
+                            tab.classList.add('ingredient-tabs__tab--active');
+                            var panel = document.getElementById(target);
+                            if (panel) {
+                                panel.hidden = false;
+                                panel.classList.add('ingredient-tabs__panel--active');
+                            }
+                        });
+                    });
+                });
+            })();
+            </script>
 
             <!-- Contact Form -->
             <div class="ingredient-contact-form">

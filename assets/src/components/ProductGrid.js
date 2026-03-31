@@ -305,6 +305,24 @@ const IngredientGrid = ({ initialCategory = '' }) => {
 };
 
 /**
+ * Map category slugs to their SVG icon filenames.
+ * Falls back to the green circle placeholder via CSS when no match.
+ */
+const CATEGORY_ICON_MAP = {
+    'plant-protein':   'Pea_Protein_Icon.svg',
+    'dairy-protein':   'Dairy_Protein_Icon-.svg',
+    'fibers':           'Organic_Circle_Icon.svg',
+    'carrot':          'Carrot_Circle_Icon.svg',
+    'gum-acacia':      'Gum_Acacia_Icon.svg',
+    'natural-colors':   'Natural_Colors-Icon.svg',
+    'sweeteners':       'Sweetener-Icon.svg',
+    'vitamins':         'Vitamin_Icon.svg',
+    'lecithins':        'Specialty_Icon.svg',
+};
+
+const pluginUrl = window.fpcData ? window.fpcData.pluginUrl : '';
+
+/**
  * CategoryGrid — initial view showing one card per ingredient category.
  * Clicking a card sets that category as the active filter.
  */
@@ -312,14 +330,24 @@ const CategoryGrid = ({ categories, onSelectCategory }) => {
     if (!categories || categories.length === 0) return null;
     return (
         <div className="fpc-category-grid">
-            {categories.map((cat) => (
+            {categories.map((cat) => {
+                const iconFile = CATEGORY_ICON_MAP[cat.slug];
+                return (
                 <button
                     key={cat.slug}
                     type="button"
                     className="fpc-category-card"
                     onClick={() => onSelectCategory(cat.slug)}
                 >
-                    <div className="fpc-category-card-icon" aria-hidden="true" />
+                    <div className="fpc-category-card-icon" aria-hidden="true">
+                        {iconFile && (
+                            <img
+                                src={`${pluginUrl}assets/img/${iconFile}`}
+                                alt=""
+                                className="fpc-category-card-icon-img"
+                            />
+                        )}
+                    </div>
                     <div className="fpc-category-card-content">
                         <h3 className="fpc-category-card-title">{cat.name}</h3>
                         {cat.tagline_lines && cat.tagline_lines.length > 0 && (
@@ -332,7 +360,8 @@ const CategoryGrid = ({ categories, onSelectCategory }) => {
                         <span className="fpc-button">{__('Product Details', 'farbest-catalog')}</span>
                     </div>
                 </button>
-            ))}
+                );
+            })}
         </div>
     );
 };
