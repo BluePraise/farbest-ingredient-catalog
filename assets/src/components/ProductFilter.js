@@ -165,7 +165,7 @@ const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs
             </div>
             <button
                 type="button"
-                className="fpc-reset-button fbd-cta-button"
+                className="fpc-reset-button"
                 onClick={handleReset}
             >
                 {__('Reset Filters', 'farbest-catalog')}

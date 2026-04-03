@@ -21,6 +21,8 @@ $grid-gap:         24px;
 .fpc-archive-page {
     background: $bg-light;
     padding-bottom: 60px;
+    position: relative; // for absolute positioning of category background accents
+    z-index: 0;
 }
 
 .fbd-hero {
@@ -86,11 +88,6 @@ $grid-gap:         24px;
         color: #fff;
         box-shadow: none;
     }
-}
-
-.fbd-catalog-wrap {
-    background-color: $bg-light;
-    padding: 0 20px;
 }
 
 .fbd-catalog-wrap .fpc-ingredient-grid-wrapper {
@@ -322,6 +319,9 @@ $grid-gap:         24px;
     align-items: end;
     margin-block-start: 80px;
     margin-bottom: 80px;
+
+    position: relative; // supporting absolute-positioned background accents
+    z-index: 11;
 
     @media (max-width: 1024px) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -573,7 +573,7 @@ $grid-gap:         24px;
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .fpc-term-badge {
@@ -590,7 +590,9 @@ $grid-gap:         24px;
 
 .fpc-ingredient-excerpt {
     flex: 1;
-    margin-bottom: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
     color: #666;
     font-size: 13px;
     line-height: 1.6;
@@ -718,6 +720,26 @@ $grid-gap:         24px;
     color: $error-color;
 }
 
+// ─── Single Ingredient — Related Products ─────────────────────────────────────
+
+.ingredient-related__heading {
+    text-align: center;
+    display: block;
+    margin-bottom: 24px;
+}
+
+.ingredient-related__footer {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.ingredient-certifications__logo,
+.fpc-ingredient-cert-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
 // ─── Single Ingredient: Tabbed Content ───────────────────────────────────────
 
 .ingredient-tabs {
@@ -734,6 +756,7 @@ $grid-gap:         24px;
 
 .ingredient-tabs__tab {
     background: none;
+    box-shadow: none;
     border: none;
     border-bottom: 3px solid transparent;
     margin-bottom: -2px;
@@ -785,7 +808,6 @@ $grid-gap:         24px;
         padding: 14px 20px;
         vertical-align: top;
         text-align: left;
-        border-bottom: 1px solid #ddd7cb;
         font-size: 0.9375rem;
         line-height: 1.6;
     }

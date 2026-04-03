@@ -1,6 +1,16 @@
 /**
  * Admin JavaScript for Farbest Product Catalog
  */
+
+// Remove Gutenberg sidebar taxonomy panels replaced by ACF fields
+wp.domReady(function() {
+    if (wp.editPost && wp.editPost.removeEditorPanel) {
+        wp.editPost.removeEditorPanel('taxonomy-panel-fpc_application');
+        wp.editPost.removeEditorPanel('taxonomy-panel-fpc_claim');
+        wp.editPost.removeEditorPanel('taxonomy-panel-fpc_certification');
+    }
+});
+
 (function($) {
     'use strict';
 

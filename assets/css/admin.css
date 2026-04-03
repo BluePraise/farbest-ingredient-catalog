@@ -42,6 +42,13 @@
     color: #2271b1;
 }
 
+/* Always show ACF taxonomy "Add" link — visible without hover */
+.post-type-fpc_ingredient .acf-taxonomy-field .acf-add-term {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
 /* Quick edit enhancements */
 .inline-edit-col-right .alignleft + .alignleft {
     clear: both;

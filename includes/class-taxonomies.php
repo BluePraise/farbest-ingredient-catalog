@@ -18,6 +18,16 @@ class FPC_Taxonomies {
         self::register_certifications();
         self::register_applications();
         self::register_category_meta();
+        add_action('add_meta_boxes', array(__CLASS__, 'remove_native_metaboxes'));
+    }
+
+    /**
+     * Remove native WordPress taxonomy metaboxes replaced by ACF fields
+     */
+    public static function remove_native_metaboxes() {
+        remove_meta_box('tagsdiv-fpc_application',   'fpc_ingredient', 'side');
+        remove_meta_box('tagsdiv-fpc_claim',         'fpc_ingredient', 'side');
+        remove_meta_box('tagsdiv-fpc_certification', 'fpc_ingredient', 'side');
     }
 
     const TAGLINE_MAX_LINES = 5;
@@ -256,6 +266,7 @@ class FPC_Taxonomies {
             'show_in_nav_menus' => false,
             'show_tagcloud'     => false,
             'show_in_rest'      => true,
+            'meta_box_cb'       => false,
             'rewrite'           => array(
                 'slug'       => 'application',
                 'with_front' => false,

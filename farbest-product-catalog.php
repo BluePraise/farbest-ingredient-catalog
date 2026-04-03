@@ -242,7 +242,7 @@ class Farbest_Product_Catalog {
             wp_enqueue_script(
                 'farbest-catalog-admin',
                 FPC_PLUGIN_URL . 'assets/js/admin.js',
-                array('jquery'),
+                array('jquery', 'wp-dom-ready', 'wp-edit-post'),
                 FPC_VERSION,
                 true
             );
@@ -389,7 +389,7 @@ class Farbest_Product_Catalog {
 
                 $ingredients[] = array(
                     'id'             => $id,
-                    'title'          => get_the_title(),
+                    'title'          => wp_strip_all_tags( get_the_title() ),
                     'excerpt'        => get_the_excerpt(),
                     'description'    => function_exists('get_field') ? (get_field('product_description', $id) ?: '') : '',
                     'permalink'      => get_permalink(),
@@ -507,7 +507,7 @@ class Farbest_Product_Catalog {
 
         return new WP_REST_Response(array(
             'id'         => $ingredient->ID,
-            'title'      => $ingredient->post_title,
+            'title'      => wp_strip_all_tags( html_entity_decode( $ingredient->post_title, ENT_QUOTES, 'UTF-8' ) ),
             'content'    => apply_filters('the_content', $ingredient->post_content),
             'permalink'  => get_permalink($ingredient->ID),
             'thumbnail'  => get_the_post_thumbnail_url($ingredient->ID, 'large'),

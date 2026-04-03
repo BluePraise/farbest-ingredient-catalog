@@ -1,6 +1,13 @@
 <?php
 /**
- * Template for displaying single ingredient
+ * Template for displaying single ingredient (plugin fallback)
+ *
+ * NOTE: This file is the fallback only. The active theme override lives at:
+ * farbest/farbest-catalog/single-ingredient.php
+ *
+ * Edit the theme file for any front-end changes. Only update this file
+ * when changing plugin-level defaults that the theme override should
+ * eventually inherit.
  */
 
 get_header();
@@ -259,11 +266,81 @@ while (have_posts()) :
             })();
             </script>
 
-            <!-- Contact Form -->
-            <div class="ingredient-contact-form">
-                <h2><?php esc_html_e('Request More Information', 'farbest-catalog'); ?></h2>
-                <?php echo do_shortcode('[fpc_contact_form product_id="' . $ingredient_id . '"]'); ?>
-            </div>
+            <!-- Related Products -->
+            <?php
+            $related_category = (!empty($categories) && !is_wp_error($categories)) ? $categories[0] : null;
+            if ($related_category) :
+                $related_query = new WP_Query(array(
+                    'post_type'      => 'fpc_ingredient',
+                    'posts_per_page' => 4,
+                    'post__not_in'   => array($ingredient_id),
+                    'orderby'        => 'rand',
+                    'tax_query'      => array(
+                        array(
+                            'taxonomy' => 'fpc_category',
+                            'field'    => 'term_id',
+                            'terms'    => $related_category->term_id,
+                        ),
+                    ),
+                ));
+            ?>
+            <?php if ($related_query->have_posts()) : ?>
+                <div class="ingredient-related">
+                    <h2 class="fpc-filter-label ingredient-related__heading">
+                        <?php echo esc_html(sprintf(__('More %s Products', 'farbest-catalog'), $related_category->name)); ?>
+                    </h2>
+                    <div class="fpc-ingredients-grid">
+                        <?php while ($related_query->have_posts()) : $related_query->the_post(); ?>
+                            <?php
+                            $rel_id       = get_the_ID();
+                            $rel_benefits = get_field('benefits_columns', $rel_id);
+                            $rel_certs    = wp_get_post_terms($rel_id, 'fpc_certification');
+                            $rel_certs    = (!is_wp_error($rel_certs) && is_array($rel_certs)) ? $rel_certs : array();
+                            ?>
+                            <article class="fpc-ingredient-card">
+                                <div class="fpc-ingredient-card-content">
+                                    <h3 class="fpc-ingredient-title"><?php the_title(); ?></h3>
+
+                                    <?php if (!empty($rel_benefits)) :
+                                        $rel_items = !empty($rel_benefits[0]['column_items']) ? $rel_benefits[0]['column_items'] : array();
+                                        if (!empty($rel_items)) : ?>
+                                        <ul class="fpc-ingredient-excerpt">
+                                            <?php foreach ($rel_items as $rel_item) : ?>
+                                                <?php if (!empty($rel_item['item_text'])) : ?>
+                                                    <li><?php echo esc_html($rel_item['item_text']); ?></li>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; endif; ?>
+
+                                    <?php if (!empty($rel_certs)) : ?>
+                                        <div class="fpc-ingredient-terms">
+                                            <?php foreach ($rel_certs as $rel_cert) :
+                                                $rel_logo = get_field('certification_logo', 'fpc_certification_' . $rel_cert->term_id);
+                                                if (!empty($rel_logo['url'])) : ?>
+                                                    <img
+                                                        src="<?php echo esc_url($rel_logo['url']); ?>"
+                                                        alt="<?php echo esc_attr(!empty($rel_logo['alt']) ? $rel_logo['alt'] : $rel_cert->name); ?>"
+                                                        class="fpc-ingredient-cert-logo"
+                                                    >
+                                            <?php endif; endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <a href="<?php the_permalink(); ?>" class="fpc-button">
+                                        <?php esc_html_e('Product Details', 'farbest-catalog'); ?>
+                                    </a>
+                                </div>
+                            </article>
+                        <?php endwhile; wp_reset_postdata(); ?>
+                    </div>
+                    <div class="ingredient-related__footer">
+                        <a href="<?php echo esc_url(get_term_link($related_category)); ?>" class="fpc-button">
+                            &lt; <?php esc_html_e('More', 'farbest-catalog'); ?> &gt;
+                        </a>
+                    </div>
+                </div>
+            <?php endif; endif; ?>
 
         </div>
 
