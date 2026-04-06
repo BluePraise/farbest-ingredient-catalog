@@ -43,6 +43,13 @@ while (have_posts()) :
     $product_sheet       = get_field('product_sheet');
     $product_description = get_field('product_description');
     $benefits_columns    = get_field('benefits_columns');
+
+    // Fiber benefit terms for auto-merge into benefits columns
+    $fiber_terms = wp_get_post_terms($ingredient_id, 'fpc_fiber_benefit', array('fields' => 'names'));
+    if (is_wp_error($fiber_terms) || !is_array($fiber_terms)) {
+        $fiber_terms = array();
+    }
+    $fiber_list = array_values(array_filter(array_map('trim', $fiber_terms)));
     ?>
 
     <div class="fb_content_left">
@@ -65,19 +72,71 @@ while (have_posts()) :
                 <?php endif; ?>
             </header>
 
-            <?php if (!empty($benefits_columns)) : ?>
+            <?php
+            // Check whether existing columns already cover applications / fiber
+            $has_app_column   = false;
+            $has_fiber_column = false;
+            if (!empty($benefits_columns)) {
+                foreach ($benefits_columns as $bc) {
+                    $lbl = !empty($bc['column_label']) ? $bc['column_label'] : '';
+                    if ($lbl && false !== stripos($lbl, 'application')) $has_app_column   = true;
+                    if ($lbl && false !== stripos($lbl, 'fiber'))       $has_fiber_column = true;
+                }
+            }
+
+            // Auto-inject columns for taxonomy terms when no matching column exists
+            $injected_columns = array();
+            if (!$has_app_column && !empty($app_list)) {
+                $injected_columns[] = array('column_label' => 'Application Benefits', 'column_items' => array());
+            }
+            if (!$has_fiber_column && !empty($fiber_list)) {
+                $injected_columns[] = array('column_label' => 'Fiber Benefits', 'column_items' => array());
+            }
+
+            $all_benefits_columns = array_merge($injected_columns, is_array($benefits_columns) ? $benefits_columns : array());
+            ?>
+
+            <?php if (!empty($all_benefits_columns)) : ?>
                 <div class="ingredient-benefits">
-                    <?php foreach ($benefits_columns as $column) :
+                    <?php foreach ($all_benefits_columns as $column) :
                         $col_label = !empty($column['column_label']) ? $column['column_label'] : '';
                         $col_items = !empty($column['column_items']) ? $column['column_items'] : array();
                         if (empty($col_label) && empty($col_items)) continue;
+
+                        // Collect manual item texts for deduplication
+                        $manual_texts = array();
+                        foreach ($col_items as $item) {
+                            if (!empty($item['item_text'])) {
+                                $manual_texts[] = $item['item_text'];
+                            }
+                        }
+                        $manual_lower = array_map('strtolower', $manual_texts);
+
+                        // Auto-merge taxonomy terms based on partial label match
+                        $auto_terms = array();
+                        if ($col_label && false !== stripos($col_label, 'application')) {
+                            $auto_terms = $app_list;
+                        } elseif ($col_label && false !== stripos($col_label, 'fiber')) {
+                            $auto_terms = $fiber_list;
+                        }
+
+                        // Deduplicate: only add taxonomy terms not already in manual items
+                        $merged_terms = array();
+                        foreach ($auto_terms as $term_name) {
+                            if (!in_array(strtolower($term_name), $manual_lower, true)) {
+                                $merged_terms[] = $term_name;
+                            }
+                        }
                     ?>
                         <div class="ingredient-benefits__column">
                             <?php if ($col_label) : ?>
                                 <h3 class="ingredient-benefits__heading"><?php echo esc_html($col_label); ?></h3>
                             <?php endif; ?>
-                            <?php if (!empty($col_items)) : ?>
+                            <?php if (!empty($merged_terms) || !empty($col_items)) : ?>
                                 <ul class="ingredient-benefits__list">
+                                    <?php foreach ($merged_terms as $term_name) : ?>
+                                        <li><?php echo esc_html($term_name); ?></li>
+                                    <?php endforeach; ?>
                                     <?php foreach ($col_items as $item) : ?>
                                         <?php if (!empty($item['item_text'])) : ?>
                                             <li><?php echo esc_html($item['item_text']); ?></li>

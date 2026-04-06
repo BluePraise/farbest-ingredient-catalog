@@ -21,8 +21,6 @@ $grid-gap:         24px;
 .fpc-archive-page {
     background: $bg-light;
     padding-bottom: 60px;
-    position: relative; // for absolute positioning of category background accents
-    z-index: 0;
 }
 
 .fbd-hero {
