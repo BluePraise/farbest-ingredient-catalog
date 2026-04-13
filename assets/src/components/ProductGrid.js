@@ -247,22 +247,7 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                     )}
                 </div>
 
-                <div className="fpc-toolbar-right">
-                    <label className="fpc-sort-label" htmlFor="fpc-sort-select">
-                        {__('Sort:', 'farbest-catalog')}
-                    </label>
-                    <select
-                        id="fpc-sort-select"
-                        className="fpc-sort-select"
-                        value={sortValue}
-                        onChange={handleSortChange}
-                    >
-                        <option value="name-asc">{__('Name (A-Z)', 'farbest-catalog')}</option>
-                        <option value="name-desc">{__('Name (Z-A)', 'farbest-catalog')}</option>
-                        <option value="date-desc">{__('Newest First', 'farbest-catalog')}</option>
-                        <option value="date-asc">{__('Oldest First', 'farbest-catalog')}</option>
-                    </select>
-                </div>
+
             </div>
             )}
 
@@ -311,9 +296,9 @@ const IngredientGrid = ({ initialCategory = '' }) => {
 const CATEGORY_ICON_MAP = {
     'plant-protein':   'Pea_Protein_Icon.svg',
     'dairy-protein':   'Dairy_Protein_Icon-.svg',
-    'fibers':           'Organic_Circle_Icon.svg',
+    'fibers':          'Fiber-Icon.svg',
     'carrot':          'Carrot_Circle_Icon.svg',
-    'gum-acacia':      'Gum_Acacia_Icon.svg',
+    'gum-acacia':      'Gum-Acacia-Icon.svg',
     'natural-colors':   'Natural_Colors-Icon.svg',
     'sweeteners':       'Sweetener-Icon.svg',
     'vitamins':         'Vitamin_Icon.svg',

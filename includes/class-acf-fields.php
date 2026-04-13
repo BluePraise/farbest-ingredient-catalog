@@ -29,6 +29,7 @@ class FPC_ACF_Fields {
         self::register_representative_codes();
         self::register_ingredient_benefits();
         self::register_certification_logo();
+        self::register_category_hero();
     }
 
     /**
@@ -347,6 +348,42 @@ class FPC_ACF_Fields {
             'menu_order' => 2,
             'position' => 'side',
             'style' => 'default',
+        ));
+    }
+
+    /**
+     * Category Hero Image field (on fpc_category taxonomy terms)
+     */
+    private static function register_category_hero() {
+        acf_add_local_field_group(array(
+            'key'   => 'group_category_hero',
+            'title' => 'Category Hero',
+            'fields' => array(
+                array(
+                    'key'           => 'field_category_hero_image',
+                    'label'         => 'Hero Image',
+                    'name'          => 'category_hero_image',
+                    'type'          => 'image',
+                    'instructions'  => 'Upload a hero/banner image for this ingredient category (recommended: 1600×400px or wider)',
+                    'required'      => 0,
+                    'return_format' => 'array',
+                    'preview_size'  => 'medium',
+                    'library'       => 'all',
+                    'mime_types'    => 'jpg,jpeg,png,webp',
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param'    => 'taxonomy',
+                        'operator' => '==',
+                        'value'    => 'fpc_category',
+                    ),
+                ),
+            ),
+            'menu_order' => 0,
+            'position'   => 'normal',
+            'style'      => 'default',
         ));
     }
 }
