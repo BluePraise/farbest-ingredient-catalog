@@ -308,6 +308,125 @@ border-radius: 5px;
     color: $secondary-color;
 }
 
+// ─── Active Filter Pills ──────────────────────────────────────────────────────
+
+.fpc-active-pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.fpc-active-pills-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $moss-green;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.fpc-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 10px;
+    border-radius: 20px;
+    box-shadow: none;
+    border: 1px solid transparent;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+    line-height: 1.4;
+
+    &--categories {
+        background: rgba($primary-color, 0.1);
+        border-color: rgba($primary-color, 0.3);
+        color: $primary-color;
+
+        &:hover {
+            background: rgba($primary-color, 0.18);
+            border-color: $primary-color;
+        }
+    }
+
+    &--applications {
+        background: rgba($dark-teal, 0.08);
+        border-color: rgba($dark-teal, 0.25);
+        color: $dark-teal;
+
+        &:hover {
+            background: rgba($dark-teal, 0.15);
+            border-color: $dark-teal;
+        }
+    }
+
+    &--certifications {
+        background: #d4edda;
+        border-color: #a3d5b0;
+        color: #155724;
+
+        &:hover {
+            background: #b8dfc4;
+            border-color: #155724;
+        }
+    }
+
+    &--claims {
+        background: #d1ecf1;
+        border-color: #9fd6e0;
+        color: #0c5460;
+
+        &:hover {
+            background: #b0d9e4;
+            border-color: #0c5460;
+        }
+    }
+
+    &--clear-all {
+        background: none;
+        border-color: $border-color;
+        color: $secondary-color;
+        font-weight: 600;
+
+        &:hover {
+            background: $border-color;
+            color: white;
+        }
+    }
+}
+
+.fpc-pill-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+
+    &::after {
+        content: ':';
+    }
+}
+
+.fpc-pill-name {
+    font-weight: 600;
+}
+
+.fpc-pill-remove {
+    font-size: 16px;
+    line-height: 1;
+    margin-left: 2px;
+    opacity: 0.6;
+    font-weight: 400;
+
+    .fpc-pill:hover & {
+        opacity: 1;
+    }
+}
+
 // ─── Toolbar (results count + sort + view) ────────────────────────────────────
 
 .fpc-toolbar {

@@ -210,6 +210,11 @@ const IngredientGrid = ({ initialCategory = '' }) => {
         );
     }
 
+    const handleRemovePill = (type, slug) => {
+        const next = { ...filters.selected, [type]: filters.selected[type].filter((s) => s !== slug) };
+        handleFilterChange(next);
+    };
+
     return (
         <div className="fpc-ingredient-grid-wrapper">
 
@@ -225,6 +230,16 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                     />
                 )}
             </div>
+
+            {/* Active filter pills */}
+            {optionsLoaded && hasActiveFilters && (
+                <FilterPills
+                    selected={filters.selected}
+                    filterOptions={filterOptions}
+                    onRemove={handleRemovePill}
+                    onReset={handleReset}
+                />
+            )}
 
             {/* Toolbar: search + results count + sort — always visible */}
             {optionsLoaded && (
@@ -284,6 +299,63 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                         ))}
                     </div>
                 )
+            )}
+        </div>
+    );
+};
+
+/**
+ * FilterPills — shows one removable pill per active filter selection.
+ */
+const FILTER_TYPE_LABELS = {
+    categories:     __('Ingredient', 'farbest-catalog'),
+    applications:   __('Application', 'farbest-catalog'),
+    certifications: __('Certification', 'farbest-catalog'),
+    claims:         __('Claim', 'farbest-catalog'),
+};
+
+const FilterPills = ({ selected, filterOptions, onRemove, onReset }) => {
+    // Build a slug→name lookup for each type
+    const lookup = {
+        categories:     Object.fromEntries((filterOptions.categories     || []).map((o) => [o.slug, o.name])),
+        applications:   Object.fromEntries((filterOptions.applications   || []).map((o) => [o.slug, o.name])),
+        certifications: Object.fromEntries((filterOptions.certifications || []).map((o) => [o.slug, o.name])),
+        claims:         Object.fromEntries((filterOptions.claims         || []).map((o) => [o.slug, o.name])),
+    };
+
+    const pills = [];
+    ['categories', 'applications', 'certifications', 'claims'].forEach((type) => {
+        (selected[type] || []).forEach((slug) => {
+            pills.push({ type, slug, label: lookup[type][slug] || slug, typeLabel: FILTER_TYPE_LABELS[type] });
+        });
+    });
+
+    if (pills.length === 0) return null;
+
+    return (
+        <div className="fpc-active-pills" role="group" aria-label={__('Active filters', 'farbest-catalog')}>
+            <span className="fpc-active-pills-label">{__('Active filters:', 'farbest-catalog')}</span>
+            {pills.map(({ type, slug, label, typeLabel }) => (
+                <button
+                    key={`${type}-${slug}`}
+                    type="button"
+                    className={`fpc-pill fpc-pill--${type}`}
+                    onClick={() => onRemove(type, slug)}
+                    aria-label={`${__('Remove filter', 'farbest-catalog')}: ${typeLabel} – ${label}`}
+                >
+                    <span className="fpc-pill-type">{typeLabel}</span>
+                    <span className="fpc-pill-name">{label}</span>
+                    <span className="fpc-pill-remove" aria-hidden="true">×</span>
+                </button>
+            ))}
+            {pills.length > 1 && (
+                <button
+                    type="button"
+                    className="fpc-pill fpc-pill--clear-all"
+                    onClick={onReset}
+                >
+                    {__('Clear all', 'farbest-catalog')}
+                </button>
             )}
         </div>
     );
