@@ -13,9 +13,23 @@ $archive_description = $is_category_archive
     : __('Whether you are looking for proteins, texturants, sweeteners, vitamins, natural colors, or something else, our selection of ingredients can solve your formulation needs.', 'farbest-catalog');
 $cta_url = home_url('/contact/');
 $initial_category = ($is_category_archive && $queried_object && !is_wp_error($queried_object)) ? $queried_object->slug : '';
+$hero_image = null;
+if ($is_category_archive && $queried_object && function_exists('get_field')) {
+    $hero_image = get_field('category_hero_image', 'fpc_category_' . $queried_object->term_id);
+}
 ?>
 
 <div class="fpc-archive-page">
+    <?php if ($hero_image && !empty($hero_image['url'])) : ?>
+        <div class="fpc-category-hero">
+            <img
+                src="<?php echo esc_url($hero_image['url']); ?>"
+                alt="<?php echo esc_attr(!empty($hero_image['alt']) ? $hero_image['alt'] : $archive_title); ?>"
+                class="fpc-category-hero__img"
+            />
+        </div>
+    <?php endif; ?>
+
     <section class="fbd-hero">
         <div class="content-wrapper container">
             <div class="fbd-hero-inner">
