@@ -1,0 +1,21 @@
+# .github/workflows/deploy-staging.yml
+name: Deploy to Staging
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy via rsync
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: -avzr --delete --exclude='.git' --exclude='node_modules'
+          path: ./
+          remote_path: /home/customer/www/farbest.navesinkwebsolutions.com/public_html/wp-content/plugins/farbest-product-catalog/
+          remote_host: ${{ secrets.STAGING_HOST }}
+          remote_user: ${{ secrets.STAGING_USER }}
+          remote_key: ${{ secrets.STAGING_SSH_KEY }}
+          remote_port: 18765
