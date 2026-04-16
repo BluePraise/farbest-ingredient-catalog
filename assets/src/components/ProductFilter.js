@@ -35,6 +35,7 @@ const MultiSelectDropdown = ({ label, options, selected, onChange, availableSlug
             ? selected.filter((s) => s !== slug)
             : [...selected, slug];
         onChange(next);
+        setOpen(false);
     };
 
     const buttonLabel = selected.length === 0

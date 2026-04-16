@@ -218,6 +218,14 @@ const IngredientGrid = ({ initialCategory = '' }) => {
     return (
         <div className="fpc-ingredient-grid-wrapper">
 
+            {/* Search — above filters */}
+            {optionsLoaded && (
+                <ProductSearch
+                    onSearch={handleSearchChange}
+                    initialValue={filters.search}
+                />
+            )}
+
             {/* Filters bar */}
             <div className="fpc-filters-bar">
                 {optionsLoaded && (
@@ -241,13 +249,9 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                 />
             )}
 
-            {/* Toolbar: search + results count + sort — always visible */}
+            {/* Toolbar: results count — always visible */}
             {optionsLoaded && (
             <div className="fpc-toolbar">
-                <ProductSearch
-                    onSearch={handleSearchChange}
-                    initialValue={filters.search}
-                />
 
                 <div className="fpc-results-count">
                     {loading ? (
@@ -295,7 +299,7 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                 ) : (
                     <div className="fpc-ingredients-grid">
                         {ingredients.map((ingredient) => (
-                            <IngredientCard key={ingredient.id} ingredient={ingredient} />
+                            <IngredientCard key={ingredient.id} ingredient={ingredient} certOptions={filterOptions.certifications} />
                         ))}
                     </div>
                 )
@@ -333,25 +337,25 @@ const FilterPills = ({ selected, filterOptions, onRemove, onReset }) => {
     if (pills.length === 0) return null;
 
     return (
-        <div className="fpc-active-pills" role="group" aria-label={__('Active filters', 'farbest-catalog')}>
-            <span className="fpc-active-pills-label">{__('Active filters:', 'farbest-catalog')}</span>
+        <div className="fpc-active-selections" role="group" aria-label={__('Active filters', 'farbest-catalog')}>
+            <span className="fpc-active-selections-label">{__('Active filters:', 'farbest-catalog')}</span>
             {pills.map(({ type, slug, label, typeLabel }) => (
                 <button
                     key={`${type}-${slug}`}
                     type="button"
-                    className={`fpc-pill fpc-pill--${type}`}
+                    className={`fpc-selection fpc-selection--${type}`}
                     onClick={() => onRemove(type, slug)}
                     aria-label={`${__('Remove filter', 'farbest-catalog')}: ${typeLabel} – ${label}`}
                 >
-                    <span className="fpc-pill-type">{typeLabel}</span>
-                    <span className="fpc-pill-name">{label}</span>
-                    <span className="fpc-pill-remove" aria-hidden="true">×</span>
+                    <span className="fpc-selection-type">{typeLabel}</span>
+                    <span className="fpc-selection-name">{label}</span>
+                    <span className="fpc-selection-remove" aria-hidden="true">×</span>
                 </button>
             ))}
             {pills.length > 1 && (
                 <button
                     type="button"
-                    className="fpc-pill fpc-pill--clear-all"
+                    className="fpc-selection fpc-selection--clear-all"
                     onClick={onReset}
                 >
                     {__('Clear all', 'farbest-catalog')}
@@ -439,7 +443,15 @@ const CategoryBadges = ({ subcategories }) => {
     );
 };
 
-const IngredientCard = ({ ingredient }) => {
+const IngredientCard = ({ ingredient, certOptions = [] }) => {
+    // Build name → cert options lookup for logo data
+    const certMap = {};
+    certOptions.forEach((c) => { certMap[c.name] = c; });
+
+    const visibleLogos = (ingredient.certifications || [])
+        .map((name) => certMap[name])
+        .filter((c) => c && c.show_on_card && c.logo_url);
+
     return (
         <article className="fpc-ingredient-card">
             {ingredient.thumbnail && (
@@ -459,6 +471,20 @@ const IngredientCard = ({ ingredient }) => {
                         className="fpc-ingredient-excerpt"
                         dangerouslySetInnerHTML={{ __html: ingredient.excerpt }}
                     />
+                )}
+
+                {visibleLogos.length > 0 && (
+                    <div className="fpc-cert-logos">
+                        {visibleLogos.map((c) => (
+                            <img
+                                key={c.name}
+                                src={c.logo_url}
+                                alt={c.logo_alt || c.name}
+                                className="fpc-cert-logo"
+                                loading="lazy"
+                            />
+                        ))}
+                    </div>
                 )}
 
                 <a href={ingredient.permalink} className="fpc-button">

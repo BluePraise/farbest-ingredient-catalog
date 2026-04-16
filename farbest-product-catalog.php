@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.1.0
+ * Version: 1.3.1
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.1.0');
+define('FPC_VERSION', '1.3.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -389,7 +389,7 @@ class Farbest_Product_Catalog {
 
                 $ingredients[] = array(
                     'id'             => $id,
-                    'title'          => wp_strip_all_tags( get_the_title() ),
+                    'title'          => html_entity_decode( wp_strip_all_tags( get_the_title() ), ENT_QUOTES, 'UTF-8' ),
                     'excerpt'        => get_the_excerpt(),
                     'description'    => function_exists('get_field') ? (get_field('product_description', $id) ?: '') : '',
                     'permalink'      => get_permalink(),
@@ -485,11 +485,31 @@ class Farbest_Product_Catalog {
             }, $terms));
         };
 
+        $format_certifications = function($terms) {
+            if (is_wp_error($terms)) return array();
+            return array_values(array_map(function($term) {
+                $acf_key  = 'fpc_certification_' . $term->term_id;
+                $logo     = function_exists('get_field') ? get_field('certification_logo', $acf_key) : null;
+                $on_card  = function_exists('get_field') ? (bool) get_field('show_on_card',   $acf_key) : false;
+                $on_detail = function_exists('get_field') ? (bool) get_field('show_on_detail', $acf_key) : false;
+                return array(
+                    'id'            => $term->term_id,
+                    'name'          => $term->name,
+                    'slug'          => $term->slug,
+                    'count'         => $term->count,
+                    'logo_url'      => !empty($logo['url'])  ? esc_url_raw($logo['url']) : '',
+                    'logo_alt'      => !empty($logo['alt'])  ? sanitize_text_field($logo['alt']) : $term->name,
+                    'show_on_card'  => $on_card,
+                    'show_on_detail' => $on_detail,
+                );
+            }, $terms));
+        };
+
         return new WP_REST_Response(array(
             'categories'        => $format_categories($categories),
             'parent_categories' => $format_categories($parent_categories),
             'claims'            => $format($claims),
-            'certifications'    => $format($certifications),
+            'certifications'    => $format_certifications($certifications),
             'applications'      => $format($applications),
         ), 200);
     }

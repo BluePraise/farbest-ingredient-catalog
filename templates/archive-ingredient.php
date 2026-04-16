@@ -6,28 +6,47 @@
 get_header();
 
 $is_category_archive = is_tax('fpc_category');
-$queried_object = $is_category_archive ? get_queried_object() : null;
-$archive_title = $is_category_archive ? single_term_title('', false) : __('Our Ingredients, Your Sourcing Simplified.', 'farbest-catalog');
-$archive_description = $is_category_archive
-    ? wp_strip_all_tags(get_the_archive_description())
-    : __('Whether you are looking for proteins, texturants, sweeteners, vitamins, natural colors, or something else, our selection of ingredients can solve your formulation needs.', 'farbest-catalog');
-$cta_url = home_url('/contact/');
-$initial_category = ($is_category_archive && $queried_object && !is_wp_error($queried_object)) ? $queried_object->slug : '';
-$hero_image = null;
-if ($is_category_archive && $queried_object && function_exists('get_field')) {
-    $hero_image = get_field('category_hero_image', 'fpc_category_' . $queried_object->term_id);
+$queried_object      = $is_category_archive ? get_queried_object() : null;
+$cta_url             = home_url('/contact/');
+$initial_category    = ($is_category_archive && $queried_object && !is_wp_error($queried_object)) ? $queried_object->slug : '';
+
+// Hero content — category archives use ACF overrides with fallbacks.
+$hero_image    = null;
+$hero_bg_style = '';
+if ($is_category_archive && $queried_object && !is_wp_error($queried_object) && function_exists('get_field')) {
+    $term_key   = 'fpc_category_' . $queried_object->term_id;
+    $hero_image = get_field('category_hero_image', $term_key);
+
+    $hero_title_override    = get_field('category_hero_title', $term_key);
+    $hero_subtitle_override = get_field('category_hero_subtitle', $term_key);
+}
+
+$archive_title = '';
+if ($is_category_archive) {
+    $archive_title = (!empty($hero_title_override))
+        ? sanitize_text_field($hero_title_override)
+        : single_term_title('', false);
+} else {
+    $archive_title = __('Our Ingredients, Your Sourcing Simplified.', 'farbest-catalog');
+}
+
+$archive_description = '';
+if ($is_category_archive) {
+    $archive_description = (!empty($hero_subtitle_override))
+        ? wp_strip_all_tags($hero_subtitle_override)
+        : wp_strip_all_tags(get_the_archive_description());
+} else {
+    $archive_description = __('Whether you are looking for proteins, texturants, sweeteners, vitamins, natural colors, or something else, our selection of ingredients can solve your formulation needs.', 'farbest-catalog');
+}
+
+if ($hero_image && !empty($hero_image['url'])) {
+    $hero_bg_style = ' style="background-image: url(\'' . esc_url($hero_image['url']) . '\')"';
 }
 ?>
 
 <div class="fpc-archive-page">
-    <?php if ($hero_image && !empty($hero_image['url'])) : ?>
-        <div class="fpc-category-hero">
-            <img
-                src="<?php echo esc_url($hero_image['url']); ?>"
-                alt="<?php echo esc_attr(!empty($hero_image['alt']) ? $hero_image['alt'] : $archive_title); ?>"
-                class="fpc-category-hero__img"
-            />
-        </div>
+    <?php if ($hero_image) : ?>
+        <div class="fpc-category-hero-img"<?php echo $hero_bg_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from esc_url above ?>></div>
     <?php endif; ?>
 
     <section class="fbd-hero">

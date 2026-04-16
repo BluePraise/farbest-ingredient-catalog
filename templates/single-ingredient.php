@@ -149,22 +149,27 @@ while (have_posts()) :
                 </div>
             <?php endif; ?>
 
-            <?php if (!empty($cert_terms)) : ?>
-                <div class="ingredient-certifications">
-                    <?php foreach ($cert_terms as $cert_term) :
-                        $logo = get_field('certification_logo', 'fpc_certification_' . $cert_term->term_id);
-                    ?>
-                        <div class="ingredient-certifications__item">
-                            <?php if (!empty($logo['url'])) : ?>
-                                <img
-                                    src="<?php echo esc_url($logo['url']); ?>"
-                                    alt="<?php echo esc_attr(!empty($logo['alt']) ? $logo['alt'] : $cert_term->name); ?>"
-                                    class="ingredient-certifications__logo"
-                                >
-                            <?php else : ?>
-                                <span class="ingredient-certifications__name"><?php echo esc_html($cert_term->name); ?></span>
-                            <?php endif; ?>
-                        </div>
+            <?php
+            // Certification logos flagged to show on the detail page
+            $detail_logos = array();
+            foreach ($cert_terms as $ct) {
+                if (function_exists('get_field') && get_field('show_on_detail', 'fpc_certification_' . $ct->term_id)) {
+                    $dl = get_field('certification_logo', 'fpc_certification_' . $ct->term_id);
+                    if (!empty($dl['url'])) {
+                        $detail_logos[] = array('logo' => $dl, 'name' => $ct->name);
+                    }
+                }
+            }
+            ?>
+            <?php if (!empty($detail_logos)) : ?>
+                <div class="ingredient-cert-logos">
+                    <?php foreach ($detail_logos as $dl) : ?>
+                        <img
+                            src="<?php echo esc_url($dl['logo']['url']); ?>"
+                            alt="<?php echo esc_attr(!empty($dl['logo']['alt']) ? $dl['logo']['alt'] : $dl['name']); ?>"
+                            class="ingredient-cert-logo"
+                            loading="lazy"
+                        >
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>

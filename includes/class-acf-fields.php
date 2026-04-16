@@ -284,6 +284,28 @@ class FPC_ACF_Fields {
                     'preview_size'  => 'thumbnail',
                     'library'       => 'all',
                 ),
+                array(
+                    'key'           => 'field_cert_show_on_card',
+                    'label'         => 'Show on Category Card',
+                    'name'          => 'show_on_card',
+                    'type'          => 'true_false',
+                    'instructions'  => 'Display this logo on the ingredient card in the browse grid',
+                    'required'      => 0,
+                    'message'       => 'Show logo on ingredient card',
+                    'default_value' => 0,
+                    'ui'            => 1,
+                ),
+                array(
+                    'key'           => 'field_cert_show_on_detail',
+                    'label'         => 'Show on Detail Page',
+                    'name'          => 'show_on_detail',
+                    'type'          => 'true_false',
+                    'instructions'  => 'Display this logo on the single ingredient detail page',
+                    'required'      => 0,
+                    'message'       => 'Show logo on ingredient detail page',
+                    'default_value' => 0,
+                    'ui'            => 1,
+                ),
             ),
             'location' => array(
                 array(
@@ -352,7 +374,7 @@ class FPC_ACF_Fields {
     }
 
     /**
-     * Category Hero Image field (on fpc_category taxonomy terms)
+     * Category Hero fields (on fpc_category taxonomy terms)
      */
     private static function register_category_hero() {
         acf_add_local_field_group(array(
@@ -361,15 +383,35 @@ class FPC_ACF_Fields {
             'fields' => array(
                 array(
                     'key'           => 'field_category_hero_image',
-                    'label'         => 'Hero Image',
+                    'label'         => 'Hero Background Image',
                     'name'          => 'category_hero_image',
                     'type'          => 'image',
-                    'instructions'  => 'Upload a hero/banner image for this ingredient category (recommended: 1600×400px or wider)',
+                    'instructions'  => 'Upload a hero/banner image displayed as the background of the hero section (recommended: 1600×500px or wider).',
                     'required'      => 0,
                     'return_format' => 'array',
                     'preview_size'  => 'medium',
                     'library'       => 'all',
                     'mime_types'    => 'jpg,jpeg,png,webp',
+                ),
+                array(
+                    'key'          => 'field_category_hero_title',
+                    'label'        => 'Hero Title',
+                    'name'         => 'category_hero_title',
+                    'type'         => 'text',
+                    'instructions' => 'Override the title shown in the hero section. Leave blank to use the category name.',
+                    'required'     => 0,
+                    'maxlength'    => 120,
+                ),
+                array(
+                    'key'          => 'field_category_hero_subtitle',
+                    'label'        => 'Hero Description',
+                    'name'         => 'category_hero_subtitle',
+                    'type'         => 'textarea',
+                    'instructions' => 'Paragraph shown beneath the hero title on the category archive page.',
+                    'required'     => 0,
+                    'rows'         => 3,
+                    'maxlength'    => 500,
+                    'new_lines'    => '',
                 ),
             ),
             'location' => array(

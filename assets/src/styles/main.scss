@@ -23,9 +23,30 @@ $grid-gap:         24px;
     padding-bottom: 60px;
 }
 
+// ── Category hero background image with bottom gradient fade ────────────────
+.fpc-category-hero-img {
+    position: relative;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    min-height: 420px;
+
+    // Gradient fade: image fades into the page background at the bottom
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(to bottom, transparent 0%, $bg-light 100%);
+        pointer-events: none;
+    }
+}
+
 .fbd-hero {
     background-color: $bg-light;
-    padding: 60px 20px 50px;
+    padding: 40px 20px 50px;
 }
 
 .fbd-hero-inner {
@@ -95,16 +116,13 @@ $grid-gap:         24px;
 // ─── Filters bar ─────────────────────────────────────────────────────────────
 
 .fpc-filters-bar {
-    width: 100%;
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
 // ─── Search ──────────────────────────────────────────────────────────────────
 
 .fpc-search {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
+    width: 320px;
 
     .fpc-search-wrapper {
         position: relative;
@@ -116,7 +134,7 @@ $grid-gap:         24px;
         width: 100%;
         padding: 8px 70px 8px 12px;
         border: 1px solid $border-color;
-border-radius: 5px;
+        border-radius: 5px;
         font-size: 14px;
         transition: $transition;
 
@@ -308,9 +326,9 @@ border-radius: 5px;
     color: $secondary-color;
 }
 
-// ─── Active Filter Pills ──────────────────────────────────────────────────────
+// ─── Active Filter Selections ─────────────────────────────────────────────────
 
-.fpc-active-pills {
+.fpc-active-selections {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -318,7 +336,7 @@ border-radius: 5px;
     margin-bottom: 16px;
 }
 
-.fpc-active-pills-label {
+.fpc-active-selections-label {
     font-size: 0.75rem;
     font-weight: 700;
     color: $moss-green;
@@ -327,68 +345,27 @@ border-radius: 5px;
     white-space: nowrap;
 }
 
-.fpc-pill {
+.fpc-selection {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     padding: 4px 10px 4px 10px;
-    border-radius: 20px;
     box-shadow: none;
-    border: 1px solid transparent;
+    border: none;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    transition: background 0.15s, color 0.15s;
     white-space: nowrap;
     line-height: 1.4;
-
-    &--categories {
-        background: rgba($primary-color, 0.1);
-        border-color: rgba($primary-color, 0.3);
-        color: $primary-color;
-
-        &:hover {
-            background: rgba($primary-color, 0.18);
-            border-color: $primary-color;
-        }
-    }
-
-    &--applications {
-        background: rgba($dark-teal, 0.08);
-        border-color: rgba($dark-teal, 0.25);
-        color: $dark-teal;
-
-        &:hover {
-            background: rgba($dark-teal, 0.15);
-            border-color: $dark-teal;
-        }
-    }
-
-    &--certifications {
-        background: #d4edda;
-        border-color: #a3d5b0;
-        color: #155724;
-
-        &:hover {
-            background: #b8dfc4;
-            border-color: #155724;
-        }
-    }
-
-    &--claims {
-        background: #d1ecf1;
-        border-color: #9fd6e0;
-        color: #0c5460;
-
-        &:hover {
-            background: #b0d9e4;
-            border-color: #0c5460;
-        }
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+    &:hover {
+        box-shadow: none;
     }
 
     &--clear-all {
         background: none;
-        border-color: $border-color;
         color: $secondary-color;
         font-weight: 600;
 
@@ -399,7 +376,7 @@ border-radius: 5px;
     }
 }
 
-.fpc-pill-type {
+.fpc-selection-type {
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
@@ -411,18 +388,18 @@ border-radius: 5px;
     }
 }
 
-.fpc-pill-name {
+.fpc-selection-name {
     font-weight: 600;
 }
 
-.fpc-pill-remove {
+.fpc-selection-remove {
     font-size: 16px;
     line-height: 1;
     margin-left: 2px;
     opacity: 0.6;
     font-weight: 400;
 
-    .fpc-pill:hover & {
+    .fpc-selection:hover & {
         opacity: 1;
     }
 }
@@ -717,6 +694,39 @@ border-radius: 5px;
     color: #666;
     font-size: 13px;
     line-height: 1.6;
+}
+
+// ─── Certification logo rows ──────────────────────────────────────────────────
+
+// Used in ingredient cards (React grid) and PHP related-product cards
+.fpc-cert-logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.fpc-cert-logo {
+    width: auto;
+    max-width: 72px;
+    object-fit: contain;
+}
+
+// Used on the single ingredient detail page (below benefits columns)
+.ingredient-cert-logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.ingredient-cert-logo {
+    height: 48px;
+    width: auto;
+    max-width: 96px;
+    object-fit: contain;
 }
 
 // Matches .btn in farbest.css — moss green, uppercase, no fill
