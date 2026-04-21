@@ -11,6 +11,23 @@ import ProductSearch from './ProductSearch';
 const EMPTY_SELECTED = { categories: [], claims: [], certifications: [], applications: [] };
 
 /**
+ * Show a full-page loader overlay before navigating away.
+ * Appends a <div> directly to <body> so it sits above all page content.
+ * The overlay cleans itself up automatically if the browser's back/forward
+ * cache restores the page (pageshow event).
+ */
+function showPageLoader() {
+    const overlay = document.createElement('div');
+    overlay.id = 'fpc-page-loader';
+    document.body.appendChild(overlay);
+
+    // Remove on bfcache restore so the overlay doesn't persist if user hits Back
+    window.addEventListener('pageshow', (e) => {
+        if (e.persisted) overlay.remove();
+    }, { once: true });
+}
+
+/**
  * Derive available filter slugs from a list of ingredients + the full filter options map.
  * Returns null if filterOptions isn't loaded yet.
  */
@@ -179,6 +196,14 @@ const IngredientGrid = ({ initialCategory = '' }) => {
     };
 
     const handleReset = () => {
+        // If we're on a taxonomy archive URL (e.g. /ingredient-category/gum-acacia/),
+        // the PHP-rendered hero title won't update when we clear the filter — navigate
+        // back to the base archive so the page title stays in sync.
+        if (initialCategory && window.fpcData && window.fpcData.archiveUrl) {
+            showPageLoader();
+            window.location.href = window.fpcData.archiveUrl;
+            return;
+        }
         setFilters({
             selected: { ...EMPTY_SELECTED },
             search: '',

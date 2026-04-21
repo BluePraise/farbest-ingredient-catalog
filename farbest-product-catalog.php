@@ -229,6 +229,7 @@ class Farbest_Product_Catalog {
                     'currentProduct' => is_singular('fpc_ingredient') ? get_the_ID() : null,
                     'ajaxUrl' => admin_url('admin-ajax.php'),
                     'pluginUrl' => FPC_PLUGIN_URL,
+                    'archiveUrl' => get_post_type_archive_link('fpc_ingredient'),
                 )
             );
         }
