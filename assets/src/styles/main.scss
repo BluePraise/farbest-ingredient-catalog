@@ -21,6 +21,7 @@ $grid-gap:         24px;
 .fpc-archive-page {
     background: $bg-light;
     padding-bottom: 60px;
+    margin-bottom: -60px;
 }
 
 // ── Category hero background image with bottom gradient fade ────────────────
@@ -106,6 +107,9 @@ $grid-gap:         24px;
         background: color.adjust($cta-color, $lightness: -10%);
         color: #fff;
         box-shadow: none;
+    }
+    &:visited {
+        color: #1f2f36;
     }
 }
 
@@ -723,7 +727,6 @@ $grid-gap:         24px;
 }
 
 .ingredient-cert-logo {
-    height: 48px;
     width: auto;
     max-width: 96px;
     object-fit: contain;

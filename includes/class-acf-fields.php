@@ -413,6 +413,17 @@ class FPC_ACF_Fields {
                     'maxlength'    => 500,
                     'new_lines'    => '',
                 ),
+                array(
+                    'key'           => 'field_category_icon_svg',
+                    'label'         => 'Category Icon (SVG)',
+                    'name'          => 'category_icon_svg',
+                    'type'          => 'file',
+                    'instructions'  => 'Upload an SVG icon representing this category. Displayed on the single ingredient page alongside the product benefits.',
+                    'required'      => 0,
+                    'return_format' => 'array',
+                    'library'       => 'all',
+                    'mime_types'    => 'svg',
+                ),
             ),
             'location' => array(
                 array(

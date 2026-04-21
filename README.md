@@ -5,7 +5,7 @@ Custom WordPress plugin replacing WooCommerce with a streamlined product catalog
 ## Overview
 
 - **Client**: Farbest (via BeckerGuerry)
-- **Version**: 1.1.0
+- **Version**: 1.3.1
 - **WordPress**: 6.0+
 - **PHP**: 7.4+
 - **Dependencies**: Advanced Custom Fields Pro

@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.3.1
+ * Version: 1.4.0
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.3.0');
+define('FPC_VERSION', '1.4.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -93,6 +93,24 @@ class Farbest_Product_Catalog {
 
         // REST API
         add_action('rest_api_init', array($this, 'register_rest_routes'));
+
+        // Allow SVG uploads for administrators
+        add_filter('upload_mimes', array($this, 'allow_svg_uploads'));
+    }
+
+    /**
+     * Allow SVG file uploads for trusted admin users.
+     * SVGs are restricted by default in WordPress due to potential XSS risk.
+     * Only administrators should be uploading category icon SVGs.
+     *
+     * @param array $mimes Allowed mime types.
+     * @return array
+     */
+    public function allow_svg_uploads( $mimes ) {
+        if ( current_user_can( 'manage_options' ) ) {
+            $mimes['svg'] = 'image/svg+xml';
+        }
+        return $mimes;
     }
 
     /**
