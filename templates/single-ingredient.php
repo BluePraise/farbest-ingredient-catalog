@@ -10,7 +10,9 @@
  * eventually inherit.
  */
 
-get_header();
+if ( empty( $GLOBALS['farbest_embedded_template'] ) ) {
+	get_header();
+}
 
 while (have_posts()) :
     the_post();
@@ -162,12 +164,12 @@ while (have_posts()) :
             }
             ?>
             <?php if (!empty($detail_logos)) : ?>
-                <div class="ingredient-cert-logos">
+                <div class="ingredient-certifications__list">
                     <?php foreach ($detail_logos as $dl) : ?>
                         <img
                             src="<?php echo esc_url($dl['logo']['url']); ?>"
                             alt="<?php echo esc_attr(!empty($dl['logo']['alt']) ? $dl['logo']['alt'] : $dl['name']); ?>"
-                            class="ingredient-cert-logo"
+                            class="ingredient-certifications__logo"
                             loading="lazy"
                         >
                     <?php endforeach; ?>
@@ -414,4 +416,6 @@ while (have_posts()) :
     <?php
 endwhile;
 
-get_footer();
+if ( empty( $GLOBALS['farbest_embedded_template'] ) ) {
+	get_footer();
+}

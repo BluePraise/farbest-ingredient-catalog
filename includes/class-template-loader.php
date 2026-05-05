@@ -14,40 +14,49 @@ class FPC_Template_Loader {
      */
     public static function load_template($template) {
         if (is_singular('fpc_ingredient')) {
-            return self::get_template('single-ingredient.php', $template);
+            return self::get_template('single-fpc_ingredient', 'single-ingredient.php', $template);
         }
 
-        if (is_post_type_archive('fpc_ingredient')) {
-            return self::get_template('archive-ingredient.php', $template);
-        }
-
-        if (is_tax('fpc_category')) {
-            return self::get_template('archive-ingredient.php', $template);
+        if (is_post_type_archive('fpc_ingredient') || is_tax('fpc_category')) {
+            return self::get_template('archive-fpc_ingredient', 'archive-ingredient.php', $template);
         }
 
         return $template;
     }
 
     /**
-     * Get template file — checks theme first, then plugin directory.
+     * Get template file — checks block theme HTML templates first, then
+     * classic theme PHP overrides, then plugin PHP templates.
+     *
+     * @param string $block_slug  Block theme template slug (no extension).
+     * @param string $php_name    PHP template filename for classic/plugin fallback.
+     * @param string $default     WordPress default template path.
      */
-    private static function get_template($template_name, $default_template) {
+    private static function get_template($block_slug, $php_name, $default) {
+        // Block theme: WP handles .html templates natively — bail out so WP uses it.
+        $block_template = get_template_directory() . '/templates/' . $block_slug . '.html';
+        if (function_exists('wp_is_block_theme') && wp_is_block_theme() && file_exists($block_template)) {
+            return $default;
+        }
+
+        // Classic theme override in farbest-catalog/ or root.
         $theme_template = locate_template(array(
-            'farbest-catalog/' . $template_name,
-            $template_name,
+            'farbest-catalog/' . $php_name,
+            $php_name,
         ));
 
         if ($theme_template) {
             return $theme_template;
         }
 
-        $plugin_template = FPC_PLUGIN_DIR . 'templates/' . $template_name;
+        // Plugin fallback.
+        $plugin_template = FPC_PLUGIN_DIR . 'templates/' . $php_name;
 
         if (file_exists($plugin_template)) {
             return $plugin_template;
         }
 
-        return $default_template;
+        return $default;
     }
 
     /**

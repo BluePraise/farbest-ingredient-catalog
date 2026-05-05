@@ -1,18 +1,26 @@
 /**
  * Farbest Ingredient Catalog Styles
+ *
+ * SCSS variables below mirror tokens.css (--farbest-* / --color-*).
+ * Hex values must stay in sync with tokens.css in the theme.
+ * SCSS variables are used here because sass:color functions require
+ * static values — CSS custom properties cannot be used in color math.
  */
 @use 'sass:color';
 
-// Variables — aligned with farbest.css / brand palette
-$primary-color:    #4D7B29;   // Heading green (matches h1-h6 in farbest.css)
-$moss-green:       #5C643A;   // Moss green (--fb-color-moss-green, .btn, .fb-label)
-$dark-teal:        #003e52;   // Logo teal (PMS 3035)
-$cta-color:        #b5b800;   // Lime green CTA (PMS 390C)
-$secondary-color:  #6c757d;   // Matches --fb-color-secondary
-$border-color:     #383836;   // Matches --fb-border warm grey
+// Variables — must match tokens.css exactly
+$primary-color:    #4D7B29;   // --farbest-heading-green
+$moss-green:       #5C643A;   // --farbest-moss-green
+$dark-teal:        #003e52;   // --farbest-teal
+$cta-color:        #b5b800;   // --farbest-lime  (--color-cta)
+$cta-color-dark:   #9da000;   // --farbest-lime-dark  (--color-cta-hover)
+$cta-text:         #1f2f36;   // --farbest-footer-bg  (--color-cta-text)
+$secondary-color:  #6c757d;   // --fb-color-secondary
+$border-color:     #383838;   // --farbest-warm-grey  (fixed: was #383836)
 $success-color:    #4caf50;
-$error-color:      #dc3545;   // Matches --fb-color-danger
-$bg-light:         #F5F3EF;   // Light beige (brand)
+$error-color:      #dc3545;   // --fb-color-danger
+$bg-light:         #f2efe9;   // --farbest-beige  (--color-bg) (fixed: was #F5F3EF)
+$bg-dark:          #ddd7cb;   // --farbest-beige-dark  (--color-bg-dark)
 $transition:       all 0.2s ease;
 $grid-gap:         24px;
 
@@ -45,52 +53,12 @@ $grid-gap:         24px;
     }
 }
 
-.fbd-hero {
-    background-color: $bg-light;
-    padding: 40px 20px 50px;
-}
-
-.fbd-hero-inner {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 32px;
-
-    @media (max-width: 960px) {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-
-.fbd-hero-text {
-    max-width: 900px;
-}
-
-.fbd-hero-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: $primary-color;
-    margin: 0 0 10px;
-    text-wrap: balance;
-}
-
-.fbd-hero-subtitle {
-    font-size: clamp(1.0625rem, 2vw, 1.5rem);
-    font-weight: 300;
-    line-height: 1.45;
-    margin: 0;
-    color: $border-color;
-    max-width: 62rem;
-}
-
-.fbd-hero-cta {
-    flex-shrink: 0;
-}
 
 .fbd-cta-button {
     box-shadow: none;
     display: inline-block;
     background: $cta-color;
-    color: #1f2f36;
+    color: $cta-text;
     text-decoration: none;
     font-size: 0.875rem;
     font-weight: 700;
@@ -104,12 +72,12 @@ $grid-gap:         24px;
 
     &:hover,
     &:focus {
-        background: color.adjust($cta-color, $lightness: -10%);
+        background: $cta-color-dark;
         color: #fff;
         box-shadow: none;
     }
     &:visited {
-        color: #1f2f36;
+        color: $cta-text;
     }
 }
 
@@ -184,7 +152,7 @@ $grid-gap:         24px;
         &:hover { background: color.adjust($cta-color, $lightness: -10%); }
         svg {
             display: block;
-            color: #1f2f36;
+            color: $cta-text;
         }
     }
 }
@@ -540,7 +508,7 @@ $grid-gap:         24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #628B1B;
+    background-color: $primary-color;
     border-radius: 50%;
     opacity: 0.8;
     filter: drop-shadow(0 4px 8px rgba(38, 38, 38, 0.15));
@@ -575,7 +543,7 @@ $grid-gap:         24px;
 .fpc-category-card-title {
     font-size: 24px;
     text-transform: unset;
-    color: #383836;
+    color: $border-color;
 }
 
 .fpc-category-card-tagline {
@@ -656,7 +624,7 @@ $grid-gap:         24px;
     flex-direction: column;
 }
 
-// Heading colour matches h1-h6: #4D7B29 in farbest.css
+// Heading colour matches h1-h6: $primary-color in farbest.css
 .fpc-ingredient-title {
     margin: 0 0 8px;
     font-size: 16px;
@@ -664,7 +632,7 @@ $grid-gap:         24px;
     line-height: 1.4;
 
     a {
-        color: #5c643a;
+        color: $moss-green;
         text-decoration: none;
         &:hover { color: $primary-color; }
     }
@@ -718,7 +686,7 @@ $grid-gap:         24px;
 }
 
 // Used on the single ingredient detail page (below benefits columns)
-.ingredient-cert-logos {
+.ingredient-certifications__list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -726,7 +694,7 @@ $grid-gap:         24px;
     margin: 20px 0;
 }
 
-.ingredient-cert-logo {
+.ingredient-certifications__logo {
     width: auto;
     max-width: 96px;
     object-fit: contain;
@@ -868,7 +836,7 @@ $grid-gap:         24px;
 }
 
 .ingredient-certifications__logo,
-.fpc-ingredient-cert-logo {
+.fpc-cert-logo {
     height: 40px;
     width: auto;
     object-fit: contain;
@@ -884,7 +852,7 @@ $grid-gap:         24px;
 .ingredient-tabs__nav {
     display: flex;
     gap: 0;
-    border-bottom: 2px solid #ddd7cb;
+    border-bottom: 2px solid $bg-dark;
     margin-bottom: 0;
 }
 
@@ -915,7 +883,7 @@ $grid-gap:         24px;
 }
 
 .ingredient-tabs__panel {
-    border: 1px solid #b5b800;
+    border: 1px solid $cta-color;
     border-top: none;
     border-radius: 0 0 5px 5px;
     padding: 32px;
@@ -954,7 +922,7 @@ $grid-gap:         24px;
     th {
         width: 200px;
         font-weight: 700;
-        color: #5c643a;
+        color: $moss-green;
         white-space: nowrap;
 
         @media (max-width: 640px) {

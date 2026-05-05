@@ -187,8 +187,13 @@ class Farbest_Product_Catalog {
      * Enqueue frontend assets
      */
     public function enqueue_frontend_assets() {
-        // Only load on relevant pages
-        if (!is_singular('fpc_ingredient') && !is_post_type_archive('fpc_ingredient') && !is_tax('fpc_category')) {
+        $on_ingredient_page = is_singular('fpc_ingredient')
+            || is_post_type_archive('fpc_ingredient')
+            || is_tax('fpc_category');
+
+        $has_catalog_block = has_block('farbest/ingredient-catalog');
+
+        if (!$on_ingredient_page && !$has_catalog_block) {
             return;
         }
 
@@ -287,7 +292,9 @@ class Farbest_Product_Catalog {
         register_rest_route('farbest/v1', '/submit-contact', array(
             'methods' => 'POST',
             'callback' => array('FPC_Contact_Form', 'handle_submission'),
-            'permission_callback' => '__return_true',
+            'permission_callback' => function($request) {
+                return wp_verify_nonce($request->get_header('X-WP-Nonce'), 'wp_rest');
+            },
         ));
 
         register_rest_route('farbest/v1', '/filter-options', array(
@@ -544,13 +551,16 @@ class Farbest_Product_Catalog {
             return new WP_Error('not_found', 'Ingredient not found', array('status' => 404));
         }
 
+        $acf_fields = function_exists('get_fields') ? get_fields($ingredient->ID) : array();
+        unset($acf_fields['rep_code_primary'], $acf_fields['rep_code_secondary']);
+
         return new WP_REST_Response(array(
             'id'         => $ingredient->ID,
             'title'      => wp_strip_all_tags( html_entity_decode( $ingredient->post_title, ENT_QUOTES, 'UTF-8' ) ),
             'content'    => apply_filters('the_content', $ingredient->post_content),
             'permalink'  => get_permalink($ingredient->ID),
             'thumbnail'  => get_the_post_thumbnail_url($ingredient->ID, 'large'),
-            'acf_fields' => function_exists('get_fields') ? get_fields($ingredient->ID) : array(),
+            'acf_fields' => $acf_fields,
         ), 200);
     }
 
