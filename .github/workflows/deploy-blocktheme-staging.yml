@@ -15,7 +15,7 @@ jobs:
 
       - name: Deploy via rsync
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.STAGING_SSH_KEY }}
           REMOTE_HOST: ssh.navesinkwebsolutions.com
           REMOTE_PORT: 18765
           REMOTE_USER: u2827-g9lpwz7hodtd
