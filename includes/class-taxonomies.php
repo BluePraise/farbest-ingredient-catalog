@@ -19,17 +19,6 @@ class FPC_Taxonomies {
         self::register_applications();
         self::register_fiber_benefits();
         self::register_category_meta();
-        add_action('add_meta_boxes', array(__CLASS__, 'remove_native_metaboxes'));
-    }
-
-    /**
-     * Remove native WordPress taxonomy metaboxes replaced by ACF fields
-     */
-    public static function remove_native_metaboxes() {
-        remove_meta_box('tagsdiv-fpc_application',   'fpc_ingredient', 'side');
-        remove_meta_box('tagsdiv-fpc_claim',         'fpc_ingredient', 'side');
-        remove_meta_box('tagsdiv-fpc_certification', 'fpc_ingredient', 'side');
-        remove_meta_box('tagsdiv-fpc_fiber_benefit', 'fpc_ingredient', 'side');
     }
 
     const TAGLINE_MAX_LINES = 5;
@@ -267,7 +256,7 @@ class FPC_Taxonomies {
             'show_admin_column' => true,
             'show_in_nav_menus' => false,
             'show_tagcloud'     => false,
-            'show_in_rest'      => true,
+            'show_in_rest'      => false, // ACF field group is the sole UI; hide Gutenberg sidebar panel
             'meta_box_cb'       => false,
             'rewrite'           => array(
                 'slug'       => 'application',
@@ -308,7 +297,7 @@ class FPC_Taxonomies {
             'show_admin_column' => true,
             'show_in_nav_menus' => false,
             'show_tagcloud'     => false,
-            'show_in_rest'      => true,
+            'show_in_rest'      => false, // ACF field group is the sole UI; hide Gutenberg sidebar panel
             'meta_box_cb'       => false,
             'rewrite'           => array(
                 'slug'       => 'fiber-benefit',

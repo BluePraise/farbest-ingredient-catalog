@@ -1,0 +1,80 @@
+/**
+ * Farbest Ingredient Archive — Page Styles
+ *
+ * Covers the ingredient archive (/ingredients/) and fpc_category taxonomy
+ * archives. Enqueued by the plugin on is_post_type_archive / is_tax.
+ *
+ * These styles were previously in the classic theme's farbest.css.
+ * Moving them here makes the archive template theme-agnostic.
+ *
+ * Depends on tokens.css being loaded first (provides --color-* variables).
+ */
+
+/* ── Responsive container ─────────────────────────────────────────────────── */
+
+.container {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+@media (min-width: 576px)  { .container { max-width: 540px;  } }
+@media (min-width: 768px)  { .container { max-width: 720px;  } }
+@media (min-width: 992px)  { .container { max-width: 960px;  } }
+@media (min-width: 1200px) { .container { max-width: 1200px; } }
+@media (min-width: 1400px) { .container { max-width: 1200px; } }
+
+/* ── Hero section ─────────────────────────────────────────────────────────── */
+
+.fbd-hero {
+    background-color: var(--color-bg);
+    padding: 60px 20px 50px;
+}
+
+.fbd-hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.fbd-hero-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.fbd-hero-cta {
+    flex: 0 0 auto;
+}
+
+.fbd-hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.fbd-hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .fbd-hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* ── Catalog wrapper ──────────────────────────────────────────────────────── */
+
+.fbd-catalog-wrap {
+    min-height: 80vh;
+    position: relative;
+    z-index: 1;
+}
