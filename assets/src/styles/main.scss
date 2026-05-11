@@ -54,33 +54,6 @@ $grid-gap:         24px;
 }
 
 
-.fbd-cta-button {
-    box-shadow: none;
-    display: inline-block;
-    background: $cta-color;
-    color: $cta-text;
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 14px 28px;
-    border-radius: 2px;
-    border: 0;
-    white-space: nowrap;
-    transition: background 0.2s ease, color 0.2s ease;
-    text-transform: uppercase;
-
-    &:hover,
-    &:focus {
-        background: $cta-color-dark;
-        color: #fff;
-        box-shadow: none;
-    }
-    &:visited {
-        color: $cta-text;
-    }
-}
-
 .fbd-catalog-wrap .fpc-ingredient-grid-wrapper {
     background: transparent;
 }
@@ -853,7 +826,7 @@ $grid-gap:         24px;
     display: flex;
     gap: 0;
     border-bottom: 2px solid $bg-dark;
-    margin-bottom: 0;
+    margin-bottom: 20px;
 }
 
 .ingredient-tabs__tab {

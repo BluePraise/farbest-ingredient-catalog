@@ -35,19 +35,20 @@
 
 .fbd-hero-inner {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 32px;
     flex-wrap: wrap;
 }
 
 .fbd-hero-text {
-    flex: 1 1 auto;
+    flex: 3; /* 3/(3+1) = 75% */
     min-width: 0;
 }
 
 .fbd-hero-cta {
-    flex: 0 0 auto;
+    flex: 1; /* 1/(3+1) = 25% */
+    text-align: right;
 }
 
 .fbd-hero-title {
