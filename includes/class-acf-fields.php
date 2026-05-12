@@ -13,7 +13,25 @@ class FPC_ACF_Fields {
      * Initialize ACF fields
      */
     public static function init() {
+        add_action('acf/init', array(__CLASS__, 'register_options_pages'));
         add_action('acf/init', array(__CLASS__, 'register_field_groups'));
+    }
+
+    /**
+     * Register ACF options sub-pages
+     */
+    public static function register_options_pages() {
+        if (!function_exists('acf_add_options_sub_page')) {
+            return;
+        }
+
+        acf_add_options_sub_page(array(
+            'page_title'  => 'Main Settings',
+            'menu_title'  => 'Main Settings',
+            'menu_slug'   => 'fpc-main-settings',
+            'parent_slug' => 'edit.php?post_type=fpc_ingredient',
+            'capability'  => 'manage_options',
+        ));
     }
 
     /**
@@ -30,6 +48,7 @@ class FPC_ACF_Fields {
         self::register_ingredient_benefits();
         self::register_certification_logo();
         self::register_category_hero();
+        self::register_archive_main_settings();
     }
 
     /**
@@ -437,6 +456,85 @@ class FPC_ACF_Fields {
             'menu_order' => 0,
             'position'   => 'normal',
             'style'      => 'default',
+        ));
+    }
+
+    /**
+     * Main Settings options page — tabbed: Archive Hero + Email Settings
+     */
+    private static function register_archive_main_settings() {
+        acf_add_local_field_group(array(
+            'key'    => 'group_archive_main_settings',
+            'title'  => 'Main Settings',
+            'fields' => array(
+
+                // ── Tab: Archive Hero ─────────────────────────────────────────
+                array(
+                    'key'   => 'field_tab_archive_hero',
+                    'label' => 'Archive Hero',
+                    'name'  => '',
+                    'type'  => 'tab',
+                ),
+                array(
+                    'key'          => 'field_archive_hero_title',
+                    'label'        => 'Hero Title',
+                    'name'         => 'archive_hero_title',
+                    'type'         => 'text',
+                    'instructions' => 'Heading displayed in the hero on /ingredients/. Leave blank to use the default.',
+                    'placeholder'  => 'Our Ingredients, Your Sourcing Simplified.',
+                    'required'     => 0,
+                ),
+                array(
+                    'key'          => 'field_archive_hero_description',
+                    'label'        => 'Hero Description',
+                    'name'         => 'archive_hero_description',
+                    'type'         => 'textarea',
+                    'instructions' => 'Subtext displayed below the hero heading. Leave blank to use the default.',
+                    'placeholder'  => 'Whether you are looking for proteins, texturants, sweeteners...',
+                    'rows'         => 3,
+                    'required'     => 0,
+                ),
+
+                // ── Tab: Email Settings ───────────────────────────────────────
+                array(
+                    'key'   => 'field_tab_email_settings',
+                    'label' => 'Email Settings',
+                    'name'  => '',
+                    'type'  => 'tab',
+                ),
+                array(
+                    'key'          => 'field_email_default',
+                    'label'        => 'Default Email Address',
+                    'name'         => 'default_email',
+                    'type'         => 'email',
+                    'instructions' => 'Used when no representative code is assigned.',
+                    'required'     => 0,
+                ),
+                array(
+                    'key'          => 'field_email_cc',
+                    'label'        => 'CC Email Addresses',
+                    'name'         => 'cc_emails',
+                    'type'         => 'textarea',
+                    'instructions' => 'One email per line. These addresses will be CC\'d on all submissions.',
+                    'rows'         => 3,
+                    'required'     => 0,
+                ),
+                array(
+                    'key'          => 'field_email_rep_mapping',
+                    'label'        => 'Representative Email Mapping',
+                    'name'         => 'rep_email_mapping',
+                    'type'         => 'textarea',
+                    'instructions' => "Format: code|email@example.com (one per line)\nExample: 101|john@farbest.com",
+                    'rows'         => 10,
+                    'required'     => 0,
+                ),
+            ),
+            'location' => array(array(array(
+                'param'    => 'options_page',
+                'operator' => '==',
+                'value'    => 'fpc-main-settings',
+            ))),
+            'active' => true,
         ));
     }
 }

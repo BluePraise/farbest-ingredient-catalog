@@ -13,101 +13,7 @@ class FPC_Email_Routing {
      * Initialize email routing
      */
     public static function init() {
-        // Add settings page for representative email configuration
-        add_action('admin_menu', array(__CLASS__, 'add_settings_page'));
-        add_action('admin_init', array(__CLASS__, 'register_settings'));
-    }
-
-    /**
-     * Add settings page
-     */
-    public static function add_settings_page() {
-        add_submenu_page(
-            'edit.php?post_type=fpc_ingredient',
-            'Email Settings',
-            'Email Settings',
-            'manage_options',
-            'fpc-email-settings',
-            array(__CLASS__, 'render_settings_page')
-        );
-    }
-
-    /**
-     * Register settings
-     */
-    public static function register_settings() {
-        register_setting('fpc_email_settings', 'fpc_rep_emails');
-        register_setting('fpc_email_settings', 'fpc_default_email');
-        register_setting('fpc_email_settings', 'fpc_cc_emails');
-    }
-
-    /**
-     * Render settings page
-     */
-    public static function render_settings_page() {
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html__('Email Routing Settings', 'farbest-catalog'); ?></h1>
-
-            <form method="post" action="options.php">
-                <?php settings_fields('fpc_email_settings'); ?>
-                <?php do_settings_sections('fpc_email_settings'); ?>
-
-                <table class="form-table">
-                    <tr>
-                        <th scope="row">
-                            <label for="fpc_default_email"><?php echo esc_html__('Default Email Address', 'farbest-catalog'); ?></label>
-                        </th>
-                        <td>
-                            <input type="email"
-                                   id="fpc_default_email"
-                                   name="fpc_default_email"
-                                   value="<?php echo esc_attr(get_option('fpc_default_email', get_option('admin_email'))); ?>"
-                                   class="regular-text">
-                            <p class="description">
-                                <?php echo esc_html__('Used when no representative code is assigned', 'farbest-catalog'); ?>
-                            </p>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th scope="row">
-                            <label for="fpc_cc_emails"><?php echo esc_html__('CC Email Addresses', 'farbest-catalog'); ?></label>
-                        </th>
-                        <td>
-                            <textarea id="fpc_cc_emails"
-                                      name="fpc_cc_emails"
-                                      rows="3"
-                                      class="large-text"><?php echo esc_textarea(get_option('fpc_cc_emails', '')); ?></textarea>
-                            <p class="description">
-                                <?php echo esc_html__('One email per line. These addresses will be CC\'d on all submissions.', 'farbest-catalog'); ?>
-                            </p>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th scope="row">
-                            <label for="fpc_rep_emails"><?php echo esc_html__('Representative Email Mapping', 'farbest-catalog'); ?></label>
-                        </th>
-                        <td>
-                            <textarea id="fpc_rep_emails"
-                                      name="fpc_rep_emails"
-                                      rows="10"
-                                      class="large-text code"><?php echo esc_textarea(get_option('fpc_rep_emails', '')); ?></textarea>
-                            <p class="description">
-                                <?php echo esc_html__('Format: code|email@example.com (one per line)', 'farbest-catalog'); ?><br>
-                                <?php echo esc_html__('Example:', 'farbest-catalog'); ?><br>
-                                <code>101|john@farbest.com</code><br>
-                                <code>102|jane@farbest.com</code>
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-
-                <?php submit_button(); ?>
-            </form>
-        </div>
-        <?php
+        // Settings UI lives in Ingredients → Main Settings (ACF options page).
     }
 
     /**
@@ -118,7 +24,8 @@ class FPC_Email_Routing {
         $to_email = self::get_recipient_email($data);
 
         if (!$to_email) {
-            $to_email = get_option('fpc_default_email', get_option('admin_email'));
+            $acf_default = function_exists('get_field') ? (string) get_field('default_email', 'option') : '';
+            $to_email    = $acf_default ?: get_option('admin_email');
         }
 
         // Get CC emails
@@ -172,8 +79,8 @@ class FPC_Email_Routing {
             return null;
         }
 
-        // Get mapping from settings
-        $mapping = get_option('fpc_rep_emails', '');
+        // Get mapping from Main Settings (ACF options page)
+        $mapping = function_exists('get_field') ? (string) get_field('rep_email_mapping', 'option') : '';
         $lines = explode("\n", $mapping);
 
         foreach ($lines as $line) {
@@ -202,7 +109,7 @@ class FPC_Email_Routing {
      * Get CC email addresses
      */
     private static function get_cc_emails() {
-        $cc_emails_raw = get_option('fpc_cc_emails', '');
+        $cc_emails_raw = function_exists('get_field') ? (string) get_field('cc_emails', 'option') : '';
         $lines = explode("\n", $cc_emails_raw);
         $cc_emails = array();
 

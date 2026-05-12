@@ -40,13 +40,20 @@ if ( $is_category_archive && $queried_object && ! is_wp_error( $queried_object )
     $hero_subtitle_override = (string) get_field( 'category_hero_subtitle', $term_key );
 }
 
+$option_title       = function_exists( 'get_field' ) ? (string) get_field( 'archive_hero_title', 'option' ) : '';
+$option_description = function_exists( 'get_field' ) ? (string) get_field( 'archive_hero_description', 'option' ) : '';
+
 $archive_title = $is_category_archive
     ? ( ! empty( $hero_title_override ) ? sanitize_text_field( $hero_title_override ) : single_term_title( '', false ) )
-    : __( 'Our Ingredients, Your Sourcing Simplified.', 'farbest-catalog' );
+    : ( ! empty( $option_title )
+        ? sanitize_text_field( $option_title )
+        : __( 'Our Ingredients, Your Sourcing Simplified.', 'farbest-catalog' ) );
 
 $archive_description = $is_category_archive
     ? ( ! empty( $hero_subtitle_override ) ? wp_strip_all_tags( $hero_subtitle_override ) : wp_strip_all_tags( get_the_archive_description() ) )
-    : __( 'Whether you are looking for proteins, texturants, sweeteners, vitamins, natural colors, or something else, our selection of ingredients can solve your formulation needs.', 'farbest-catalog' );
+    : ( ! empty( $option_description )
+        ? wp_strip_all_tags( $option_description )
+        : __( 'Whether you are looking for proteins, texturants, sweeteners, vitamins, natural colors, or something else, our selection of ingredients can solve your formulation needs.', 'farbest-catalog' ) );
 
 ?>
 
