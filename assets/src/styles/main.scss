@@ -825,7 +825,6 @@ $grid-gap:         24px;
 .ingredient-tabs__nav {
     display: flex;
     gap: 0;
-    border-bottom: 2px solid $bg-dark;
     margin-bottom: 20px;
 }
 
@@ -835,7 +834,8 @@ $grid-gap:         24px;
     border: none;
     border-bottom: 3px solid transparent;
     margin-bottom: -2px;
-    padding: 12px 24px;
+    margin-right: 4em;
+    padding: 12px 0;
     font-size: 0.8125rem;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -857,8 +857,7 @@ $grid-gap:         24px;
 
 .ingredient-tabs__panel {
     border: 1px solid $cta-color;
-    border-top: none;
-    border-radius: 0 0 5px 5px;
+    border-radius: 4px;
     padding: 32px;
     background: #fff;
 
