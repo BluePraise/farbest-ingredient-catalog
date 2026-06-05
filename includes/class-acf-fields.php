@@ -45,6 +45,7 @@ class FPC_ACF_Fields {
         self::register_product_details();
         self::register_representative_codes();
         self::register_certification_logo();
+        self::register_vendor_fields();
         self::register_category_hero();
         self::register_archive_main_settings();
     }
@@ -94,6 +95,22 @@ class FPC_ACF_Fields {
                     'load_terms'   => 1,
                     'return_format' => 'id',
                     'multiple'     => 1,
+                ),
+                array(
+                    'key'           => 'field_product_vendors',
+                    'label'         => 'Vendors',
+                    'name'          => 'product_vendors',
+                    'type'          => 'taxonomy',
+                    'instructions'  => 'Select the vendors for this ingredient. Manage vendors under Ingredients → Vendors.',
+                    'required'      => 0,
+                    'taxonomy'      => 'fpc_vendor',
+                    'field_type'    => 'checkbox',
+                    'allow_null'    => 1,
+                    'add_term'      => 0,
+                    'save_terms'    => 1,
+                    'load_terms'    => 1,
+                    'return_format' => 'id',
+                    'multiple'      => 1,
                 ),
                 array(
                     'key' => 'field_product_packaging',
@@ -238,6 +255,50 @@ class FPC_ACF_Fields {
             'menu_order' => 2,
             'position' => 'side',
             'style' => 'default',
+        ));
+    }
+
+    /**
+     * Vendor fields (logo + caption text, on fpc_vendor taxonomy terms)
+     */
+    private static function register_vendor_fields() {
+        acf_add_local_field_group(array(
+            'key'   => 'group_vendor_fields',
+            'title' => 'Vendor Details',
+            'fields' => array(
+                array(
+                    'key'           => 'field_vendor_logo',
+                    'label'         => 'Vendor Logo',
+                    'name'          => 'vendor_logo',
+                    'type'          => 'image',
+                    'instructions'  => 'Upload the vendor logo (transparent PNG or SVG preferred)',
+                    'required'      => 0,
+                    'return_format' => 'array',
+                    'preview_size'  => 'thumbnail',
+                    'library'       => 'all',
+                ),
+                array(
+                    'key'          => 'field_vendor_text',
+                    'label'        => 'Caption',
+                    'name'         => 'vendor_text',
+                    'type'         => 'text',
+                    'instructions' => 'Short line of text displayed beside the logo (e.g. "Exclusive distributor")',
+                    'required'     => 0,
+                    'maxlength'    => 120,
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param'    => 'taxonomy',
+                        'operator' => '==',
+                        'value'    => 'fpc_vendor',
+                    ),
+                ),
+            ),
+            'menu_order' => 0,
+            'position'   => 'normal',
+            'style'      => 'default',
         ));
     }
 

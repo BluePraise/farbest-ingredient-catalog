@@ -17,6 +17,7 @@ class FPC_Taxonomies {
         self::register_claims();
         self::register_certifications();
         self::register_applications();
+        self::register_vendors();
         self::register_category_meta();
     }
 
@@ -264,6 +265,44 @@ class FPC_Taxonomies {
         );
 
         register_taxonomy('fpc_application', array('fpc_ingredient'), $args);
+    }
+
+    /**
+     * Register Vendors taxonomy (non-hierarchical)
+     */
+    private static function register_vendors() {
+        $labels = array(
+            'name'                       => _x('Vendors', 'Taxonomy General Name', 'farbest-catalog'),
+            'singular_name'              => _x('Vendor', 'Taxonomy Singular Name', 'farbest-catalog'),
+            'menu_name'                  => __('Vendors', 'farbest-catalog'),
+            'all_items'                  => __('All Vendors', 'farbest-catalog'),
+            'new_item_name'              => __('New Vendor Name', 'farbest-catalog'),
+            'add_new_item'               => __('Add New Vendor', 'farbest-catalog'),
+            'edit_item'                  => __('Edit Vendor', 'farbest-catalog'),
+            'update_item'                => __('Update Vendor', 'farbest-catalog'),
+            'view_item'                  => __('View Vendor', 'farbest-catalog'),
+            'separate_items_with_commas' => __('Separate vendors with commas', 'farbest-catalog'),
+            'add_or_remove_items'        => __('Add or remove vendors', 'farbest-catalog'),
+            'choose_from_most_used'      => __('Choose from the most used', 'farbest-catalog'),
+            'popular_items'              => __('Popular Vendors', 'farbest-catalog'),
+            'search_items'               => __('Search Vendors', 'farbest-catalog'),
+            'not_found'                  => __('Not Found', 'farbest-catalog'),
+        );
+
+        $args = array(
+            'labels'            => $labels,
+            'hierarchical'      => false,
+            'public'            => false,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'show_in_nav_menus' => false,
+            'show_tagcloud'     => false,
+            'show_in_rest'      => false,
+            'meta_box_cb'       => false,
+            'rewrite'           => false,
+        );
+
+        register_taxonomy('fpc_vendor', array('fpc_ingredient'), $args);
     }
 
 }

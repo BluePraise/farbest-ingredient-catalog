@@ -73,11 +73,27 @@ if ($ingredient_id) :
         $cert_terms = array();
     }
 
+    $vendor_terms = wp_get_post_terms($ingredient_id, 'fpc_vendor');
+    if (is_wp_error($vendor_terms) || ! is_array($vendor_terms)) {
+        $vendor_terms = array();
+    }
+
     // ── ACF fields ───────────────────────────────────────────────────────────
 
     $packaging           = get_field('product_packaging');
     $product_sheet       = get_field('product_sheet');
     $product_description = get_field('product_description');
+    // ── Vendor items: logo + caption text ───────────────────────────────────
+
+    $vendor_items = array();
+    foreach ($vendor_terms as $vt) {
+        $logo = function_exists('get_field') ? get_field('vendor_logo', 'fpc_vendor_' . $vt->term_id) : null;
+        $text = function_exists('get_field') ? get_field('vendor_text', 'fpc_vendor_' . $vt->term_id) : '';
+        if (! empty($logo['url']) || ! empty($text)) {
+            $vendor_items[] = array('logo' => $logo, 'text' => $text, 'name' => $vt->name);
+        }
+    }
+
     // ── Certification logos: detail page ─────────────────────────────────────
 
     $detail_logos = array();
@@ -299,6 +315,27 @@ if ($ingredient_id) :
                 </div>
 
             </div><!-- .ingredient-tabs -->
+
+            <!-- Vendors: logo + caption text -->
+
+            <?php if (! empty($vendor_items)) : ?>
+                <div class="ingredient-vendors">
+                    <?php foreach ($vendor_items as $vi) : ?>
+                        <div class="ingredient-vendors__item">
+                            <?php if (! empty($vi['logo']['url'])) : ?>
+                                <img
+                                    src="<?php echo esc_url($vi['logo']['url']); ?>"
+                                    alt="<?php echo esc_attr(! empty($vi['logo']['alt']) ? $vi['logo']['alt'] : $vi['name']); ?>"
+                                    class="ingredient-vendors__logo"
+                                    loading="lazy">
+                            <?php endif; ?>
+                            <?php if (! empty($vi['text'])) : ?>
+                                <span class="ingredient-vendors__text"><?php echo esc_html($vi['text']); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
             <!-- Related products: same category, excludes current, show_on_card cert logos -->
             <?php
