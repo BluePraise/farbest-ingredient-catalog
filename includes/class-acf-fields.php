@@ -43,9 +43,7 @@ class FPC_ACF_Fields {
         }
 
         self::register_product_details();
-        self::register_product_specifications();
         self::register_representative_codes();
-        self::register_ingredient_benefits();
         self::register_certification_logo();
         self::register_category_hero();
         self::register_archive_main_settings();
@@ -98,22 +96,6 @@ class FPC_ACF_Fields {
                     'multiple'     => 1,
                 ),
                 array(
-                    'key'           => 'field_product_fiber_benefits',
-                    'label'         => 'Fiber Benefits',
-                    'name'          => 'product_fiber_benefits',
-                    'type'          => 'taxonomy',
-                    'instructions'  => 'Select the fiber benefits this ingredient provides',
-                    'required'      => 0,
-                    'taxonomy'      => 'fpc_fiber_benefit',
-                    'field_type'    => 'checkbox',
-                    'allow_null'    => 1,
-                    'add_term'      => 1,
-                    'save_terms'    => 1,
-                    'load_terms'    => 1,
-                    'return_format' => 'id',
-                    'multiple'      => 1,
-                ),
-                array(
                     'key' => 'field_product_packaging',
                     'label' => 'Packaging',
                     'name' => 'product_packaging',
@@ -148,139 +130,6 @@ class FPC_ACF_Fields {
             'style' => 'default',
             'label_placement' => 'top',
             'instruction_placement' => 'label',
-        ));
-    }
-
-    /**
-     * Product Specifications field group
-     */
-    private static function register_product_specifications() {
-        acf_add_local_field_group(array(
-            'key' => 'group_product_specifications',
-            'title' => 'Product Specifications',
-            'fields' => array(
-                array(
-                    'key' => 'field_spec_protein_content',
-                    'label' => 'Protein Content',
-                    'name' => 'spec_protein_content',
-                    'type' => 'text',
-                    'instructions' => 'e.g., "80% min"',
-                ),
-                array(
-                    'key' => 'field_spec_moisture',
-                    'label' => 'Moisture',
-                    'name' => 'spec_moisture',
-                    'type' => 'text',
-                    'instructions' => 'e.g., "5% max"',
-                ),
-                array(
-                    'key' => 'field_spec_ph',
-                    'label' => 'pH',
-                    'name' => 'spec_ph',
-                    'type' => 'text',
-                    'instructions' => 'e.g., "6.5-7.5"',
-                ),
-                array(
-                    'key' => 'field_spec_solubility',
-                    'label' => 'Solubility',
-                    'name' => 'spec_solubility',
-                    'type' => 'text',
-                ),
-                array(
-                    'key' => 'field_spec_additional',
-                    'label' => 'Additional Specifications',
-                    'name' => 'spec_additional',
-                    'type' => 'repeater',
-                    'instructions' => 'Add custom specification fields',
-                    'button_label' => 'Add Specification',
-                    'sub_fields' => array(
-                        array(
-                            'key' => 'field_spec_name',
-                            'label' => 'Specification Name',
-                            'name' => 'spec_name',
-                            'type' => 'text',
-                            'required' => 1,
-                        ),
-                        array(
-                            'key' => 'field_spec_value',
-                            'label' => 'Value',
-                            'name' => 'spec_value',
-                            'type' => 'text',
-                            'required' => 1,
-                        ),
-                    ),
-                ),
-            ),
-            'location' => array(
-                array(
-                    array(
-                        'param' => 'post_type',
-                        'operator' => '==',
-                        'value' => 'fpc_ingredient',
-                    ),
-                ),
-            ),
-            'menu_order' => 1,
-            'position' => 'normal',
-            'style' => 'default',
-        ));
-    }
-
-    /**
-     * Ingredient Benefits field group (flexible repeater columns)
-     */
-    private static function register_ingredient_benefits() {
-        acf_add_local_field_group(array(
-            'key'   => 'group_ingredient_benefits',
-            'title' => 'Ingredient Benefits',
-            'fields' => array(
-                array(
-                    'key'          => 'field_benefits_columns',
-                    'label'        => 'Benefits Columns',
-                    'name'         => 'benefits_columns',
-                    'type'         => 'repeater',
-                    'instructions' => 'Add one or more benefit columns (e.g. "Application Benefits", "Fiber Benefits")',
-                    'button_label' => 'Add Column',
-                    'sub_fields'   => array(
-                        array(
-                            'key'         => 'field_benefits_column_label',
-                            'label'       => 'Column Heading',
-                            'name'        => 'column_label',
-                            'type'        => 'text',
-                            'placeholder' => 'e.g. Application Benefits',
-                            'required'    => 1,
-                        ),
-                        array(
-                            'key'          => 'field_benefits_column_items',
-                            'label'        => 'Benefit Items',
-                            'name'         => 'column_items',
-                            'type'         => 'repeater',
-                            'button_label' => 'Add Item',
-                            'sub_fields'   => array(
-                                array(
-                                    'key'      => 'field_benefits_item_text',
-                                    'label'    => 'Item',
-                                    'name'     => 'item_text',
-                                    'type'     => 'text',
-                                    'required' => 1,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'location' => array(
-                array(
-                    array(
-                        'param'    => 'post_type',
-                        'operator' => '==',
-                        'value'    => 'fpc_ingredient',
-                    ),
-                ),
-            ),
-            'menu_order' => 3,
-            'position'   => 'normal',
-            'style'      => 'default',
         ));
     }
 

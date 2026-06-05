@@ -17,7 +17,6 @@ class FPC_Taxonomies {
         self::register_claims();
         self::register_certifications();
         self::register_applications();
-        self::register_fiber_benefits();
         self::register_category_meta();
     }
 
@@ -267,44 +266,4 @@ class FPC_Taxonomies {
         register_taxonomy('fpc_application', array('fpc_ingredient'), $args);
     }
 
-    /**
-     * Register Fiber Benefits taxonomy (non-hierarchical)
-     */
-    private static function register_fiber_benefits() {
-        $labels = array(
-            'name'                       => _x('Fiber Benefits', 'Taxonomy General Name', 'farbest-catalog'),
-            'singular_name'              => _x('Fiber Benefit', 'Taxonomy Singular Name', 'farbest-catalog'),
-            'menu_name'                  => __('Fiber Benefits', 'farbest-catalog'),
-            'all_items'                  => __('All Fiber Benefits', 'farbest-catalog'),
-            'new_item_name'              => __('New Fiber Benefit Name', 'farbest-catalog'),
-            'add_new_item'               => __('Add New Fiber Benefit', 'farbest-catalog'),
-            'edit_item'                  => __('Edit Fiber Benefit', 'farbest-catalog'),
-            'update_item'                => __('Update Fiber Benefit', 'farbest-catalog'),
-            'view_item'                  => __('View Fiber Benefit', 'farbest-catalog'),
-            'separate_items_with_commas' => __('Separate fiber benefits with commas', 'farbest-catalog'),
-            'add_or_remove_items'        => __('Add or remove fiber benefits', 'farbest-catalog'),
-            'choose_from_most_used'      => __('Choose from the most used', 'farbest-catalog'),
-            'popular_items'              => __('Popular Fiber Benefits', 'farbest-catalog'),
-            'search_items'               => __('Search Fiber Benefits', 'farbest-catalog'),
-            'not_found'                  => __('Not Found', 'farbest-catalog'),
-        );
-
-        $args = array(
-            'labels'            => $labels,
-            'hierarchical'      => false,
-            'public'            => true,
-            'show_ui'           => true,
-            'show_admin_column' => true,
-            'show_in_nav_menus' => false,
-            'show_tagcloud'     => false,
-            'show_in_rest'      => false, // ACF field group is the sole UI; hide Gutenberg sidebar panel
-            'meta_box_cb'       => false,
-            'rewrite'           => array(
-                'slug'       => 'fiber-benefit',
-                'with_front' => false,
-            ),
-        );
-
-        register_taxonomy('fpc_fiber_benefit', array('fpc_ingredient'), $args);
-    }
 }

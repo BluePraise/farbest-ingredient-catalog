@@ -12,8 +12,7 @@
 }
 
 /* ACF field styling improvements */
-.acf-field-group_product_details .acf-label,
-.acf-field-group_product_specifications .acf-label {
+.acf-field-group_product_details .acf-label {
     font-weight: 600;
 }
 
