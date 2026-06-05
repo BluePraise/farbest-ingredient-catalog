@@ -236,6 +236,14 @@ const IngredientGrid = ({ initialCategory = '' }) => {
     }
 
     const handleRemovePill = (type, slug) => {
+        // On a taxonomy archive page the hero is PHP-rendered and won't update via
+        // React state alone — navigate to the base archive (same as Reset) when the
+        // category filter is cleared so the page title stays in sync.
+        if (type === 'categories' && initialCategory && window.fpcData && window.fpcData.archiveUrl) {
+            showPageLoader();
+            window.location.href = window.fpcData.archiveUrl;
+            return;
+        }
         const next = { ...filters.selected, [type]: filters.selected[type].filter((s) => s !== slug) };
         handleFilterChange(next);
     };
@@ -299,9 +307,17 @@ const IngredientGrid = ({ initialCategory = '' }) => {
             {showCategoryBrowse && (
                 <CategoryGrid
                     categories={filterOptions.parent_categories}
-                    onSelectCategory={(slug) =>
-                        handleFilterChange({ ...EMPTY_SELECTED, categories: [slug] })
-                    }
+                    onSelectCategory={(slug) => {
+                        // Navigate to the category archive so the PHP-rendered hero
+                        // (title, subtitle, background image) updates correctly.
+                        const cat = (filterOptions.parent_categories || []).find((c) => c.slug === slug);
+                        if (cat && cat.link) {
+                            showPageLoader();
+                            window.location.href = cat.link;
+                        } else {
+                            handleFilterChange({ ...EMPTY_SELECTED, categories: [slug] });
+                        }
+                    }}
                 />
             )}
 

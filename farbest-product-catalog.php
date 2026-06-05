@@ -540,12 +540,14 @@ class Farbest_Product_Catalog {
         $format_categories = function($terms) {
             if (is_wp_error($terms)) return array();
             return array_values(array_map(function($term) {
+                $link = get_term_link($term);
                 return array(
                     'id'          => $term->term_id,
                     'name'        => $term->name,
                     'slug'        => $term->slug,
                     'count'       => $term->count,
                     'parent_id'   => $term->parent,
+                    'link'        => is_wp_error($link) ? '' : $link,
                     'tagline_lines' => (function($term_id) {
                         $raw = get_term_meta($term_id, 'fpc_tagline_lines', true);
                         if (!$raw) return array();
