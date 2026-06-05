@@ -484,6 +484,32 @@ const CategoryBadges = ({ subcategories }) => {
     );
 };
 
+/**
+ * BenefitsGroups — renders benefit headings + bullet lists parsed from post content.
+ * Each group corresponds to one column in the benefits-columns block pattern.
+ */
+const BenefitsGroups = ({ benefits }) => {
+    if (!benefits || benefits.length === 0) return null;
+    return (
+        <div className="fpc-ingredient-benefits">
+            {benefits.map((group, i) => (
+                <div key={i} className="fpc-ingredient-benefits__group">
+                    {group.heading && (
+                        <p className="fpc-ingredient-benefits__heading">{group.heading}</p>
+                    )}
+                    {group.items && group.items.length > 0 && (
+                        <ul className="fpc-ingredient-benefits__list">
+                            {group.items.map((item, j) => (
+                                <li key={j}>{item}</li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
+
 const IngredientCard = ({ ingredient, certOptions = [] }) => {
     // Build name → cert options lookup for logo data
     const certMap = {};
@@ -507,7 +533,9 @@ const IngredientCard = ({ ingredient, certOptions = [] }) => {
 
                 <CategoryBadges subcategories={ingredient.subcategories} />
 
-                {ingredient.excerpt && (
+                <BenefitsGroups benefits={ingredient.benefits} />
+
+                {(!ingredient.benefits || ingredient.benefits.length === 0) && ingredient.excerpt && (
                     <div
                         className="fpc-ingredient-excerpt"
                         dangerouslySetInnerHTML={{ __html: ingredient.excerpt }}

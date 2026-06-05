@@ -378,6 +378,27 @@ if ($ingredient_id) :
                                     <div class="fpc-ingredient-card-content">
                                         <h3 class="fpc-ingredient-title"><?php the_title(); ?></h3>
 
+                                        <?php
+                                        $rel_benefits = fpc_extract_benefits($rel_id);
+                                        if (! empty($rel_benefits)) : ?>
+                                            <div class="fpc-ingredient-benefits">
+                                                <?php foreach ($rel_benefits as $group) : ?>
+                                                    <div class="fpc-ingredient-benefits__group">
+                                                        <?php if (! empty($group['heading'])) : ?>
+                                                            <p class="fpc-ingredient-benefits__heading"><?php echo esc_html($group['heading']); ?></p>
+                                                        <?php endif; ?>
+                                                        <?php if (! empty($group['items'])) : ?>
+                                                            <ul class="fpc-ingredient-benefits__list">
+                                                                <?php foreach ($group['items'] as $item) : ?>
+                                                                    <li><?php echo esc_html($item); ?></li>
+                                                                <?php endforeach; ?>
+                                                            </ul>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+
                                         <?php if (! empty($rel_certs)) :
                                             $rel_card_logos = array();
                                             foreach ($rel_certs as $rel_cert) {

@@ -471,6 +471,7 @@ class Farbest_Product_Catalog {
                     'claims'         => is_wp_error($claim_names) ? array() : $claim_names,
                     'certifications' => is_wp_error($certification_names) ? array() : $certification_names,
                     'applications'   => is_wp_error($application_names) ? array() : $application_names,
+                    'benefits'       => fpc_extract_benefits($id),
                 );
             }
             wp_reset_postdata();
@@ -675,6 +676,80 @@ class Farbest_Product_Catalog {
         </div>
         <?php
     }
+}
+
+/**
+ * Extract benefit groups from a post's block content.
+ *
+ * Parses any core/columns block where each column contains a heading + list,
+ * and any core/group block with the same structure (single-column variant).
+ * Returns an array of [ 'heading' => string, 'items' => string[] ] per group.
+ *
+ * @param int $post_id
+ * @return array
+ */
+function fpc_extract_benefits( $post_id ) {
+    if ( ! function_exists( 'parse_blocks' ) ) {
+        return array();
+    }
+    $content = get_post_field( 'post_content', $post_id );
+    if ( empty( $content ) ) {
+        return array();
+    }
+
+    $groups = array();
+
+    foreach ( parse_blocks( $content ) as $block ) {
+        $name = $block['blockName'] ?? '';
+
+        // Two-column layout: core/columns → core/column (×n), each with heading + list
+        if ( $name === 'core/columns' ) {
+            foreach ( $block['innerBlocks'] as $col ) {
+                $heading = '';
+                $items   = array();
+                foreach ( $col['innerBlocks'] ?? array() as $inner ) {
+                    $iname = $inner['blockName'] ?? '';
+                    if ( $iname === 'core/heading' ) {
+                        $heading = trim( wp_strip_all_tags( $inner['innerHTML'] ) );
+                    } elseif ( $iname === 'core/list' ) {
+                        foreach ( $inner['innerBlocks'] ?? array() as $li ) {
+                            $text = trim( wp_strip_all_tags( $li['innerHTML'] ) );
+                            if ( $text !== '' ) {
+                                $items[] = $text;
+                            }
+                        }
+                    }
+                }
+                if ( $heading !== '' || ! empty( $items ) ) {
+                    $groups[] = array( 'heading' => $heading, 'items' => $items );
+                }
+            }
+        }
+
+        // Single-column layout: core/group → core/heading + core/list
+        if ( $name === 'core/group' ) {
+            $heading = '';
+            $items   = array();
+            foreach ( $block['innerBlocks'] ?? array() as $inner ) {
+                $iname = $inner['blockName'] ?? '';
+                if ( $iname === 'core/heading' ) {
+                    $heading = trim( wp_strip_all_tags( $inner['innerHTML'] ) );
+                } elseif ( $iname === 'core/list' ) {
+                    foreach ( $inner['innerBlocks'] ?? array() as $li ) {
+                        $text = trim( wp_strip_all_tags( $li['innerHTML'] ) );
+                        if ( $text !== '' ) {
+                            $items[] = $text;
+                        }
+                    }
+                }
+            }
+            if ( $heading !== '' || ! empty( $items ) ) {
+                $groups[] = array( 'heading' => $heading, 'items' => $items );
+            }
+        }
+    }
+
+    return $groups;
 }
 
 /**

@@ -88,7 +88,7 @@ class FPC_ACF_Fields {
                     'instructions' => 'Select the applications this ingredient is suited for',
                     'required'     => 0,
                     'taxonomy'     => 'fpc_application',
-                    'field_type'   => 'checkbox',
+                    'field_type'   => 'multi_select',
                     'allow_null'   => 1,
                     'add_term'     => 1,
                     'save_terms'   => 1,
