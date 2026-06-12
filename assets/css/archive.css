@@ -53,7 +53,7 @@
 
 .fbd-hero-title {
     font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 400;
+    font-weight: 300;
     color: var(--color-heading);
     margin-top: 0;
     margin-bottom: 10px;
