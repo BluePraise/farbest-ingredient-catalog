@@ -455,7 +455,7 @@ const CategoryGrid = ({ categories, onSelectCategory }) => {
                     <div className="fpc-category-card-content">
                         <h3 className="fpc-category-card-title">{decodeHtmlEntities(cat.name)}</h3>
                         {cat.tagline_lines && cat.tagline_lines.length > 0 && (
-                            <p className="fpc-category-card-tagline">
+                            <p className="fpc-card-certifications">
                                 {cat.tagline_lines.map((line, i) => (
                                     <span key={i}>{line}</span>
                                 ))}
