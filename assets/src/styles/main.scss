@@ -43,7 +43,7 @@ $grid-gap:         24px;
     // Wave shape overlay at the very bottom edge of the hero image
     .fpc-category-hero-wave {
         position: absolute;
-        bottom: 0;
+        bottom: -1px; // overlap 1px to close sub-pixel gap under the wave
         left: 0;
         right: 0;
         z-index: 1;
