@@ -555,6 +555,11 @@ class Farbest_Product_Catalog {
                         $lines = json_decode($raw, true);
                         return is_array($lines) ? $lines : array();
                     })($term->term_id),
+                    'icon_url' => (function($term_id) {
+                        if (!function_exists('get_field')) return '';
+                        $icon = get_field('category_grid_icon', 'fpc_category_' . $term_id);
+                        return !empty($icon['url']) ? esc_url_raw($icon['url']) : '';
+                    })($term->term_id),
                     'description' => wp_strip_all_tags($term->description),
                 );
             }, $terms));

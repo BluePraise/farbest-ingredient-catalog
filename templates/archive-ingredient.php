@@ -60,7 +60,13 @@ $archive_description = $is_category_archive
 <div class="fpc-archive-page">
 
     <?php if ( ! empty( $hero_image['url'] ) ) : ?>
-        <div class="fpc-category-hero-img" style="background-image: url('<?php echo esc_url( $hero_image['url'] ); ?>')"></div>
+        <div class="fpc-category-hero-img" style="background-image: url('<?php echo esc_url( $hero_image['url'] ); ?>')">
+            <div class="fpc-category-hero-wave" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 41" preserveAspectRatio="none">
+                    <path d="M1200,0c-175.18,7.24-316.7,8.33-411,8.08-188.32-.5-283.09-6.58-487-5.28C171.25,3.63,65.6,7.06,0,9.63v31.37h1200V0Z" fill="#f2efe9"/>
+                </svg>
+            </div>
+        </div>
     <?php endif; ?>
 
     <section class="fbd-hero">

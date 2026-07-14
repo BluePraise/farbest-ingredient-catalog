@@ -353,6 +353,18 @@ class FPC_ACF_Fields {
                     'library'       => 'all',
                     'mime_types'    => 'svg',
                 ),
+                array(
+                    'key'           => 'field_category_grid_icon',
+                    'label'         => 'Category Grid Icon',
+                    'name'          => 'category_grid_icon',
+                    'type'          => 'image',
+                    'instructions'  => 'Upload the icon displayed on this category\'s card in the ingredient browse grid (recommended: square image, WEBP or PNG with transparent background).',
+                    'required'      => 0,
+                    'return_format' => 'array',
+                    'preview_size'  => 'thumbnail',
+                    'library'       => 'all',
+                    'mime_types'    => 'jpg,jpeg,png,webp,svg',
+                ),
             ),
             'location' => array(
                 array(

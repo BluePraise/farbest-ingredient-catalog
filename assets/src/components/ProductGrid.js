@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import ProductFilter from './ProductFilter';
 import ProductSearch from './ProductSearch';
+import { decodeHtmlEntities } from '../utils';
 
 const EMPTY_SELECTED = { categories: [], claims: [], certifications: [], applications: [] };
 
@@ -371,7 +372,7 @@ const FilterPills = ({ selected, filterOptions, onRemove, onReset }) => {
     const pills = [];
     ['categories', 'applications', 'certifications', 'claims'].forEach((type) => {
         (selected[type] || []).forEach((slug) => {
-            pills.push({ type, slug, label: lookup[type][slug] || slug, typeLabel: FILTER_TYPE_LABELS[type] });
+            pills.push({ type, slug, label: decodeHtmlEntities(lookup[type][slug] || slug), typeLabel: FILTER_TYPE_LABELS[type] });
         });
     });
 
@@ -411,15 +412,15 @@ const FilterPills = ({ selected, filterOptions, onRemove, onReset }) => {
  * Falls back to the green circle placeholder via CSS when no match.
  */
 const CATEGORY_ICON_MAP = {
-    'plant-protein':   'Pea_Protein_Icon.svg',
-    'dairy-protein':   'Dairy_Protein_Icon-.svg',
-    'fibers':          'Fiber-Icon.svg',
+    'plant-protein':   'Pea_Protein_Icon.webp',
+    'dairy-protein':   'Dairy_Protein_Icon.webp',
+    'dietary-fiber':          'Fiber-Icon.webp',
     'carrot':          'Carrot_Circle_Icon.svg',
-    'gum-acacia':      'Gum-Acacia-Icon.svg',
-    'natural-colors':   'Natural_Colors-Icon.svg',
-    'sweeteners':       'Sweetener-Icon.svg',
-    'vitamins':         'Vitamin_Icon.svg',
-    'lecithins':        'Specialty_Icon.svg',
+    'gum-acacia':      'Gum-Acacia-Icon.webp',
+    'natural-colors':   'Natural_Colors-Icon.webp',
+    'sweeteners':       'Sweetener-Icon.webp',
+    'vitamins-and-nutrients': 'Vitamin_Icon.webp',
+    'lecithins':        'Lecithin_Icon.webp',
 };
 
 const pluginUrl = window.fpcData ? window.fpcData.pluginUrl : '';
@@ -434,6 +435,7 @@ const CategoryGrid = ({ categories, onSelectCategory }) => {
         <div className="fpc-category-grid">
             {categories.map((cat) => {
                 const iconFile = CATEGORY_ICON_MAP[cat.slug];
+                const iconSrc = cat.icon_url || (iconFile ? `${pluginUrl}assets/img/${iconFile}` : '');
                 return (
                 <button
                     key={cat.slug}
@@ -442,16 +444,16 @@ const CategoryGrid = ({ categories, onSelectCategory }) => {
                     onClick={() => onSelectCategory(cat.slug)}
                 >
                     <div className="fpc-category-card-icon" aria-hidden="true">
-                        {iconFile && (
+                        {iconSrc && (
                             <img
-                                src={`${pluginUrl}assets/img/${iconFile}`}
+                                src={iconSrc}
                                 alt=""
                                 className="fpc-category-card-icon-img"
                             />
                         )}
                     </div>
                     <div className="fpc-category-card-content">
-                        <h3 className="fpc-category-card-title">{cat.name}</h3>
+                        <h3 className="fpc-category-card-title">{decodeHtmlEntities(cat.name)}</h3>
                         {cat.tagline_lines && cat.tagline_lines.length > 0 && (
                             <p className="fpc-category-card-tagline">
                                 {cat.tagline_lines.map((line, i) => (

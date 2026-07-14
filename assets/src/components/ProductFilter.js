@@ -5,6 +5,7 @@
  */
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { decodeHtmlEntities } from '../utils';
 
 /**
  * A single multi-select dropdown (checkbox list).
@@ -77,7 +78,7 @@ const MultiSelectDropdown = ({ label, options, selected, onChange, availableSlug
                                         disabled={!available}
                                         onChange={() => toggle(opt.slug)}
                                     />
-                                    <span className="fpc-dropdown-item-name">{opt.name}</span>
+                                    <span className="fpc-dropdown-item-name">{decodeHtmlEntities(opt.name)}</span>
                                     {availableSlugs !== null && (
                                         <span className="fpc-dropdown-item-count">
                                             ({available ? opt.count : 0})

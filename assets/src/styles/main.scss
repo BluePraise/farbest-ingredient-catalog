@@ -40,16 +40,20 @@ $grid-gap:         24px;
     background-repeat: no-repeat;
     min-height: 420px;
 
-    // Gradient fade: image fades into the page background at the bottom
-    &::after {
-        content: '';
+    // Wave shape overlay at the very bottom edge of the hero image
+    .fpc-category-hero-wave {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 50%;
-        background: linear-gradient(to bottom, transparent 0%, $bg-light 100%);
-        pointer-events: none;
+        z-index: 1;
+        line-height: 0;
+
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
     }
 }
 
@@ -511,6 +515,18 @@ $grid-gap:         24px;
     object-fit: contain;
     display: block;
     padding: 8px;
+}
+
+.fpc-category-card:nth-child(5) .fpc-category-card-icon-img {
+    width: 80%;
+}
+
+.fpc-category-card:nth-child(6) .fpc-category-card-icon-img {
+    width: 85%;
+}
+
+.fpc-category-card:nth-child(7) .fpc-category-card-icon-img {
+    width: 87%;
 }
 
 .fpc-category-card-title {
