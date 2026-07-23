@@ -283,7 +283,7 @@ if ($ingredient_id) :
                                     <th><?php esc_html_e('Applications', 'farbest-catalog'); ?></th>
                                     <td>
                                         <?php foreach ($app_list as $app) : ?>
-                                            <div><?php echo esc_html($app); ?></div>
+                                            <span><?php echo esc_html($app); ?></span><?php if ($app !== end($app_list)) : ?> | <?php endif; ?>
                                         <?php endforeach; ?>
                                     </td>
                                 </tr>
