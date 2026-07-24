@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.5.0
+ * Version: 1.6.0
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.5.0');
+define('FPC_VERSION', '1.6.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -91,9 +91,6 @@ class Farbest_Product_Catalog {
         // Template loader
         add_filter('template_include', array('FPC_Template_Loader', 'load_template'));
 
-        // Server-side block for block theme archive pages.
-        add_action('init', array($this, 'register_blocks'));
-
         // REST API
         add_action('rest_api_init', array($this, 'register_rest_routes'));
 
@@ -159,20 +156,6 @@ class Farbest_Product_Catalog {
     }
 
     /**
-     * Register server-side blocks.
-     *
-     * farbest/ingredient-archive renders the full archive hero + React mount
-     * point via PHP. Block theme HTML templates reference this block so they
-     * get dynamic content (ACF category hero, initial category filter) without
-     * needing PHP in the template file itself.
-     */
-    public function register_blocks() {
-        register_block_type( 'farbest/ingredient-archive', array(
-            'render_callback' => array( 'FPC_Template_Loader', 'render_archive' ),
-        ) );
-    }
-
-    /**
      * Initialize plugin
      */
     public function init() {
@@ -208,11 +191,11 @@ class Farbest_Product_Catalog {
             || is_post_type_archive('fpc_ingredient')
             || is_tax('fpc_category');
 
-        $has_catalog_block = has_block('farbest/ingredient-catalog');
-
-        if (!$on_ingredient_page && !$has_catalog_block) {
+        if (!$on_ingredient_page) {
             return;
         }
+
+        // Everything below runs only on ingredient pages.
 
         // Check if build files exist
         $build_css = FPC_PLUGIN_DIR . 'assets/build/index.css';
@@ -231,16 +214,14 @@ class Farbest_Product_Catalog {
 
         // Archive layout styles — plain CSS, no build step needed.
         // Provides .fbd-hero, .container, etc. that classic theme had in farbest.css.
-        if ( $on_ingredient_page ) {
-            $archive_css = FPC_PLUGIN_DIR . 'assets/css/archive.css';
-            if ( file_exists( $archive_css ) ) {
-                wp_enqueue_style(
-                    'farbest-catalog-archive',
-                    FPC_PLUGIN_URL . 'assets/css/archive.css',
-                    array(),
-                    FPC_VERSION
-                );
-            }
+        $archive_css = FPC_PLUGIN_DIR . 'assets/css/archive.css';
+        if ( file_exists( $archive_css ) ) {
+            wp_enqueue_style(
+                'farbest-catalog-archive',
+                FPC_PLUGIN_URL . 'assets/css/archive.css',
+                array(),
+                FPC_VERSION
+            );
         }
 
         // Tab switching script — vanilla JS, no build step needed.

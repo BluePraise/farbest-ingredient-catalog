@@ -5,7 +5,8 @@
 PLUGIN_SLUG="farbest-product-catalog"
 PLUGIN_DIR="$(cd "$(dirname "$0")" && pwd)"
 PARENT_DIR="$(dirname "$PLUGIN_DIR")"
-ZIP_PATH="$PLUGIN_DIR/$PLUGIN_SLUG.zip"
+PLUGIN_VERSION=$(grep -m1 "\"version\"" "$PLUGIN_DIR/package.json" | sed 's/.*"version": "\(.*\)".*/\1/')
+ZIP_PATH="$PLUGIN_DIR/$PLUGIN_SLUG-$PLUGIN_VERSION.zip"
 
 # Remove old zip if it exists
 [ -f "$ZIP_PATH" ] && rm "$ZIP_PATH"
@@ -25,5 +26,5 @@ zip -r "$ZIP_PATH" "$PLUGIN_SLUG" \
   --exclude "$PLUGIN_SLUG/.gitignore"
 
 echo ""
-echo "Deploy zip ready: $ZIP_PATH"
+echo "Deploy zip ready: $ZIP_PATH  (v$PLUGIN_VERSION)"
 echo "Upload to WordPress staging via Plugins > Add New > Upload Plugin."

@@ -6,28 +6,16 @@
  * This is the authoritative template for single fpc_ingredient pages.
  * Theme overrides are no longer used — all presentation logic lives here.
  *
- * In classic themes: loaded via template_include (FPC_Template_Loader).
- *   get_header() / get_footer() are called normally.
- *
- * In block themes: rendered via FPC_Template_Loader::render_single(), which
- *   calls ob_start and includes this file. The block theme's template parts
- *   (header.html / footer.html) wrap the output — header/footer are skipped.
+ * Loaded via template_include (FPC_Template_Loader) on the classic theme.
  *
  * Plugin styles:    assets/build/index.css  (enqueued by plugin)
  * Tab behaviour:    assets/js/ingredient-tabs.js  (enqueued by plugin)
- * Layout styles:    css/ingredient-single.css  (enqueued by active block theme)
+ * Layout styles:    css/ingredient-single.css  (enqueued by the theme)
  */
 
-if (! wp_is_block_theme()) {
-    get_header();
-}
+get_header();
 
-// In a block theme the_content filter fires inside the loop — the_post() has
-// already been called, so have_posts() returns false. Call the_post() only
-// when we are the main template file (classic theme context).
-if (! in_the_loop()) {
-    the_post();
-}
+the_post();
 
 $ingredient_id = get_the_ID();
 
@@ -446,7 +434,5 @@ if ($ingredient_id) :
 <?php
 endif;
 
-if (! wp_is_block_theme()) {
-    get_footer();
-}
+get_footer();
 ?>

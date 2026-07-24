@@ -5,18 +5,10 @@
  * Covers both the main fpc_ingredient archive (/ingredients/) and
  * fpc_category taxonomy archives.
  *
- * In classic themes: loaded via template_include (FPC_Template_Loader).
- *   get_header() / get_footer() are called normally.
- *
- * In block themes: rendered via FPC_Template_Loader::render_archive(), which
- *   is the render_callback for the farbest/ingredient-archive server-side block.
- *   The block theme's HTML template provides the page wrapper; this file outputs
- *   only the inner content (hero + React mount point).
+ * Loaded via template_include (FPC_Template_Loader) on the classic theme.
  */
 
-if ( ! wp_is_block_theme() ) {
-    get_header();
-}
+get_header();
 
 $is_category_archive = is_tax( 'fpc_category' );
 $queried_object      = $is_category_archive ? get_queried_object() : null;
@@ -155,7 +147,5 @@ $archive_description = $is_category_archive
 </div><!-- .fpc-archive-page -->
 
 <?php
-if ( ! wp_is_block_theme() ) {
-    get_footer();
-}
+get_footer();
 ?>
