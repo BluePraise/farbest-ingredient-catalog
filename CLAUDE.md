@@ -62,7 +62,7 @@ Base: `/wp-json/farbest/v1/`
 - Settings page: Products → Email Settings in WP Admin
 
 ## Template Loading
-The plugin targets the **classic** `farbest` theme only (the FSE block theme was retired
+The plugin targets the classic **`farbest-classic`** theme only (the FSE block theme was retired
 2026-07-23). `class-template-loader.php` intercepts `template_include` and checks (in order):
 1. Theme: `farbest-catalog/{template}.php`
 2. Theme root: `{template}.php`
