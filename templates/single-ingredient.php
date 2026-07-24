@@ -153,11 +153,42 @@ if ($ingredient_id) :
                     <h1 class="ingredient-title"><?php the_title(); ?></h1>
                 </header>
                 <div class="ingredient-header-left">
+                    <?php the_content(); ?>
+
                     <?php
-                    remove_filter( 'the_content', 'farbest_render_ingredient_content' );
-                    the_content();
-                    add_filter( 'the_content', 'farbest_render_ingredient_content' );
-                    ?>
+                    // Benefits columns — ACF repeater, one column per group.
+                    // Replaces the block theme's farbest/benefits-columns pattern,
+                    // which has no equivalent in a classic theme.
+                    $benefits_columns = get_field( 'benefits_columns', $ingredient_id );
+
+                    if ( ! empty( $benefits_columns ) && is_array( $benefits_columns ) ) : ?>
+                        <div class="farbest-benefits-columns">
+                            <?php foreach ( $benefits_columns as $column ) :
+                                $col_label = ! empty( $column['column_label'] ) ? $column['column_label'] : '';
+                                $col_items = ! empty( $column['column_items'] ) ? $column['column_items'] : array();
+
+                                if ( '' === $col_label && empty( $col_items ) ) {
+                                    continue;
+                                }
+                                ?>
+                                <div class="farbest-benefits-columns__col">
+                                    <?php if ( '' !== $col_label ) : ?>
+                                        <h3 class="farbest-benefits-columns__heading"><?php echo esc_html( $col_label ); ?></h3>
+                                    <?php endif; ?>
+
+                                    <?php if ( ! empty( $col_items ) ) : ?>
+                                        <ul class="farbest-benefits-columns__list">
+                                            <?php foreach ( $col_items as $item ) : ?>
+                                                <?php if ( ! empty( $item['item_text'] ) ) : ?>
+                                                    <li><?php echo esc_html( $item['item_text'] ); ?></li>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div><!-- .ingredient-header-left -->
 
                 <!-- Right column: category SVG + CTA -->
