@@ -8,7 +8,7 @@
  *
  * Loaded via template_include (FPC_Template_Loader) on the classic theme.
  *
- * Plugin styles:    assets/build/index.css  (enqueued by plugin)
+ * Plugin styles:    assets/css/catalog.css  (enqueued by plugin)
  * Tab behaviour:    assets/js/ingredient-tabs.js  (enqueued by plugin)
  * Layout styles:    css/ingredient-single.css  (enqueued by the theme)
  */

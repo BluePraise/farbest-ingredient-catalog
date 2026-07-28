@@ -4,7 +4,8 @@
 import { render } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import IngredientGrid from './components/ProductGrid';
-import './styles/main.scss';
+// Styles are shipped as plain CSS (assets/css/catalog.css), enqueued directly
+// by the plugin — they are no longer bundled through the JS build.
 
 // Configure apiFetch with the REST nonce from localized data.
 // (wp-api-fetch already sets the root URL via window.wpApiSettings)

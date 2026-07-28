@@ -1,0 +1,983 @@
+/**
+ * Farbest Ingredient Catalog — front-end styles.
+ *
+ * Plain CSS (converted from the former assets/src/styles/main.scss). Loaded
+ * directly by the plugin on ingredient pages; not part of the JS build.
+ *
+ * The brand palette lives in the custom properties below — the plain-CSS
+ * equivalent of the SCSS $variables this file used to carry. Keep these in
+ * sync with the theme's css/tokens.css.
+ */
+
+:root {
+    --fpc-primary:       #4D7B29; /* headings, links, active states */
+    --fpc-primary-rgb:   77, 123, 41; /* for rgba() tints of the primary */
+    --fpc-primary-light: #99cf6e; /* lightened primary — category browse fallback */
+    --fpc-moss:          #5C643A; /* labels */
+    --fpc-teal:          #003e52; /* dark teal accents */
+    --fpc-cta:           #b5b800; /* CTA lime */
+    --fpc-cta-hover:     #838500; /* CTA lime, darkened for hover */
+    --fpc-cta-text:      #1f2f36; /* text on CTA */
+    --fpc-secondary:     #6c757d; /* muted / secondary text */
+    --fpc-border:        #383838; /* borders, inputs */
+    --fpc-error:         #dc3545; /* error / clear */
+    --fpc-bg-light:      #f2efe9; /* beige surfaces */
+}
+
+.fpc-archive-page {
+  background: var(--fpc-bg-light);
+  padding-bottom: 60px;
+  margin-bottom: -60px;
+}
+
+.fpc-category-hero-img {
+  position: relative;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  min-height: 420px;
+}
+.fpc-category-hero-img .fpc-category-hero-wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  line-height: 0;
+}
+.fpc-category-hero-img .fpc-category-hero-wave svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.fbd-catalog-wrap .fpc-ingredient-grid-wrapper {
+  background: transparent;
+}
+
+.fpc-filters-bar {
+  margin: 20px 0;
+}
+
+.fpc-search {
+  width: 320px;
+}
+.fpc-search .fpc-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.fpc-search .fpc-search-input {
+  width: 100%;
+  padding: 8px 70px 8px 12px;
+  border: 1px solid var(--fpc-border);
+  border-radius: 5px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+.fpc-search .fpc-search-input::placeholder {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+  font-weight: 600;
+  color: #c3c3c3;
+}
+.fpc-search .fpc-search-input:focus {
+  outline: none;
+  border-color: var(--fpc-primary);
+  box-shadow: 0 0 0 2px rgba(var(--fpc-primary-rgb), 0.15);
+}
+.fpc-search .fpc-search-clear {
+  position: absolute;
+  right: 38px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--fpc-secondary);
+  cursor: pointer;
+  padding: 0 6px;
+}
+.fpc-search .fpc-search-clear:hover {
+  color: var(--fpc-error);
+}
+.fpc-search .fpc-search-button {
+  position: absolute;
+  right: 4px;
+  padding: 6px 10px;
+  background: var(--fpc-cta);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+.fpc-search .fpc-search-button:hover {
+  background: var(--fpc-cta-hover);
+}
+.fpc-search .fpc-search-button svg {
+  display: block;
+  color: var(--fpc-cta-text);
+}
+
+.fpc-filter-dropdowns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 24px;
+  align-items: end;
+  width: 100%;
+}
+@media (max-width: 1024px) {
+  .fpc-filter-dropdowns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .fpc-filter-dropdowns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.fpc-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fpc-reset-button {
+  justify-self: end;
+  align-self: end;
+}
+@media (min-width: 1025px) {
+  .fpc-reset-button {
+    grid-column: 4;
+  }
+}
+@media (max-width: 1024px) and (min-width: 641px) {
+  .fpc-reset-button {
+    grid-column: 2;
+  }
+}
+@media (max-width: 640px) {
+  .fpc-reset-button {
+    width: auto;
+  }
+}
+
+.fpc-filter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--fpc-moss);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fpc-dropdown {
+  position: relative;
+}
+
+.fpc-dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 14px 10px;
+  background: white;
+  border: 1px solid var(--fpc-border);
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+  font-weight: 600;
+  color: #c3c3c3;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+.fpc-dropdown-toggle:hover, .fpc-dropdown-toggle.open {
+  border-color: var(--fpc-primary);
+  color: var(--fpc-primary);
+}
+.fpc-dropdown-toggle.open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.fpc-dropdown-caret {
+  font-size: 10px;
+  color: var(--fpc-secondary);
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.fpc-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid var(--fpc-primary);
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fpc-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.1s;
+}
+.fpc-dropdown-item:hover:not(.disabled) {
+  background: rgba(var(--fpc-primary-rgb), 0.06);
+}
+.fpc-dropdown-item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.fpc-dropdown-item input[type=checkbox] {
+  flex-shrink: 0;
+  cursor: inherit;
+}
+.fpc-dropdown-item .fpc-dropdown-item-name {
+  flex: 1;
+}
+.fpc-dropdown-item .fpc-dropdown-item-count {
+  font-size: 11px;
+  color: var(--fpc-secondary);
+}
+
+.fpc-dropdown-empty {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--fpc-secondary);
+}
+
+.fpc-active-selections {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fpc-active-selections-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--fpc-moss);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.fpc-selection {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 10px;
+  box-shadow: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  line-height: 1.4;
+  background: rgba(var(--fpc-primary-rgb), 0.1);
+  color: var(--fpc-primary);
+}
+.fpc-selection:hover {
+  box-shadow: none;
+}
+.fpc-selection--clear-all {
+  background: none;
+  color: var(--fpc-secondary);
+  font-weight: 600;
+}
+.fpc-selection--clear-all:hover {
+  background: var(--fpc-border);
+  color: white;
+}
+
+.fpc-selection-type {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+.fpc-selection-type::after {
+  content: ":";
+}
+
+.fpc-selection-name {
+  font-weight: 600;
+}
+
+.fpc-selection-remove {
+  font-size: 16px;
+  line-height: 1;
+  margin-left: 2px;
+  opacity: 0.6;
+  font-weight: 400;
+}
+.fpc-selection:hover .fpc-selection-remove {
+  opacity: 1;
+}
+
+.fpc-toolbar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 24px;
+  align-items: end;
+  margin-block-start: 80px;
+  margin-bottom: 80px;
+  position: relative;
+  z-index: 11;
+}
+@media (max-width: 1024px) {
+  .fpc-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .fpc-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.fpc-results-count {
+  font-size: 14px;
+  color: var(--fpc-secondary);
+  min-width: 0;
+}
+.fpc-results-count strong {
+  color: #333;
+}
+
+.fpc-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-self: end;
+}
+@media (max-width: 640px) {
+  .fpc-toolbar-right {
+    justify-self: stretch;
+  }
+}
+
+.fpc-toolbar .fpc-search {
+  grid-column: span 2;
+}
+@media (max-width: 1024px) {
+  .fpc-toolbar .fpc-search {
+    grid-column: span 1;
+  }
+}
+
+.fpc-toolbar .fpc-results-count {
+  align-self: center;
+}
+
+.fpc-sort-label {
+  font-size: 13px;
+  color: var(--fpc-secondary);
+  white-space: nowrap;
+}
+
+.fpc-sort-select {
+  padding: 6px 10px;
+  border: 1px solid var(--fpc-border);
+  border-radius: 5px;
+  font-size: 13px;
+  color: #333;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.fpc-sort-select:focus {
+  outline: none;
+  border-color: var(--fpc-primary);
+}
+
+.fpc-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 80px 24px;
+  margin-bottom: 40px;
+}
+@media (max-width: 1024px) {
+  .fpc-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .fpc-category-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.fpc-category-card {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 18px;
+  background: white;
+  border: 1px solid var(--fpc-border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 0.2s, transform 0.2s;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+.fpc-category-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.fpc-category-card-content {
+  width: 100%;
+}
+
+.fpc-category-card-icon {
+  position: relative;
+  transform: translate(0%, -50%);
+  width: 90px;
+  height: 90px;
+  padding: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fpc-primary);
+  border-radius: 50%;
+  opacity: 0.8;
+  filter: drop-shadow(0 4px 8px rgba(38, 38, 38, 0.15));
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  margin: 0px auto;
+  overflow: hidden;
+}
+.fpc-category-card-icon:not(:has(.fpc-category-card-icon-img))::after {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--fpc-primary-light);
+}
+
+.fpc-category-card:hover .fpc-category-card-icon {
+  opacity: 1;
+  filter: drop-shadow(0 4px 10px rgba(38, 38, 38, 0.25));
+}
+
+.fpc-category-card-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 8px;
+}
+
+.fpc-category-card:nth-child(5) .fpc-category-card-icon-img {
+  width: 80%;
+}
+
+.fpc-category-card:nth-child(6) .fpc-category-card-icon-img {
+  width: 85%;
+}
+
+.fpc-category-card:nth-child(7) .fpc-category-card-icon-img {
+  width: 87%;
+}
+
+.fpc-category-card-title {
+  font-size: 24px;
+  text-transform: unset;
+  color: var(--fpc-border);
+}
+
+.fpc-card-certifications {
+  font-size: 14px;
+  color: var(--fpc-secondary);
+  margin: 4px 0 8px;
+  line-height: 1.4;
+}
+.fpc-card-certifications span {
+  display: block;
+}
+
+.fpc-button {
+  width: 100%;
+  text-align: right;
+}
+
+.fpc-ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+@media (max-width: 1200px) {
+  .fpc-ingredients-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1024px) {
+  .fpc-ingredients-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .fpc-ingredients-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.fpc-ingredient-card {
+  background: white;
+  border: 1px solid var(--fpc-border);
+  border-radius: 5px;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.fpc-ingredient-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.fpc-ingredient-thumbnail {
+  display: block;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+.fpc-ingredient-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.fpc-ingredient-thumbnail:hover img {
+  transform: scale(1.04);
+}
+
+.fpc-ingredient-card-content {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fpc-ingredient-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.fpc-ingredient-title a {
+  color: var(--fpc-moss);
+  text-decoration: none;
+}
+.fpc-ingredient-title a:hover {
+  color: var(--fpc-primary);
+}
+
+.fpc-ingredient-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.fpc-term-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: 10px;
+}
+.fpc-term-badge--category {
+  background: #e9ecef;
+  color: var(--fpc-secondary);
+}
+.fpc-term-badge--claim {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+.fpc-term-badge--cert {
+  background: #d4edda;
+  color: #155724;
+}
+.fpc-term-badge--more {
+  background: transparent;
+  border: 1px solid var(--fpc-border);
+  color: var(--fpc-secondary);
+}
+
+.fpc-ingredient-excerpt {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.fpc-ingredient-benefits {
+  margin: 0 0 12px;
+}
+
+.fpc-ingredient-benefits__group + .fpc-ingredient-benefits__group {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.fpc-ingredient-benefits__heading {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fpc-moss);
+  margin: 0 0 4px;
+}
+
+.fpc-ingredient-benefits__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  color: #555;
+  line-height: 1.6;
+}
+.fpc-ingredient-benefits__list li::before {
+  content: "• ";
+  color: var(--fpc-primary);
+}
+
+.fpc-cert-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.fpc-cert-logo {
+  width: auto;
+  max-width: 72px;
+  object-fit: contain;
+}
+
+.ingredient-certifications__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.ingredient-certifications__logo {
+  width: auto;
+  max-width: 96px;
+  object-fit: contain;
+}
+
+.fpc-button {
+  display: inline-block;
+  padding: 0;
+  background: none;
+  color: var(--fpc-moss);
+  text-decoration: none;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  margin-top: auto;
+  padding-top: 12px;
+}
+.fpc-button::after {
+  content: " ›";
+  font-size: 14px;
+}
+.fpc-button:hover {
+  color: var(--fpc-primary);
+}
+
+.fpc-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.fpc-pagination-button {
+  padding: 7px 14px;
+  background: white;
+  border: 1px solid var(--fpc-border);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.fpc-pagination-button:hover:not(:disabled) {
+  background: var(--fpc-primary);
+  color: white;
+  border-color: var(--fpc-primary);
+}
+.fpc-pagination-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.fpc-pagination-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.fpc-pagination-number {
+  min-width: 34px;
+  padding: 7px 10px;
+  background: white;
+  border: 1px solid var(--fpc-border);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.fpc-pagination-number:hover {
+  background: var(--fpc-bg-light);
+}
+.fpc-pagination-number.active {
+  background: var(--fpc-primary);
+  color: white;
+  border-color: var(--fpc-primary);
+}
+
+.fpc-pagination-ellipsis {
+  padding: 7px 4px;
+  font-size: 13px;
+  color: var(--fpc-secondary);
+}
+
+.fpc-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: var(--fpc-secondary);
+}
+
+.fpc-spinner {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--fpc-border);
+  border-top-color: var(--fpc-primary);
+  border-radius: 50%;
+  animation: fpc-spin 0.7s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes fpc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.fpc-no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--fpc-secondary);
+  font-size: 16px;
+}
+
+.fpc-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--fpc-error);
+}
+
+.ingredient-related__heading {
+  text-align: center;
+  display: block;
+  margin-bottom: 24px;
+}
+
+.ingredient-related__footer {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.ingredient-certifications__logo,
+.fpc-cert-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.ingredient-tabs {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.ingredient-tabs__nav {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+}
+
+.ingredient-tabs__tab {
+  background: none;
+  box-shadow: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  margin-right: 4em;
+  padding: 12px 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fpc-secondary);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.ingredient-tabs__tab:hover {
+  color: var(--fpc-moss);
+}
+.ingredient-tabs__tab--active, .ingredient-tabs__tab[aria-selected=true] {
+  color: var(--fpc-moss);
+  border-bottom-color: var(--fpc-cta);
+}
+
+.ingredient-tabs__panel {
+  border: 1px solid var(--fpc-cta);
+  border-radius: 4px;
+  padding: 32px;
+  background: #fff;
+}
+.ingredient-tabs__panel[hidden] {
+  display: none;
+}
+
+.ingredient-tabs__empty {
+  color: var(--fpc-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+.ingredient-details-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ingredient-details-table th,
+.ingredient-details-table td {
+  padding: 14px 20px;
+  vertical-align: top;
+  text-align: left;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.ingredient-details-table tr:last-child th,
+.ingredient-details-table tr:last-child td {
+  border-bottom: none;
+}
+.ingredient-details-table th {
+  width: 200px;
+  font-weight: 700;
+  color: var(--fpc-moss);
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .ingredient-details-table th {
+    width: auto;
+    display: block;
+    padding-bottom: 4px;
+  }
+}
+.ingredient-details-table td {
+  color: #444;
+}
+@media (max-width: 640px) {
+  .ingredient-details-table td {
+    display: block;
+    padding-top: 0;
+  }
+}
+@media (max-width: 640px) {
+  .ingredient-details-table tr {
+    display: block;
+    padding: 12px 0;
+  }
+}
+
+#fpc-page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--fpc-bg-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#fpc-page-loader::after {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(var(--fpc-primary-rgb), 0.2);
+  border-top-color: var(--fpc-primary);
+  border-radius: 50%;
+  animation: fpc-spin 0.7s linear infinite;
+}
+
+.screen-reader-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.fpc-category-hero {
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  background: var(--fpc-teal);
+}
+
+.fpc-category-hero__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  object-position: center;
+}

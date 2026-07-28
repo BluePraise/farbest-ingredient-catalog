@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.6.0
+ * Version: 1.6.1
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.6.0');
+define('FPC_VERSION', '1.6.1');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -197,31 +197,23 @@ class Farbest_Product_Catalog {
 
         // Everything below runs only on ingredient pages.
 
-        // Check if build files exist
-        $build_css = FPC_PLUGIN_DIR . 'assets/build/index.css';
-        $build_js = FPC_PLUGIN_DIR . 'assets/build/index.js';
+        $build_js   = FPC_PLUGIN_DIR . 'assets/build/index.js';
         $asset_file = FPC_PLUGIN_DIR . 'assets/build/index.asset.php';
 
-        // Frontend styles
-        if (file_exists($build_css)) {
-            wp_enqueue_style(
-                'farbest-catalog-styles',
-                FPC_PLUGIN_URL . 'assets/build/index.css',
-                array(),
-                FPC_VERSION
-            );
-        }
-
-        // Archive layout styles — plain CSS, no build step needed.
-        // Provides .fbd-hero, .container, etc. that classic theme had in farbest.css.
-        $archive_css = FPC_PLUGIN_DIR . 'assets/css/archive.css';
-        if ( file_exists( $archive_css ) ) {
-            wp_enqueue_style(
-                'farbest-catalog-archive',
-                FPC_PLUGIN_URL . 'assets/css/archive.css',
-                array(),
-                FPC_VERSION
-            );
+        // Frontend styles — plain CSS, enqueued directly (no build step).
+        // catalog.css was converted from the former SCSS source; archive.css
+        // covers the archive hero/layout. Both are versioned by file mtime so
+        // edits bust the cache without a manual version bump.
+        foreach ( array( 'catalog', 'archive' ) as $handle ) {
+            $path = FPC_PLUGIN_DIR . "assets/css/{$handle}.css";
+            if ( file_exists( $path ) ) {
+                wp_enqueue_style(
+                    "farbest-catalog-{$handle}",
+                    FPC_PLUGIN_URL . "assets/css/{$handle}.css",
+                    array(),
+                    (string) filemtime( $path )
+                );
+            }
         }
 
         // Tab switching script — vanilla JS, no build step needed.

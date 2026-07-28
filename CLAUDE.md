@@ -9,7 +9,11 @@ The plugin is the **canonical** source for all ingredient data and filtering —
 - **CPT:** `fpc_ingredient` (slug: `/ingredients/`, has archive)
 - **Frontend:** React app — `assets/src/index.js` mounts `IngredientGrid` to `#farbest-ingredient-grid`
 - **Backend:** REST API at `/wp-json/farbest/v1/`
-- **Build:** `npm run build` → `assets/build/` (wp-scripts / webpack)
+- **Build:** `npm run build` → `assets/build/index.js` (wp-scripts / webpack). JS only.
+- **Styles:** plain CSS, enqueued directly, **no build step** — `assets/css/catalog.css`
+  (all front-end styles; brand palette lives in `--fpc-*` custom properties at the top) and
+  `assets/css/archive.css` (archive hero/layout). Versioned by file mtime. The former
+  `assets/src/styles/main.scss` was converted to `catalog.css` and removed.
 - **Requires:** Advanced Custom Fields Pro
 
 ## Taxonomies
