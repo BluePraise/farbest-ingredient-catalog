@@ -454,7 +454,95 @@ class Farbest_Product_Catalog {
             'ingredients' => $ingredients,
             'total'       => $query->found_posts,
             'pages'       => $query->max_num_pages,
+            'facets'      => $this->compute_facets($params),
         ), 200);
+    }
+
+    /**
+     * Disjunctive facet counts for the filter dropdowns.
+     *
+     * For each facet we count matching ingredients per term while applying every
+     * OTHER active facet (and the search term) but NOT the facet's own selection.
+     * That gives counts scoped to the current context — e.g. Application counts
+     * reflect the selected category as soon as you open the dropdown — and makes
+     * the other facets narrow as more filters are checked, while a facet's own
+     * options stay selectable (they are OR-combined server-side).
+     *
+     * @param array $params Request params (categories, claims, certifications, applications, search).
+     * @return array Map of facet key => ( term slug => count ).
+     */
+    private function compute_facets($params) {
+        $facet_map = array(
+            'categories'     => 'fpc_category',
+            'claims'         => 'fpc_claim',
+            'certifications' => 'fpc_certification',
+            'applications'   => 'fpc_application',
+        );
+
+        // Build each facet's tax_query clause from the request params, once.
+        $clauses = array();
+        foreach ($facet_map as $key => $taxonomy) {
+            $clauses[$key] = null;
+            if (empty($params[$key])) {
+                continue;
+            }
+            $slugs = array_filter(array_map('sanitize_text_field', explode(',', $params[$key])));
+            if (empty($slugs)) {
+                continue;
+            }
+            $clause = array(
+                'taxonomy' => $taxonomy,
+                'field'    => 'slug',
+                'terms'    => $slugs,
+                'operator' => 'IN',
+            );
+            if ($taxonomy === 'fpc_category') {
+                $clause['include_children'] = true;
+            }
+            $clauses[$key] = $clause;
+        }
+
+        $search = !empty($params['search']) ? sanitize_text_field($params['search']) : '';
+
+        $facets = array();
+        foreach ($facet_map as $key => $taxonomy) {
+            // Apply every OTHER facet's clause, but not this facet's own.
+            $tax_query = array('relation' => 'AND');
+            foreach ($clauses as $other_key => $clause) {
+                if ($other_key === $key || null === $clause) {
+                    continue;
+                }
+                $tax_query[] = $clause;
+            }
+
+            $args = array(
+                'post_type'      => 'fpc_ingredient',
+                'post_status'    => 'publish',
+                'posts_per_page' => -1,
+                'fields'         => 'ids',
+                'no_found_rows'  => true,
+            );
+            if (count($tax_query) > 1) {
+                $args['tax_query'] = $tax_query;
+            }
+            if ('' !== $search) {
+                $args['s'] = $search;
+            }
+
+            $query = new WP_Query($args);
+            $counts = array();
+            if (!empty($query->posts)) {
+                $terms = wp_get_object_terms($query->posts, $taxonomy, array('fields' => 'all_with_object_id'));
+                if (!is_wp_error($terms)) {
+                    foreach ($terms as $term) {
+                        $counts[$term->slug] = isset($counts[$term->slug]) ? $counts[$term->slug] + 1 : 1;
+                    }
+                }
+            }
+            $facets[$key] = $counts;
+        }
+
+        return $facets;
     }
 
     /**

@@ -28,61 +28,6 @@ function showPageLoader() {
     }, { once: true });
 }
 
-/**
- * Derive available filter slugs from a list of ingredients + the full filter options map.
- * Returns null if filterOptions isn't loaded yet.
- */
-function computeAvailableSlugsFrom(ingredientList, options) {
-    if (!options.categories.length && !options.claims.length && !options.certifications.length) {
-        return null;
-    }
-
-    const categories = new Set();
-    const claims = new Set();
-    const certifications = new Set();
-
-    if (options.categories.length) {
-        const nameToSlug = {};
-        options.categories.forEach((t) => { nameToSlug[t.name] = t.slug; });
-        ingredientList.forEach((p) => {
-            (p.categories || []).forEach((name) => {
-                if (nameToSlug[name]) categories.add(nameToSlug[name]);
-            });
-        });
-    }
-    if (options.claims.length) {
-        const nameToSlug = {};
-        options.claims.forEach((t) => { nameToSlug[t.name] = t.slug; });
-        ingredientList.forEach((p) => {
-            (p.claims || []).forEach((name) => {
-                if (nameToSlug[name]) claims.add(nameToSlug[name]);
-            });
-        });
-    }
-    if (options.certifications.length) {
-        const nameToSlug = {};
-        options.certifications.forEach((t) => { nameToSlug[t.name] = t.slug; });
-        ingredientList.forEach((p) => {
-            (p.certifications || []).forEach((name) => {
-                if (nameToSlug[name]) certifications.add(nameToSlug[name]);
-            });
-        });
-    }
-
-    const applications = new Set();
-    if (options.applications && options.applications.length) {
-        const nameToSlug = {};
-        options.applications.forEach((t) => { nameToSlug[t.name] = t.slug; });
-        ingredientList.forEach((p) => {
-            (p.applications || []).forEach((name) => {
-                if (nameToSlug[name]) applications.add(nameToSlug[name]);
-            });
-        });
-    }
-
-    return { categories, claims, certifications, applications };
-}
-
 const IngredientGrid = ({ initialCategory = '' }) => {
     // Filter / sort state
     const [filters, setFilters] = useState({
@@ -105,22 +50,17 @@ const IngredientGrid = ({ initialCategory = '' }) => {
     const [filterOptions, setFilterOptions] = useState({ categories: [], parent_categories: [], claims: [], certifications: [] });
     const [optionsLoaded, setOptionsLoaded] = useState(false);
 
-    // Available slugs for smart filtering (updated after each fetch)
-    const [availableSlugs, setAvailableSlugs] = useState(null);
+    // Disjunctive facet counts from the server (per facet: { slug: count }).
+    // Drives both the number beside each option and whether it stays selectable.
+    // null until the first fetch resolves.
+    const [facetCounts, setFacetCounts] = useState(null);
 
-    // Load filter options once on mount; re-compute available slugs once they arrive
+    // Load filter options once on mount.
     useEffect(() => {
         apiFetch({ path: '/farbest/v1/filter-options' })
             .then((data) => {
                 setFilterOptions(data);
                 setOptionsLoaded(true);
-                // Re-compute now that we have the slug→name map
-                setIngredients((current) => {
-                    if (current.length > 0) {
-                        setAvailableSlugs(computeAvailableSlugsFrom(current, data));
-                    }
-                    return current;
-                });
             })
             .catch((err) => console.error('Error loading filter options:', err));
     }, []);
@@ -164,23 +104,13 @@ const IngredientGrid = ({ initialCategory = '' }) => {
 
             setIngredients(response.ingredients);
             setPagination({ total: response.total, pages: response.pages });
-
-            // Compute available slugs from returned ingredients for smart filtering
-            setAvailableSlugs(computeAvailableSlugs(response.ingredients));
+            setFacetCounts(response.facets || null);
         } catch (err) {
             setError(err.message);
             console.error('Error fetching ingredients:', err);
         } finally {
             setLoading(false);
         }
-    };
-
-    /**
-     * Build Sets of slugs that appear in the current result set.
-     * Used to gray out filter options with 0 matches.
-     */
-    const computeAvailableSlugs = (ingredientList) => {
-        return computeAvailableSlugsFrom(ingredientList, filterOptions);
     };
 
     const handleFilterChange = (newSelected) => {
@@ -212,7 +142,7 @@ const IngredientGrid = ({ initialCategory = '' }) => {
             order: 'ASC',
             page: 1,
         });
-        setAvailableSlugs(null);
+        setFacetCounts(null);
     };
 
 
@@ -282,7 +212,7 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                         filterOptions={filterOptions}
                         selected={filters.selected}
                         onFilterChange={handleFilterChange}
-                        availableSlugs={availableSlugs}
+                        facetCounts={facetCounts}
                         onReset={handleReset}
                     />
                 )}

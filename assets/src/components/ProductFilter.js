@@ -14,9 +14,9 @@ import { decodeHtmlEntities } from '../utils';
  * @param {Array}    options        - [{id, name, slug, count}]
  * @param {Array}    selected       - Array of selected slugs
  * @param {Function} onChange       - Called with new selected array
- * @param {Object}   availableSlugs - Set of slugs that have results; null = no restriction
+ * @param {Object}   counts - Map of slug -> match count for this facet; null = not loaded yet
  */
-const MultiSelectDropdown = ({ label, options, selected, onChange, availableSlugs }) => {
+const MultiSelectDropdown = ({ label, options, selected, onChange, counts }) => {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
 
@@ -66,7 +66,10 @@ const MultiSelectDropdown = ({ label, options, selected, onChange, availableSlug
                     ) : (
                         options.map((opt) => {
                             const isChecked = selected.includes(opt.slug);
-                            const available = availableSlugs === null || isChecked || availableSlugs.has(opt.slug);
+                            // Before the first fetch resolves (counts == null) fall back to the
+                            // global term count; afterwards use the context-aware facet count.
+                            const count = counts == null ? (opt.count || 0) : (counts[opt.slug] || 0);
+                            const available = counts == null || isChecked || count > 0;
                             return (
                                 <label
                                     key={opt.slug}
@@ -79,11 +82,7 @@ const MultiSelectDropdown = ({ label, options, selected, onChange, availableSlug
                                         onChange={() => toggle(opt.slug)}
                                     />
                                     <span className="fpc-dropdown-item-name">{decodeHtmlEntities(opt.name)}</span>
-                                    {availableSlugs !== null && (
-                                        <span className="fpc-dropdown-item-count">
-                                            ({available ? opt.count : 0})
-                                        </span>
-                                    )}
+                                    <span className="fpc-dropdown-item-count">({count})</span>
                                 </label>
                             );
                         })
@@ -101,9 +100,9 @@ const MultiSelectDropdown = ({ label, options, selected, onChange, availableSlug
  *   filterOptions  - { categories, claims, certifications, applications } from /farbest/v1/filter-options
  *   selected       - { categories: [], claims: [], certifications: [], applications: [] }
  *   onFilterChange - called with updated selected object
- *   availableSlugs - { categories: Set, claims: Set, certifications: Set, applications: Set } | null
+ *   facetCounts    - { categories, claims, certifications, applications } each a slug->count map | null
  */
-const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs, onReset }) => {
+const ProductFilter = ({ filterOptions, selected, onFilterChange, facetCounts, onReset }) => {
     const update = (key, value) => {
         onFilterChange({ ...selected, [key]: value });
     };
@@ -123,7 +122,7 @@ const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs
                     options={filterOptions.categories}
                     selected={selected.categories}
                     onChange={(val) => update('categories', val)}
-                    availableSlugs={availableSlugs ? availableSlugs.categories : null}
+                    counts={facetCounts ? facetCounts.categories : null}
                 />
             </div>
 
@@ -136,7 +135,7 @@ const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs
                     options={filterOptions.applications || []}
                     selected={selected.applications}
                     onChange={(val) => update('applications', val)}
-                    availableSlugs={availableSlugs ? availableSlugs.applications : null}
+                    counts={facetCounts ? facetCounts.applications : null}
                 />
             </div>
 
@@ -149,7 +148,7 @@ const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs
                     options={filterOptions.certifications}
                     selected={selected.certifications}
                     onChange={(val) => update('certifications', val)}
-                    availableSlugs={availableSlugs ? availableSlugs.certifications : null}
+                    counts={facetCounts ? facetCounts.certifications : null}
                 />
             </div>
 
@@ -162,7 +161,7 @@ const ProductFilter = ({ filterOptions, selected, onFilterChange, availableSlugs
                     options={filterOptions.claims}
                     selected={selected.claims}
                     onChange={(val) => update('claims', val)}
-                    availableSlugs={availableSlugs ? availableSlugs.claims : null}
+                    counts={facetCounts ? facetCounts.claims : null}
                 />
             </div>
             <button
