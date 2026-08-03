@@ -136,7 +136,12 @@ $archive_description = $is_category_archive
 
                     <?php else : ?>
                         <div class="no-ingredients-found">
-                            <p><?php esc_html_e( 'No ingredients found.', 'farbest-catalog' ); ?></p>
+                            <?php if ( $is_category_archive ) : ?>
+                                <p><?php esc_html_e( 'We haven’t added any ingredients to this category yet — check back soon.', 'farbest-catalog' ); ?></p>
+                                <p><a class="button" href="<?php echo esc_url( get_post_type_archive_link( 'fpc_ingredient' ) ); ?>"><?php esc_html_e( 'Browse all ingredients', 'farbest-catalog' ); ?></a></p>
+                            <?php else : ?>
+                                <p><?php esc_html_e( 'No ingredients found.', 'farbest-catalog' ); ?></p>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 </div>

@@ -223,6 +223,21 @@ const IngredientGrid = ({ initialCategory = '' }) => {
         filters.selected.applications.length > 0 ||
         filters.search !== '';
 
+    // True when we've landed on a category archive (e.g. /ingredient-category/lecithins/)
+    // that simply has no ingredients yet — the only "filter" is the archive's own
+    // category and the visitor hasn't narrowed anything down. This is a "coming soon"
+    // state, not a "your filters matched nothing" state, so it gets friendlier copy.
+    const isEmptyCategoryArchive =
+        !!initialCategory &&
+        filters.search === '' &&
+        filters.selected.categories.length === 1 &&
+        filters.selected.categories[0] === initialCategory &&
+        filters.selected.claims.length === 0 &&
+        filters.selected.certifications.length === 0 &&
+        filters.selected.applications.length === 0;
+
+    const archiveUrl = (window.fpcData && window.fpcData.archiveUrl) || '';
+
     // Initial view: show parent category cards when no filters are active
     const showCategoryBrowse = !hasActiveFilters && optionsLoaded;
 
@@ -331,11 +346,24 @@ const IngredientGrid = ({ initialCategory = '' }) => {
                     </div>
                 ) : ingredients.length === 0 ? (
                     <div className="fpc-no-results">
-                        <p>{__('No ingredients found matching your criteria.', 'farbest-catalog')}</p>
-                        {hasActiveFilters && (
-                            <button type="button" className="fpc-reset-button" onClick={handleReset}>
-                                {__('Reset Filters', 'farbest-catalog')}
-                            </button>
+                        {isEmptyCategoryArchive ? (
+                            <>
+                                <p>{__('We haven’t added any ingredients to this category yet — check back soon.', 'farbest-catalog')}</p>
+                                {archiveUrl && (
+                                    <a className="fpc-reset-button" href={archiveUrl} onClick={showPageLoader}>
+                                        {__('Browse all ingredients', 'farbest-catalog')}
+                                    </a>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <p>{__('No ingredients found matching your criteria.', 'farbest-catalog')}</p>
+                                {hasActiveFilters && (
+                                    <button type="button" className="fpc-reset-button" onClick={handleReset}>
+                                        {__('Reset Filters', 'farbest-catalog')}
+                                    </button>
+                                )}
+                            </>
                         )}
                     </div>
                 ) : (

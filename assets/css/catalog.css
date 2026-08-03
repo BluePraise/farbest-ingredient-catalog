@@ -25,7 +25,11 @@
 }
 
 .fpc-archive-page {
-  background: var(--fpc-bg-light);
+  /* No opaque fill here: the body already paints --fpc-bg-light beige, and an
+     opaque background on this wrapper painted over the theme's hills-and-valley
+     artwork (css/global.css hangs it off .site-content::after at z-index:-1),
+     hiding it on archive + category pages. Staying transparent lets it show. */
+  background: transparent;
   padding-bottom: 60px;
   margin-bottom: -60px;
 }

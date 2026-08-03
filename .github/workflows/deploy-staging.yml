@@ -39,7 +39,7 @@ jobs:
             --exclude='*.md'
             --exclude='.DS_Store'
           path: ./
-          remote_path: /home/customer/www/farbest.navesinkwebsolutions.com/public_html/wp-content/plugins/farbest-product-catalog/
+          remote_path: /home/customer/www/farbest-classic.navesinkwebsolutions.com/public_html/wp-content/plugins/farbest-product-catalog/
           remote_host: ${{ secrets.STAGING_HOST }}
           remote_user: ${{ secrets.STAGING_USER }}
           remote_key: ${{ secrets.STAGING_SSH_KEY }}
