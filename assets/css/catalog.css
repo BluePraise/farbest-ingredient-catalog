@@ -536,14 +536,9 @@
 
 .fpc-ingredients-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
   margin-bottom: 40px;
-}
-@media (max-width: 1200px) {
-  .fpc-ingredients-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 @media (max-width: 1024px) {
   .fpc-ingredients-grid {
@@ -595,7 +590,7 @@
 
 .fpc-ingredient-title {
   margin: 0 0 8px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   line-height: 1.4;
 }
@@ -658,7 +653,7 @@
 }
 
 .fpc-ingredient-benefits__heading {
-  font-size: 0.65rem;
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -670,7 +665,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #555;
   line-height: 1.6;
 }
@@ -863,23 +858,30 @@
   box-shadow: none;
   border: none;
   border-bottom: 3px solid transparent;
+  border-radius: 0; /* keep the active underline a straight line (buttons inherit a radius) */
   margin-bottom: -2px;
-  margin-right: 4em;
-  padding: 12px 0;
+  margin-right: 2em;
+  padding: 12px 14px;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--fpc-secondary);
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.15s, background 0.15s, padding 0.15s, border-color 0.15s;
 }
 .ingredient-tabs__tab:hover {
-  color: var(--fpc-moss);
+  color: #fff;
+  background: var(--fpc-moss);
+  padding-left: 22px;
+  padding-right: 22px;
 }
 .ingredient-tabs__tab--active, .ingredient-tabs__tab[aria-selected=true] {
   color: var(--fpc-moss);
   border-bottom-color: var(--fpc-cta);
+}
+.ingredient-tabs__tab--active:hover, .ingredient-tabs__tab[aria-selected=true]:hover {
+  color: #fff; /* keep text legible on the moss hover background */
 }
 
 .ingredient-tabs__panel {
