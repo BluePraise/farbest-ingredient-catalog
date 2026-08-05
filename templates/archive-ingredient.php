@@ -32,6 +32,16 @@ if ( $is_category_archive && $queried_object && ! is_wp_error( $queried_object )
     $hero_subtitle_override = (string) get_field( 'category_hero_subtitle', $term_key );
 }
 
+// Which zone the client's linked content page renders in on this category.
+// Defaults to below_hero; the client changes it on the category screen.
+$content_zone = 'below_hero';
+if ( $is_category_archive && $queried_object && ! is_wp_error( $queried_object ) && function_exists( 'get_field' ) ) {
+    $chosen_zone = (string) get_field( 'category_content_position', 'fpc_category_' . $queried_object->term_id );
+    if ( 'below_results' === $chosen_zone ) {
+        $content_zone = 'below_results';
+    }
+}
+
 $option_title       = function_exists( 'get_field' ) ? (string) get_field( 'archive_hero_title', 'option' ) : '';
 $option_description = function_exists( 'get_field' ) ? (string) get_field( 'archive_hero_description', 'option' ) : '';
 
@@ -82,6 +92,12 @@ $archive_description = $is_category_archive
             </div>
         </div>
     </section>
+
+    <?php
+    if ( 'below_hero' === $content_zone && $is_category_archive && $queried_object && ! is_wp_error( $queried_object ) ) {
+        fpc_render_category_zone( $queried_object->term_id, 'below_hero' );
+    }
+    ?>
 
     <div class="fbd-catalog-wrap">
         <div class="content-wrapper container">
@@ -153,7 +169,7 @@ $archive_description = $is_category_archive
     // Client-owned content zone: renders the block content of the Page linked on
     // this category term (FAQ accordion, callouts, any Kadence blocks). Editable
     // by the client without a developer. See fpc_render_category_zone().
-    if ( $is_category_archive && $queried_object && ! is_wp_error( $queried_object ) ) {
+    if ( 'below_results' === $content_zone && $is_category_archive && $queried_object && ! is_wp_error( $queried_object ) ) {
         fpc_render_category_zone( $queried_object->term_id, 'below_results' );
     }
     ?>

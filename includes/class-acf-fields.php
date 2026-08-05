@@ -477,6 +477,22 @@ class FPC_ACF_Fields {
                     'ui'            => 1,
                     'allow_null'    => 1,
                 ),
+                array(
+                    'key'           => 'field_category_content_position',
+                    'label'         => 'Content Position',
+                    'name'          => 'category_content_position',
+                    'type'          => 'select',
+                    'instructions'  => 'Where the content above appears on this category page.',
+                    'required'      => 0,
+                    'choices'       => array(
+                        'below_hero'    => 'Below the hero (above the filters and grid)',
+                        'below_results' => 'Below the ingredient grid',
+                    ),
+                    'default_value' => 'below_hero',
+                    'return_format' => 'value',
+                    'allow_null'    => 0,
+                    'ui'            => 0,
+                ),
             ),
             'location' => array(
                 array(
