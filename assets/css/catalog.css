@@ -31,6 +31,11 @@
   padding: 32px 0 48px;
 }
 
+/* [fpc_ingredients] shortcode grid placed on an arbitrary page. */
+.fpc-shortcode-grid {
+  margin: 24px 0;
+}
+
 .fpc-archive-page {
   /* No opaque fill here: the body already paints --fpc-bg-light beige, and an
      opaque background on this wrapper painted over the theme's hills-and-valley

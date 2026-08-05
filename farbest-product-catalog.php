@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.7.0
+ * Version: 1.8.0
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.7.0');
+define('FPC_VERSION', '1.8.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -191,32 +191,21 @@ class Farbest_Product_Catalog {
             || is_post_type_archive('fpc_ingredient')
             || is_tax('fpc_category');
 
-        if (!$on_ingredient_page) {
+        // Also load when the [fpc_ingredients] shortcode is in the queried
+        // post's content, so the grid works on any Page. (The shortcode also
+        // enqueues on render, covering content rendered outside the main query,
+        // e.g. inside a category content-zone page.)
+        $post = get_post();
+        $has_grid_shortcode = is_singular() && $post
+            && has_shortcode( (string) $post->post_content, 'fpc_ingredients' );
+
+        if ( ! $on_ingredient_page && ! $has_grid_shortcode ) {
             return;
         }
 
-        // Everything below runs only on ingredient pages.
+        $this->enqueue_catalog_assets();
 
-        $build_js   = FPC_PLUGIN_DIR . 'assets/build/index.js';
-        $asset_file = FPC_PLUGIN_DIR . 'assets/build/index.asset.php';
-
-        // Frontend styles — plain CSS, enqueued directly (no build step).
-        // catalog.css was converted from the former SCSS source; archive.css
-        // covers the archive hero/layout. Both are versioned by file mtime so
-        // edits bust the cache without a manual version bump.
-        foreach ( array( 'catalog', 'archive' ) as $handle ) {
-            $path = FPC_PLUGIN_DIR . "assets/css/{$handle}.css";
-            if ( file_exists( $path ) ) {
-                wp_enqueue_style(
-                    "farbest-catalog-{$handle}",
-                    FPC_PLUGIN_URL . "assets/css/{$handle}.css",
-                    array(),
-                    (string) filemtime( $path )
-                );
-            }
-        }
-
-        // Tab switching script — vanilla JS, no build step needed.
+        // Tab switching script — vanilla JS, single ingredient only.
         if ( is_singular( 'fpc_ingredient' ) ) {
             $tabs_js = FPC_PLUGIN_DIR . 'assets/js/ingredient-tabs.js';
             if ( file_exists( $tabs_js ) ) {
@@ -229,9 +218,38 @@ class Farbest_Product_Catalog {
                 );
             }
         }
+    }
+
+    /**
+     * Enqueue the catalog React app + styles. Idempotent, so it can be called
+     * from the page-type check above or lazily from the [fpc_ingredients]
+     * shortcode when the grid is placed on an arbitrary page.
+     */
+    public function enqueue_catalog_assets() {
+        static $done = false;
+        if ( $done ) {
+            return;
+        }
+        $done = true;
+
+        $build_js   = FPC_PLUGIN_DIR . 'assets/build/index.js';
+        $asset_file = FPC_PLUGIN_DIR . 'assets/build/index.asset.php';
+
+        // Frontend styles — plain CSS, versioned by file mtime.
+        foreach ( array( 'catalog', 'archive' ) as $handle ) {
+            $path = FPC_PLUGIN_DIR . "assets/css/{$handle}.css";
+            if ( file_exists( $path ) ) {
+                wp_enqueue_style(
+                    "farbest-catalog-{$handle}",
+                    FPC_PLUGIN_URL . "assets/css/{$handle}.css",
+                    array(),
+                    (string) filemtime( $path )
+                );
+            }
+        }
 
         // React app bundle
-        if (file_exists($build_js) && file_exists($asset_file)) {
+        if ( file_exists( $build_js ) && file_exists( $asset_file ) ) {
             $asset_data = include $asset_file;
 
             wp_enqueue_script(
@@ -242,17 +260,16 @@ class Farbest_Product_Catalog {
                 true
             );
 
-            // Localize script with data
             wp_localize_script(
                 'farbest-catalog-app',
                 'fpcData',
                 array(
                     'restUrl'        => rest_url('farbest/v1/'),
-                    'nonce' => wp_create_nonce('wp_rest'),
+                    'nonce'          => wp_create_nonce('wp_rest'),
                     'currentProduct' => is_singular('fpc_ingredient') ? get_the_ID() : null,
-                    'ajaxUrl' => admin_url('admin-ajax.php'),
-                    'pluginUrl' => FPC_PLUGIN_URL,
-                    'archiveUrl' => get_post_type_archive_link('fpc_ingredient'),
+                    'ajaxUrl'        => admin_url('admin-ajax.php'),
+                    'pluginUrl'      => FPC_PLUGIN_URL,
+                    'archiveUrl'     => get_post_type_archive_link('fpc_ingredient'),
                 )
             );
         }
@@ -862,6 +879,37 @@ function fpc_render_category_zone( $term_id, $zone = 'below_results' ) {
         $rendered // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     );
 }
+
+/**
+ * [fpc_ingredients] — render the filterable ingredient grid on any page.
+ *
+ * Lets the client drop the catalog (or a category-scoped view of it) into any
+ * Page, Kadence layout, or the category content zone — the first step toward
+ * building category pages as real editor-composed Pages.
+ *
+ * Attributes:
+ *   category — an fpc_category slug to pre-scope the grid (optional; empty shows all).
+ *
+ * The grid is the same React app used on the archive; it reads the category
+ * from data-initial-category. Only one grid per page is supported (the app
+ * mounts to the #farbest-ingredient-grid id).
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string
+ */
+function fpc_ingredients_shortcode( $atts ) {
+    $atts = shortcode_atts( array( 'category' => '' ), $atts, 'fpc_ingredients' );
+
+    // Ensure the bundle + styles load, including when this runs outside the main
+    // query (a category content-zone page, a Kadence-embedded layout, etc.).
+    Farbest_Product_Catalog::get_instance()->enqueue_catalog_assets();
+
+    return sprintf(
+        '<div class="fpc-shortcode-grid"><div id="farbest-ingredient-grid" data-initial-category="%s"></div></div>',
+        esc_attr( sanitize_title( $atts['category'] ) )
+    );
+}
+add_shortcode( 'fpc_ingredients', 'fpc_ingredients_shortcode' );
 
 /**
  * Initialize the plugin
