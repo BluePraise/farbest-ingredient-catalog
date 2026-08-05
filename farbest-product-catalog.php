@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.6.1
+ * Version: 1.7.0
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.6.1');
+define('FPC_VERSION', '1.7.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -816,6 +816,51 @@ function fpc_extract_benefits( $post_id ) {
     }
 
     return $groups;
+}
+
+/**
+ * Render a category's editable content zone.
+ *
+ * Loads the Page linked on the fpc_category term via the `category_content_page`
+ * ACF field and echoes its block content, so the client can compose an FAQ
+ * accordion, callouts, or any other (Kadence) blocks below the ingredient grid
+ * without a developer. This is the generic mechanism — pass a different $zone
+ * (and add a matching render call) to place client content elsewhere later, on
+ * category or single-ingredient templates.
+ *
+ * Content is run through the `the_content` filter, which triggers do_blocks()
+ * and lets Kadence Blocks build and enqueue its per-block CSS for this content.
+ * The linked page is rendered regardless of status (it is meant to live as a
+ * Draft, with no public URL); only trashed/empty pages are skipped.
+ *
+ * @param int    $term_id fpc_category term ID.
+ * @param string $zone    Zone identifier (only 'below_results' today; kept for future zones).
+ * @return void
+ */
+function fpc_render_category_zone( $term_id, $zone = 'below_results' ) {
+    if ( ! function_exists( 'get_field' ) || ! $term_id ) {
+        return;
+    }
+
+    $page_id = get_field( 'category_content_page', 'fpc_category_' . $term_id );
+    if ( ! $page_id ) {
+        return;
+    }
+
+    $page = get_post( $page_id );
+    if ( ! $page || 'trash' === $page->post_status || '' === trim( (string) $page->post_content ) ) {
+        return;
+    }
+
+    // the_content runs do_blocks(); Kadence hooks in there to emit its block CSS.
+    $rendered = apply_filters( 'the_content', $page->post_content );
+
+    printf(
+        '<section class="fpc-category-zone fpc-category-zone--%s"><div class="content-wrapper container">%s</div></section>',
+        esc_attr( $zone ),
+        // Block output is trusted admin content already sanitised by the_content filters.
+        $rendered // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    );
 }
 
 /**

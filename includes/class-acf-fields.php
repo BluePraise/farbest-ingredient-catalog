@@ -48,6 +48,7 @@ class FPC_ACF_Fields {
         self::register_certification_logo();
         self::register_vendor_fields();
         self::register_category_hero();
+        self::register_category_content();
         self::register_archive_main_settings();
     }
 
@@ -445,6 +446,48 @@ class FPC_ACF_Fields {
                 ),
             ),
             'menu_order' => 0,
+            'position'   => 'normal',
+            'style'      => 'default',
+        ));
+    }
+
+    /**
+     * Category Content page link (on fpc_category taxonomy terms).
+     *
+     * Points a category at a Page the client builds with the block editor /
+     * Kadence. archive-ingredient.php renders that page's blocks in the content
+     * zone below the ingredient grid via fpc_render_category_zone(). Keep the
+     * linked page as a Draft — it is rendered by term ID regardless of status,
+     * so it needs no public URL of its own.
+     */
+    private static function register_category_content() {
+        acf_add_local_field_group(array(
+            'key'    => 'group_category_content',
+            'title'  => 'Category Content',
+            'fields' => array(
+                array(
+                    'key'           => 'field_category_content_page',
+                    'label'         => 'Content Page',
+                    'name'          => 'category_content_page',
+                    'type'          => 'post_object',
+                    'instructions'  => 'Select a Page whose block content (FAQ accordion, callouts, etc.) is shown below the ingredient grid on this category page. Build the Page with the editor / Kadence and keep it as a Draft — it is embedded here, not linked directly.',
+                    'required'      => 0,
+                    'post_type'     => array('page'),
+                    'return_format' => 'id',
+                    'ui'            => 1,
+                    'allow_null'    => 1,
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param'    => 'taxonomy',
+                        'operator' => '==',
+                        'value'    => 'fpc_category',
+                    ),
+                ),
+            ),
+            'menu_order' => 5,
             'position'   => 'normal',
             'style'      => 'default',
         ));

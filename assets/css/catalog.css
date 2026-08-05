@@ -24,6 +24,13 @@
     --fpc-bg-light:      #f2efe9; /* beige surfaces */
 }
 
+/* Client-owned content zone rendered below the ingredient grid on category
+   pages (see fpc_render_category_zone). Holds any block content the client
+   builds — FAQ accordion, callouts, etc. */
+.fpc-category-zone {
+  padding: 32px 0 48px;
+}
+
 .fpc-archive-page {
   /* No opaque fill here: the body already paints --fpc-bg-light beige, and an
      opaque background on this wrapper painted over the theme's hills-and-valley
@@ -655,7 +662,6 @@
 .fpc-ingredient-benefits__heading {
   font-size: 16px;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--fpc-moss);
   margin: 0 0 4px;

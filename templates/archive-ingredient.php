@@ -149,6 +149,15 @@ $archive_description = $is_category_archive
         </div>
     </div>
 
+    <?php
+    // Client-owned content zone: renders the block content of the Page linked on
+    // this category term (FAQ accordion, callouts, any Kadence blocks). Editable
+    // by the client without a developer. See fpc_render_category_zone().
+    if ( $is_category_archive && $queried_object && ! is_wp_error( $queried_object ) ) {
+        fpc_render_category_zone( $queried_object->term_id, 'below_results' );
+    }
+    ?>
+
 </div><!-- .fpc-archive-page -->
 
 <?php
