@@ -19,9 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (mountPoint) {
         const initialCategory = mountPoint.dataset.initialCategory || '';
+        // Opt out of the search box with data-show-search="0" (category pages).
+        const showSearch = mountPoint.dataset.showSearch !== '0';
 
         render(
-            <IngredientGrid initialCategory={initialCategory} />,
+            <IngredientGrid initialCategory={initialCategory} showSearch={showSearch} />,
             mountPoint
         );
     }

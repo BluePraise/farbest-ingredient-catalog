@@ -102,7 +102,9 @@ $archive_description = $is_category_archive
     <div class="fbd-catalog-wrap">
         <div class="content-wrapper container">
             <main class="ingredient-content">
-                <div id="farbest-ingredient-grid" data-initial-category="<?php echo esc_attr( $initial_category ); ?>">
+                <div id="farbest-ingredient-grid"
+                    data-initial-category="<?php echo esc_attr( $initial_category ); ?>"
+                    data-show-search="<?php echo $is_category_archive ? '0' : '1'; ?>">
                     <?php if ( have_posts() ) : ?>
                         <div class="ingredients-grid">
                             <?php while ( have_posts() ) : the_post(); ?>

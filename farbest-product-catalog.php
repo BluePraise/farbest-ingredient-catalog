@@ -893,24 +893,38 @@ function fpc_render_category_zone( $term_id, $zone = 'below_results' ) {
  *
  * Attributes:
  *   category — an fpc_category slug to pre-scope the grid (optional; empty shows all).
+ *   search   — "yes" or "no" to force the search box. Default follows the
+ *              category pages: hidden when a category is set, shown otherwise.
  *
- * The grid is the same React app used on the archive; it reads the category
- * from data-initial-category. Only one grid per page is supported (the app
+ * The grid is the same React app used on the archive; it reads its settings
+ * from the data attributes. Only one grid per page is supported (the app
  * mounts to the #farbest-ingredient-grid id).
  *
  * @param array $atts Shortcode attributes.
  * @return string
  */
 function fpc_ingredients_shortcode( $atts ) {
-    $atts = shortcode_atts( array( 'category' => '' ), $atts, 'fpc_ingredients' );
+    $atts = shortcode_atts( array( 'category' => '', 'search' => '' ), $atts, 'fpc_ingredients' );
+
+    $category = sanitize_title( $atts['category'] );
+
+    $search = strtolower( trim( (string) $atts['search'] ) );
+    if ( in_array( $search, array( 'yes', 'true', '1' ), true ) ) {
+        $show_search = true;
+    } elseif ( in_array( $search, array( 'no', 'false', '0' ), true ) ) {
+        $show_search = false;
+    } else {
+        $show_search = ( '' === $category ); // auto
+    }
 
     // Ensure the bundle + styles load, including when this runs outside the main
     // query (a category content-zone page, a Kadence-embedded layout, etc.).
     Farbest_Product_Catalog::get_instance()->enqueue_catalog_assets();
 
     return sprintf(
-        '<div class="fpc-shortcode-grid"><div id="farbest-ingredient-grid" data-initial-category="%s"></div></div>',
-        esc_attr( sanitize_title( $atts['category'] ) )
+        '<div class="fpc-shortcode-grid"><div id="farbest-ingredient-grid" data-initial-category="%s" data-show-search="%s"></div></div>',
+        esc_attr( $category ),
+        $show_search ? '1' : '0'
     );
 }
 add_shortcode( 'fpc_ingredients', 'fpc_ingredients_shortcode' );

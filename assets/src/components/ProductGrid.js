@@ -28,7 +28,7 @@ function showPageLoader() {
     }, { once: true });
 }
 
-const IngredientGrid = ({ initialCategory = '' }) => {
+const IngredientGrid = ({ initialCategory = '', showSearch = true }) => {
     // Filter / sort state
     const [filters, setFilters] = useState({
         selected: initialCategory
@@ -197,8 +197,9 @@ const IngredientGrid = ({ initialCategory = '' }) => {
     return (
         <div className="fpc-ingredient-grid-wrapper">
 
-            {/* Search — above filters */}
-            {optionsLoaded && (
+            {/* Search — above filters. Hidden on category pages, where the
+                results are already scoped to one category. */}
+            {optionsLoaded && showSearch && (
                 <ProductSearch
                     onSearch={handleSearchChange}
                     initialValue={filters.search}
