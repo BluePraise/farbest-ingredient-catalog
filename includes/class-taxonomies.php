@@ -142,8 +142,12 @@ class FPC_Taxonomies {
             'show_tagcloud'     => true,
             'show_in_rest'      => true,
             'rest_base'         => 'ingredient-categories',
+            // Categories live under the ingredient base: /ingredients/gum-acacia/
+            // and, for child terms, /ingredients/gum-acacia/organic/. Routing for
+            // this shared base is resolved in class-rewrites.php — this rewrite
+            // exists so get_term_link() generates matching URLs.
             'rewrite'           => array(
-                'slug'        => 'ingredient-category',
+                'slug'        => FPC_Rewrites::BASE,
                 'with_front'  => false,
                 'hierarchical' => true,
             ),

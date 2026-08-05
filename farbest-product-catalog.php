@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.8.0
+ * Version: 1.9.0
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.8.0');
+define('FPC_VERSION', '1.9.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -58,6 +58,7 @@ class Farbest_Product_Catalog {
      */
     private function load_dependencies() {
         // Core classes
+        require_once FPC_PLUGIN_DIR . 'includes/class-rewrites.php';
         require_once FPC_PLUGIN_DIR . 'includes/class-post-types.php';
         require_once FPC_PLUGIN_DIR . 'includes/class-taxonomies.php';
         require_once FPC_PLUGIN_DIR . 'includes/class-acf-fields.php';
@@ -78,6 +79,9 @@ class Farbest_Product_Catalog {
         // Activation/Deactivation hooks
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+
+        // URL routing under /ingredients/ (registers its own init hooks)
+        FPC_Rewrites::init();
 
         // Initialization
         add_action('plugins_loaded', array($this, 'init_acf_fields'));
