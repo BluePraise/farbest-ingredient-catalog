@@ -1,0 +1,114 @@
+{
+    "key": "group_ingredient_benefits",
+    "title": "Ingredient Benefits",
+    "fields": [
+        {
+            "key": "field_benefits_columns",
+            "label": "Benefits Columns",
+            "name": "benefits_columns",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add one or more benefit columns (e.g. \"Application Benefits\", \"Fiber Benefits\")",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "button_label": "Add Column",
+            "sub_fields": [
+                {
+                    "key": "field_benefits_column_label",
+                    "label": "Column Heading",
+                    "name": "column_label",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "placeholder": "e.g. Application Benefits",
+                    "default_value": "",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_benefits_columns"
+                },
+                {
+                    "key": "field_benefits_column_items",
+                    "label": "Benefit Items",
+                    "name": "column_items",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "button_label": "Add Item",
+                    "sub_fields": [
+                        {
+                            "key": "field_benefits_item_text",
+                            "label": "Item",
+                            "name": "item_text",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 1,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_benefits_column_items"
+                        }
+                    ],
+                    "min": 0,
+                    "max": 0,
+                    "rows_per_page": 20,
+                    "layout": "table",
+                    "collapsed": "",
+                    "parent_repeater": "field_benefits_columns"
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "layout": "table",
+            "collapsed": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "fpc_ingredient"
+            }
+        ]
+    ],
+    "menu_order": 3,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1754400000
+}

@@ -43,8 +43,24 @@ Base: `/wp-json/farbest/v1/`
 - `ProductSearch.js` — Debounced search input (500ms), calls `onSearch()` callback
 - Filter state shape: `{ selected: { categories[], claims[], certifications[], applications[] }, search, orderby, order, page }`
 
-## ACF Fields (on `fpc_ingredient`)
-**Product Details group:**
+## ACF Fields
+
+Field groups are **ACF Local JSON** in `acf-json/` — one `group_*.json` per group. They used to be
+registered in PHP via `acf_add_local_field_group()`, but ACF hides PHP-registered groups from the
+Custom Fields → Field Groups admin screen entirely, so they could not be seen or edited there.
+
+`includes/class-acf-fields.php` now only wires ACF up: it adds `acf-json/` as a load point and
+routes saves for groups it owns back into the plugin (the theme sets the global save point to its
+own `acf-json/`, so without that an admin edit would land in the theme and the next deploy would
+revert it). It still registers the `fpc-main-settings` options page.
+
+On a fresh environment the groups appear under Custom Fields → Field Groups → **Sync available**.
+They are already active before syncing; syncing only creates the DB copies that make them editable
+in the admin. Do not re-add PHP registration alongside the JSON: ACF fires `acf/include_fields`
+(where Local JSON is read) *before* `acf/init`, so a PHP group would overwrite the JSON one and
+disappear from the admin again.
+
+**Product Details group** (on `fpc_ingredient`)**:**
 - `product_description` (wysiwyg)
 - `product_sheet` (file/pdf)
 - `product_applications` (taxonomy field → `fpc_application`, saves terms)

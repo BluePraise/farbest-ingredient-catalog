@@ -1,0 +1,153 @@
+{
+    "key": "group_product_details",
+    "title": "Product Details",
+    "fields": [
+        {
+            "key": "field_product_description",
+            "label": "Product Description",
+            "name": "product_description",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "Detailed product description",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "default_value": "",
+            "delay": 0
+        },
+        {
+            "key": "field_product_sheet",
+            "label": "Product Sheet (PDF)",
+            "name": "product_sheet",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "Upload the product specification sheet PDF",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "mime_types": "pdf",
+            "min_size": 0,
+            "max_size": 0
+        },
+        {
+            "key": "field_product_applications",
+            "label": "Applications",
+            "name": "product_applications",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Select the applications this ingredient is suited for",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "fpc_application",
+            "field_type": "multi_select",
+            "allow_null": 1,
+            "add_term": 1,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 1
+        },
+        {
+            "key": "field_product_vendors",
+            "label": "Vendors",
+            "name": "product_vendors",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Select the vendors for this ingredient. Manage vendors under Ingredients → Vendors.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "fpc_vendor",
+            "field_type": "checkbox",
+            "allow_null": 1,
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 1
+        },
+        {
+            "key": "field_product_packaging",
+            "label": "Packaging",
+            "name": "product_packaging",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Packaging details",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_display_order",
+            "label": "Display Order",
+            "name": "display_order",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Order for sorting products (lower numbers appear first)",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 0,
+            "min": 0,
+            "step": 1,
+            "max": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "fpc_ingredient"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1754400000
+}

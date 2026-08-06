@@ -1,0 +1,158 @@
+{
+    "key": "group_archive_main_settings",
+    "title": "Main Settings",
+    "fields": [
+        {
+            "key": "field_tab_archive_hero",
+            "label": "Archive Hero",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_archive_hero_title",
+            "label": "Hero Title",
+            "name": "archive_hero_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Heading displayed in the hero on \/ingredients\/. Leave blank to use the default.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "Our Ingredients, Your Sourcing Simplified.",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_archive_hero_description",
+            "label": "Hero Description",
+            "name": "archive_hero_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Subtext displayed below the hero heading. Leave blank to use the default.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "Whether you are looking for proteins, texturants, sweeteners...",
+            "rows": 3,
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_tab_email_settings",
+            "label": "Email Settings",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_email_default",
+            "label": "Default Email Address",
+            "name": "default_email",
+            "aria-label": "",
+            "type": "email",
+            "instructions": "Used when no representative code is assigned.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_email_cc",
+            "label": "CC Email Addresses",
+            "name": "cc_emails",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "One email per line. These addresses will be CC'd on all submissions.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_email_rep_mapping",
+            "label": "Representative Email Mapping",
+            "name": "rep_email_mapping",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Format: code|email@example.com (one per line)\nExample: 101|john@farbest.com",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 10,
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": "",
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "fpc-main-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1754400000
+}

@@ -1,0 +1,74 @@
+{
+    "key": "group_category_content",
+    "title": "Category Content",
+    "fields": [
+        {
+            "key": "field_category_content_page",
+            "label": "Content Page",
+            "name": "category_content_page",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "Select a Page whose block content (FAQ accordion, callouts, etc.) is shown below the ingredient grid on this category page. Build the Page with the editor \/ Kadence and keep it as a Draft — it is embedded here, not linked directly.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "page"
+            ],
+            "return_format": "id",
+            "ui": 1,
+            "allow_null": 1,
+            "taxonomy": [],
+            "multiple": 0
+        },
+        {
+            "key": "field_category_content_position",
+            "label": "Content Position",
+            "name": "category_content_position",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Where the content above appears on this category page.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "below_hero": "Below the hero (above the filters and grid)",
+                "below_results": "Below the ingredient grid"
+            },
+            "default_value": "below_hero",
+            "return_format": "value",
+            "allow_null": 0,
+            "ui": 0,
+            "multiple": 0,
+            "ajax": 0,
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "fpc_category"
+            }
+        ]
+    ],
+    "menu_order": 5,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1754400000
+}

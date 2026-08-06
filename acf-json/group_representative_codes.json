@@ -1,0 +1,85 @@
+{
+    "key": "group_representative_codes",
+    "title": "Sales Representative Routing",
+    "fields": [
+        {
+            "key": "field_rep_code_primary",
+            "label": "Primary Representative Code",
+            "name": "rep_code_primary",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Numerical code for primary sales representative",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 10,
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_rep_code_secondary",
+            "label": "Secondary Representative Code",
+            "name": "rep_code_secondary",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional secondary representative code",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 10,
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_rep_notes",
+            "label": "Representative Notes",
+            "name": "rep_notes",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Internal notes about representative routing",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": "",
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "fpc_ingredient"
+            }
+        ]
+    ],
+    "menu_order": 2,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1754400000
+}

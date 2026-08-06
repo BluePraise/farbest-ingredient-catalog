@@ -1,0 +1,70 @@
+{
+    "key": "group_vendor_fields",
+    "title": "Vendor Details",
+    "fields": [
+        {
+            "key": "field_vendor_logo",
+            "label": "Vendor Logo",
+            "name": "vendor_logo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Upload the vendor logo (transparent PNG or SVG preferred)",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
+            "key": "field_vendor_text",
+            "label": "Caption",
+            "name": "vendor_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Short line of text displayed beside the logo (e.g. \"Exclusive distributor\")",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 120,
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "fpc_vendor"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1754400000
+}

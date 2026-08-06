@@ -1,0 +1,135 @@
+{
+    "key": "group_category_hero",
+    "title": "Category Hero",
+    "fields": [
+        {
+            "key": "field_category_hero_image",
+            "label": "Hero Background Image",
+            "name": "category_hero_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Upload a hero\/banner image displayed as the background of the hero section (recommended: 1600×500px or wider).",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "mime_types": "jpg,jpeg,png,webp",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0
+        },
+        {
+            "key": "field_category_hero_title",
+            "label": "Hero Title",
+            "name": "category_hero_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Override the title shown in the hero section. Leave blank to use the category name.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 120,
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_category_hero_subtitle",
+            "label": "Hero Description",
+            "name": "category_hero_subtitle",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Paragraph shown beneath the hero title on the category archive page.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "maxlength": 500,
+            "new_lines": "",
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_category_icon_svg",
+            "label": "Category Icon (SVG)",
+            "name": "category_icon_svg",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "Upload an SVG icon representing this category. Displayed on the single ingredient page alongside the product benefits.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "mime_types": "svg",
+            "min_size": 0,
+            "max_size": 0
+        },
+        {
+            "key": "field_category_grid_icon",
+            "label": "Category Grid Icon",
+            "name": "category_grid_icon",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Upload the icon displayed on this category's card in the ingredient browse grid (recommended: square image, WEBP or PNG with transparent background).",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "mime_types": "jpg,jpeg,png,webp,svg",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "fpc_category"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1754400000
+}
