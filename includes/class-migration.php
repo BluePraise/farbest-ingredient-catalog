@@ -664,3 +664,107 @@ class FPC_Rename_PostType {
 }
 
 WP_CLI::add_command('farbest rename-posttype', 'FPC_Rename_PostType');
+
+/**
+ * Carry the retired `category_icon_svg` uploads over to `category_icon_circle`.
+ *
+ * The old field was removed in 1.11.0 when the single ingredient page moved to
+ * the FPC_Icons resolution chain. Its uploads were already circle artwork
+ * (Gum_Acacia_Circle_Icon.svg, Pea_Protein_Circle_Icon.svg, …), so they are the
+ * artwork the new field wants — copying them across saves re-uploading every
+ * category by hand.
+ *
+ * Idempotent: a category that already has a circle icon is left alone, so this
+ * is safe to re-run and safe to run after someone has started uploading.
+ *
+ * WP-CLI command: wp farbest migrate-circle-icons [--dry-run] [--cleanup]
+ */
+class FPC_Migrate_Circle_Icons {
+
+    const OLD_FIELD = 'category_icon_svg';
+    const NEW_FIELD = 'category_icon_circle';
+
+    /**
+     * Copy legacy category icon uploads to the new circle icon field.
+     *
+     * ## OPTIONS
+     *
+     * [--dry-run]
+     * : Report what would change without writing anything.
+     *
+     * [--cleanup]
+     * : Also delete the orphaned legacy meta rows once copied. The attachments
+     *   themselves are never touched.
+     *
+     * ## EXAMPLES
+     *
+     *     wp farbest migrate-circle-icons --dry-run
+     *     wp farbest migrate-circle-icons
+     *     wp farbest migrate-circle-icons --cleanup
+     *
+     * @when after_wp_load
+     */
+    public function __invoke($args, $assoc_args) {
+        $dry_run = ! empty($assoc_args['dry-run']);
+        $cleanup = ! empty($assoc_args['cleanup']);
+
+        if (! function_exists('get_field')) {
+            WP_CLI::error('ACF is not active; cannot read or write field values.');
+        }
+
+        $terms = get_terms(array('taxonomy' => 'fpc_category', 'hide_empty' => false));
+        if (is_wp_error($terms)) {
+            WP_CLI::error('Could not load fpc_category terms: ' . $terms->get_error_message());
+        }
+
+        if ($dry_run) {
+            WP_CLI::log('DRY RUN — nothing will be written.');
+        }
+
+        $copied = 0;
+        $skipped = 0;
+        $empty = 0;
+
+        foreach ($terms as $term) {
+            $object = 'fpc_category_' . $term->term_id;
+            $legacy = get_term_meta($term->term_id, self::OLD_FIELD, true);
+
+            if (empty($legacy)) {
+                WP_CLI::log("  — {$term->name}: no legacy icon, nothing to copy");
+                $empty++;
+                continue;
+            }
+
+            $existing = get_field(self::NEW_FIELD, $object);
+            if (! empty($existing['ID'])) {
+                WP_CLI::log("  = {$term->name}: already has a circle icon (#{$existing['ID']}), left alone");
+                $skipped++;
+                continue;
+            }
+
+            $title = get_the_title((int) $legacy);
+            WP_CLI::log("  + {$term->name}: copying #{$legacy} ({$title})");
+
+            if (! $dry_run) {
+                update_field(self::NEW_FIELD, (int) $legacy, $object);
+            }
+            $copied++;
+        }
+
+        if ($cleanup && ! $dry_run) {
+            $removed = 0;
+            foreach ($terms as $term) {
+                $removed += (int) delete_term_meta($term->term_id, self::OLD_FIELD);
+                $removed += (int) delete_term_meta($term->term_id, '_' . self::OLD_FIELD);
+            }
+            WP_CLI::log("Cleanup: removed {$removed} orphaned legacy meta rows.");
+        } elseif ($cleanup) {
+            WP_CLI::log('Cleanup skipped in dry-run mode.');
+        }
+
+        $verb = $dry_run ? 'Would copy' : 'Copied';
+        WP_CLI::success("{$verb}: {$copied}. Already set: {$skipped}. No legacy icon: {$empty}.");
+    }
+}
+
+WP_CLI::add_command('farbest migrate-circle-icons', 'FPC_Migrate_Circle_Icons');
