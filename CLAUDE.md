@@ -60,6 +60,32 @@ in the admin. Do not re-add PHP registration alongside the JSON: ACF fires `acf/
 (where Local JSON is read) *before* `acf/init`, so a PHP group would overwrite the JSON one and
 disappear from the admin again.
 
+### Single-ingredient circle icon
+
+The circle SVG above the "Get in Touch" button is resolved by `FPC_Icons::get_ingredient_icon()`
+(`includes/class-icons.php`), first hit wins:
+
+1. `category_icon_circle` on the ingredient's **most specific** `fpc_category` term
+2. the same field on each **ancestor** of that term — inheritance
+3. `{theme}/images/categories/{slug}.svg` — filesystem default (directory does not exist yet)
+4. nothing
+
+The icon is uploaded once on the category term. **There is deliberately no per-ingredient
+field** — an earlier draft had one and it was removed as confusing. Products needing a different
+icon are handled with a **subcategory**: a Soy child term under Plant Protein carrying its own
+icon, with every ingredient under it inheriting. A child term left without an icon falls through
+to its parent, so only the ones that genuinely differ need an upload.
+
+This means the icon always follows the category tree, and there is exactly one place to set it.
+
+`category_icon_svg` was the predecessor and has been **removed** — field and template code both.
+Terms edited before the change may still carry orphaned `category_icon_svg` / `_category_icon_svg`
+meta rows; they are inert and can be dropped whenever convenient. The SVG attachments those rows
+pointed at are untouched and still in the media library.
+
+Don't confuse any of this with `category_grid_icon`, which is the category's card image in the
+browse grid and is still live.
+
 **Product Details group** (on `fpc_ingredient`)**:**
 - `product_description` (wysiwyg)
 - `product_sheet` (file/pdf)

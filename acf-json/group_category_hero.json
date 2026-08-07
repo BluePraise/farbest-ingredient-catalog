@@ -68,12 +68,12 @@
             "placeholder": ""
         },
         {
-            "key": "field_category_icon_svg",
-            "label": "Category Icon (SVG)",
-            "name": "category_icon_svg",
+            "key": "field_category_icon_circle",
+            "label": "Ingredient Icon (circle SVG)",
+            "name": "category_icon_circle",
             "aria-label": "",
             "type": "file",
-            "instructions": "Upload an SVG icon representing this category. Displayed on the single ingredient page alongside the product benefits.",
+            "instructions": "The circle icon shown on the single ingredient page for every ingredient in this category. Upload it once here. A subcategory can override it with its own icon — that is how products needing a different icon are handled (e.g. a Soy subcategory under Plant Protein). A subcategory left without an icon inherits this one.",
             "required": 0,
             "conditional_logic": false,
             "wrapper": {

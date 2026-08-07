@@ -94,32 +94,11 @@ if ($ingredient_id) :
         }
     }
 
-    // ── Category SVG icon ────────────────────────────────────────────────────
+    // ── Circle SVG icon ──────────────────────────────────────────────────────
+    // Resolved ingredient override -> category -> ancestors -> theme default.
+    // See FPC_Icons for the full order.
 
-    $first_category = ! empty($categories) ? $categories[0] : null;
-    $svg_content    = '';
-
-    if ($first_category) {
-        // 1. ACF image field on the category term.
-        if (function_exists('get_field')) {
-            $acf_svg = get_field('category_icon_svg', 'fpc_category_' . $first_category->term_id);
-            if (! empty($acf_svg['ID'])) {
-                $svg_file = get_attached_file($acf_svg['ID']);
-                if ($svg_file && file_exists($svg_file)) {
-                    $svg_content = file_get_contents($svg_file); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-                }
-            }
-        }
-
-        // 2. Filesystem fallback: active theme's images/categories/{slug}.svg.
-        if (empty($svg_content)) {
-            $svg_slug = sanitize_file_name($first_category->slug);
-            $svg_path = get_template_directory() . '/images/categories/' . $svg_slug . '.svg';
-            if (file_exists($svg_path)) {
-                $svg_content = file_get_contents($svg_path); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-            }
-        }
-    }
+    $svg_content = FPC_Icons::get_ingredient_icon(get_the_ID());
 
     // ── Breadcrumb ───────────────────────────────────────────────────────────
 
@@ -191,9 +170,10 @@ if ($ingredient_id) :
                     <?php endif; ?>
                 </div><!-- .ingredient-header-left -->
 
-                <!-- Right column: category SVG + CTA -->
+                <!-- Right column: circle SVG + CTA -->
                 <div class="ingredient-header-aside">
 
+                    <?php // Class name kept for continuity; the icon may now come from the ingredient itself. ?>
                     <?php if (! empty($svg_content)) : ?>
                         <div class="ingredient-category-icon">
                             <?php echo $svg_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
