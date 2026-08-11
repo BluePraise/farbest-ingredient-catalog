@@ -630,8 +630,8 @@
 .fpc-term-badge--category {
   border: 1px solid var(--fpc-primary);
   background: rgba(var(--fpc-primary-rgb), 0.1);
-	color: var(--fpc-primary);}
-
+  color: var(--fpc-primary);
+}
 .fpc-term-badge--claim {
   background: #d1ecf1;
   color: #0c5460;
