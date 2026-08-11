@@ -2,7 +2,7 @@
  * Ingredient Grid Component
  * Orchestrates filtering, sorting, view toggle, and pagination.
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import ProductFilter from './ProductFilter';
@@ -471,6 +471,30 @@ const BenefitsGroups = ({ benefits }) => {
     );
 };
 
+/**
+ * TitleWithTrademark — renders a title with ® wrapped in a styled <sup>.
+ *
+ * The REST payload keeps titles as plain text (it also feeds the thumbnail alt
+ * attribute), so the split happens here rather than shipping markup. Mirrors
+ * fpc_wrap_trademark_symbols() in PHP, which handles the server-rendered
+ * titles. ™ is left alone on purpose — that glyph is already drawn raised.
+ *
+ * @param {{ text: string }} props
+ */
+const TitleWithTrademark = ({ text }) => {
+    if (!text || !text.includes('®')) return text || null;
+    return (
+        <Fragment>
+            {text.split('®').map((part, i) => (
+                <Fragment key={i}>
+                    {i > 0 && <sup className="fpc-tm">®</sup>}
+                    {part}
+                </Fragment>
+            ))}
+        </Fragment>
+    );
+};
+
 const IngredientCard = ({ ingredient, certOptions = [] }) => {
     // Build name → cert options lookup for logo data
     const certMap = {};
@@ -489,7 +513,9 @@ const IngredientCard = ({ ingredient, certOptions = [] }) => {
             )}
             <div className="fpc-ingredient-card-content">
                 <h3 className="fpc-ingredient-title">
-                    <a href={ingredient.permalink}>{ingredient.title}</a>
+                    <a href={ingredient.permalink}>
+                        <TitleWithTrademark text={ingredient.title} />
+                    </a>
                 </h3>
 
                 <CategoryBadges subcategories={ingredient.subcategories} />

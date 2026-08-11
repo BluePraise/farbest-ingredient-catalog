@@ -118,7 +118,7 @@ $archive_description = $is_category_archive
 
                                     <div class="ingredient-card-content">
                                         <h2 class="ingredient-card-title">
-                                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                            <a href="<?php the_permalink(); ?>"><?php echo wp_kses_post( fpc_get_the_title() ); ?></a>
                                         </h2>
 
                                         <?php

@@ -600,6 +600,17 @@
   flex-direction: column;
 }
 
+/* Registered-trademark mark. ® is drawn full-size on the baseline, so it needs
+   markup to sit like a trademark symbol; ™ is already raised by the font and is
+   deliberately left unwrapped. line-height: 0 keeps the <sup> from inflating
+   the line box — without it, two-line card titles gain uneven leading. */
+.fpc-tm {
+  font-size: 0.55em;
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 0.04em;
+}
+
 .fpc-ingredient-title {
   margin: 0 0 8px;
   font-size: 20px;

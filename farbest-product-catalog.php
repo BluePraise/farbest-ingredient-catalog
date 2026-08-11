@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.11.1
+ * Version: 1.12.0
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.11.1');
+define('FPC_VERSION', '1.12.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -764,6 +764,45 @@ class Farbest_Product_Catalog {
         </div>
         <?php
     }
+}
+
+/**
+ * Wrap the registered-trademark symbol in a <sup> so it can be styled.
+ *
+ * ® (U+00AE) is drawn by the font as a full-size circled R on the baseline, so
+ * it needs markup to sit like a trademark mark. ™ (U+2122) is deliberately left
+ * alone: that glyph is already drawn raised and small, and wrapping it too
+ * would lift it clear above the cap height.
+ *
+ * Applied explicitly at render points rather than through a global `the_title`
+ * filter — that filter also feeds nav menu items and the contact-form email
+ * subject (FPC_Email_Routing::build_subject()), which must stay plain text.
+ *
+ * @param string $text Title or other display string.
+ * @return string
+ */
+function fpc_wrap_trademark_symbols( $text ) {
+    $text = (string) $text;
+
+    if ( strpos( $text, '®' ) === false && strpos( $text, '&reg;' ) === false ) {
+        return $text;
+    }
+
+    return str_replace(
+        array( '®', '&reg;' ),
+        '<sup class="fpc-tm">®</sup>',
+        $text
+    );
+}
+
+/**
+ * The post title with ® wrapped for styling. Mirrors get_the_title().
+ *
+ * @param int|WP_Post $post Optional. Defaults to the current post.
+ * @return string
+ */
+function fpc_get_the_title( $post = 0 ) {
+    return fpc_wrap_trademark_symbols( get_the_title( $post ) );
 }
 
 /**

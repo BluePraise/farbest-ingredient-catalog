@@ -123,13 +123,13 @@ if ($ingredient_id) :
                     </a>
                 <?php endif; ?>
                 <span class="ingredient-breadcrumb__sep" aria-hidden="true"> | </span>
-                <span class="ingredient-breadcrumb__current" aria-current="page"><?php the_title(); ?></span>
+                <span class="ingredient-breadcrumb__current" aria-current="page"><?php echo wp_kses_post( fpc_get_the_title() ); ?></span>
             </nav>
 
             <!-- Header row: title + benefits (left) / category SVG + CTA (right) -->
             <div class="ingredient-header-row">
                 <header class="ingredient-header">
-                    <h1 class="ingredient-title"><?php the_title(); ?></h1>
+                    <h1 class="ingredient-title"><?php echo wp_kses_post( fpc_get_the_title() ); ?></h1>
                 </header>
                 <div class="ingredient-header-left">
                     <?php the_content(); ?>
@@ -375,7 +375,7 @@ if ($ingredient_id) :
                                 ?>
                                 <article class="fpc-ingredient-card">
                                     <div class="fpc-ingredient-card-content">
-                                        <h3 class="fpc-ingredient-title"><?php the_title(); ?></h3>
+                                        <h3 class="fpc-ingredient-title"><?php echo wp_kses_post( fpc_get_the_title() ); ?></h3>
 
                                         <?php
                                         $rel_benefits = fpc_extract_benefits($rel_id);
