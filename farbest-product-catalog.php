@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.11.0
+ * Version: 1.11.1
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.11.0');
+define('FPC_VERSION', '1.11.1');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -767,16 +767,26 @@ class Farbest_Product_Catalog {
 }
 
 /**
- * Extract benefit groups from a post's block content.
+ * Extract benefit groups from a post.
  *
- * Parses any core/columns block where each column contains a heading + list,
+ * The canonical source is the `benefits_columns` ACF repeater (one row per
+ * column, each with a heading and a nested list of items) — the same field the
+ * single-ingredient template renders. Older ingredients that predate the field
+ * still carry their benefits as blocks in post_content, so we fall back to
+ * parsing those: any core/columns block whose columns contain a heading + list,
  * and any core/group block with the same structure (single-column variant).
+ *
  * Returns an array of [ 'heading' => string, 'items' => string[] ] per group.
  *
  * @param int $post_id
  * @return array
  */
 function fpc_extract_benefits( $post_id ) {
+    $acf_groups = fpc_extract_benefits_from_acf( $post_id );
+    if ( ! empty( $acf_groups ) ) {
+        return $acf_groups;
+    }
+
     if ( ! function_exists( 'parse_blocks' ) ) {
         return array();
     }
@@ -834,6 +844,48 @@ function fpc_extract_benefits( $post_id ) {
             if ( $heading !== '' || ! empty( $items ) ) {
                 $groups[] = array( 'heading' => $heading, 'items' => $items );
             }
+        }
+    }
+
+    return $groups;
+}
+
+/**
+ * Read benefit groups from the `benefits_columns` ACF repeater.
+ *
+ * Mirrors the shape `fpc_extract_benefits()` returns so callers do not care
+ * which source the data came from.
+ *
+ * @param int $post_id
+ * @return array
+ */
+function fpc_extract_benefits_from_acf( $post_id ) {
+    if ( ! function_exists( 'get_field' ) ) {
+        return array();
+    }
+
+    $columns = get_field( 'benefits_columns', $post_id );
+    if ( empty( $columns ) || ! is_array( $columns ) ) {
+        return array();
+    }
+
+    $groups = array();
+
+    foreach ( $columns as $column ) {
+        $heading = isset( $column['column_label'] ) ? trim( (string) $column['column_label'] ) : '';
+        $items   = array();
+
+        if ( ! empty( $column['column_items'] ) && is_array( $column['column_items'] ) ) {
+            foreach ( $column['column_items'] as $item ) {
+                $text = isset( $item['item_text'] ) ? trim( (string) $item['item_text'] ) : '';
+                if ( $text !== '' ) {
+                    $items[] = $text;
+                }
+            }
+        }
+
+        if ( $heading !== '' || ! empty( $items ) ) {
+            $groups[] = array( 'heading' => $heading, 'items' => $items );
         }
     }
 
