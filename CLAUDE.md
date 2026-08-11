@@ -94,6 +94,18 @@ browse grid and is still live.
 - `product_packaging` (textarea)
 - `display_order` (number)
 
+**Ingredient Benefits group** (on `fpc_ingredient`)**:**
+- `benefits_columns` (repeater, one row per column)
+  - `column_label` (text — the heading, e.g. "Application Benefits")
+  - `column_items` (repeater) → `item_text` (text)
+
+This is the **canonical** source for benefits, on the single-ingredient page and on the
+grid/related cards alike. `fpc_extract_benefits()` reads it first and only falls back to
+parsing `core/columns` / `core/group` blocks out of `post_content` for the handful of older
+ingredients that still store benefits that way (the pre-ACF format). Anything that surfaces
+benefits should go through `fpc_extract_benefits()` rather than re-reading either source —
+reading only the block content is what broke the cards in 1.11.0.
+
 **Sales Rep Routing group:**
 - `rep_code_primary`, `rep_code_secondary`, `rep_notes`
 
