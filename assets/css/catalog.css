@@ -602,12 +602,12 @@
 
 .fpc-ingredient-title {
   margin: 0 0 8px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1.4;
 }
 .fpc-ingredient-title a {
-  color: var(--fpc-moss);
+  color: var(--color-primary);
   text-decoration: none;
 }
 .fpc-ingredient-title a:hover {
@@ -625,12 +625,13 @@
   display: inline-block;
   padding: 2px 8px;
   font-size: 11px;
-  border-radius: 10px;
+  border-radius: 2px;
 }
 .fpc-term-badge--category {
-  background: #e9ecef;
-  color: var(--fpc-secondary);
-}
+  border: 1px solid var(--fpc-primary);
+  background: rgba(var(--fpc-primary-rgb), 0.1);
+	color: var(--fpc-primary);}
+
 .fpc-term-badge--claim {
   background: #d1ecf1;
   color: #0c5460;
@@ -665,11 +666,11 @@
 }
 
 .fpc-ingredient-benefits__heading {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--fpc-moss);
-  margin: 0 0 4px;
+  color: var(--fpc-green);
+  margin: 6px 0 4px;
 }
 
 .fpc-ingredient-benefits__list {
