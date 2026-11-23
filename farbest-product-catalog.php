@@ -3,7 +3,7 @@
  * Plugin Name: Farbest Product Catalog
  * Plugin URI: https://farbest.com
  * Description: Custom product catalog solution replacing WooCommerce with advanced filtering and contact form integration
- * Version: 1.12.0
+ * Version: 1.13.0
  * Author: BeckerGuerry
  * Author URI: https://beckerguerry.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FPC_VERSION', '1.12.0');
+define('FPC_VERSION', '1.13.0');
 define('FPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FPC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FPC_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -381,14 +381,10 @@ class Farbest_Product_Catalog {
 
         if (!empty($params['categories'])) {
             $category_slugs = array_filter(array_map('sanitize_text_field', explode(',', $params['categories'])));
-            if (!empty($category_slugs)) {
-                $tax_query[] = array(
-                    'taxonomy'         => 'fpc_category',
-                    'field'            => 'slug',
-                    'terms'            => $category_slugs,
-                    'operator'         => 'IN',
-                    'include_children' => true,
-                );
+            // One clause per slug so multiple picks AND together (narrow),
+            // while include_children still lets a parent match its children.
+            foreach ($this->category_clauses($category_slugs) as $category_clause) {
+                $tax_query[] = $category_clause;
             }
         }
 
@@ -481,6 +477,26 @@ class Farbest_Product_Catalog {
     }
 
     /**
+     * One tax_query clause per category slug, so multiple category picks AND
+     * together (narrow). include_children lets a parent match its child terms.
+     *
+     * @param string[] $slugs fpc_category slugs.
+     * @return array[] tax_query clauses.
+     */
+    private function category_clauses(array $slugs) {
+        $clauses = array();
+        foreach (array_values(array_unique($slugs)) as $slug) {
+            $clauses[] = array(
+                'taxonomy'         => 'fpc_category',
+                'field'            => 'slug',
+                'terms'            => array($slug),
+                'include_children' => true,
+            );
+        }
+        return $clauses;
+    }
+
+    /**
      * Disjunctive facet counts for the filter dropdowns.
      *
      * For each facet we count matching ingredients per term while applying every
@@ -489,6 +505,9 @@ class Farbest_Product_Catalog {
      * reflect the selected category as soon as you open the dropdown — and makes
      * the other facets narrow as more filters are checked, while a facet's own
      * options stay selectable (they are OR-combined server-side).
+     *
+     * Exception: categories AND together, so the category facet also applies its
+     * own selection — only categories that co-occur with the picks stay counted.
      *
      * @param array $params Request params (categories, claims, certifications, applications, search).
      * @return array Map of facet key => ( term slug => count ).
@@ -512,16 +531,17 @@ class Farbest_Product_Catalog {
             if (empty($slugs)) {
                 continue;
             }
-            $clause = array(
+            if ($taxonomy === 'fpc_category') {
+                // List of clauses: categories AND together.
+                $clauses[$key] = $this->category_clauses($slugs);
+                continue;
+            }
+            $clauses[$key] = array(array(
                 'taxonomy' => $taxonomy,
                 'field'    => 'slug',
                 'terms'    => $slugs,
                 'operator' => 'IN',
-            );
-            if ($taxonomy === 'fpc_category') {
-                $clause['include_children'] = true;
-            }
-            $clauses[$key] = $clause;
+            ));
         }
 
         $search = !empty($params['search']) ? sanitize_text_field($params['search']) : '';
@@ -530,11 +550,19 @@ class Farbest_Product_Catalog {
         foreach ($facet_map as $key => $taxonomy) {
             // Apply every OTHER facet's clause, but not this facet's own.
             $tax_query = array('relation' => 'AND');
-            foreach ($clauses as $other_key => $clause) {
-                if ($other_key === $key || null === $clause) {
+            foreach ($clauses as $other_key => $facet_clauses) {
+                if (null === $facet_clauses) {
                     continue;
                 }
-                $tax_query[] = $clause;
+                // Categories AND together, so their own selection must narrow
+                // their own counts (e.g. Casein picked -> only co-occurring
+                // categories stay available). Other facets stay disjunctive.
+                if ($other_key === $key && 'categories' !== $key) {
+                    continue;
+                }
+                foreach ($facet_clauses as $clause) {
+                    $tax_query[] = $clause;
+                }
             }
 
             $args = array(

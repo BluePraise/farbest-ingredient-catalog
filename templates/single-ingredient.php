@@ -69,6 +69,7 @@ if ($ingredient_id) :
     // ── ACF fields ───────────────────────────────────────────────────────────
 
     $packaging           = get_field('product_packaging');
+    $sourcing            = get_field('product_sourcing');
     $product_sheet       = get_field('product_sheet');
     $product_description = get_field('product_description');
     // ── Vendor items: logo + caption text ───────────────────────────────────
@@ -299,6 +300,13 @@ if ($ingredient_id) :
                                 <tr>
                                     <th><?php esc_html_e('Certifications', 'farbest-catalog'); ?></th>
                                     <td><?php echo esc_html(implode(' | ', wp_list_pluck($cert_terms, 'name'))); ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($sourcing) : ?>
+                                <tr>
+                                    <th><?php esc_html_e('Sourcing', 'farbest-catalog'); ?></th>
+                                    <td><?php echo esc_html($sourcing); ?></td>
                                 </tr>
                             <?php endif; ?>
 

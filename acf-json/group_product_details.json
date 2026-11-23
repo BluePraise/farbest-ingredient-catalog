@@ -109,6 +109,26 @@
             "placeholder": ""
         },
         {
+            "key": "field_product_sourcing",
+            "label": "Sourcing",
+            "name": "product_sourcing",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Dairy proteins only: the country the protein is sourced from (e.g. New Zealand). Leave blank for all other ingredients.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": 100,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_display_order",
             "label": "Display Order",
             "name": "display_order",
@@ -149,5 +169,5 @@
     "active": true,
     "description": "",
     "show_in_rest": false,
-    "modified": 1754400000
+    "modified": 1794499408
 }
